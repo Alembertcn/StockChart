@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -16,7 +16,7 @@ package com.github.wangyiqian.stockchart.entities
 /**
  * 封装了一层KEntity，目的是为了实现五日线这种不同日的折线不需要相连，每日起始第一个点使用此类封装即可
  *
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/2/22
  */
 @Deprecated("")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -14,7 +14,7 @@
 package com.github.wangyiqian.stockchart.listener
 
 /**
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/1/30
  */
 interface OnKEntitiesChangedListener {

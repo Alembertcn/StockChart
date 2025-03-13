@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import kotlin.math.abs
 /**
  * 统一处理触摸事件
  *
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/1/29
  */
 internal class TouchHelper(private val stockChart: IStockChart, private val callBack: CallBack) :

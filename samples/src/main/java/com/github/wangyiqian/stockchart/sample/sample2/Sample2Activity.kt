@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -48,7 +48,7 @@ import kotlinx.android.synthetic.main.activity_sample3.*
 import kotlinx.android.synthetic.main.layout_sample2_option_buttons.*
 
 /**
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/3/6
  */
 class Sample2Activity : AppCompatActivity() {
@@ -155,8 +155,6 @@ class Sample2Activity : AppCompatActivity() {
 
             // 最大缩放比例
             scaleFactorMax = 2f
-
-            scrollSmoothly = false
 
             // 最小缩放比例
             scaleFactorMin = 0.5f
@@ -293,7 +291,7 @@ class Sample2Activity : AppCompatActivity() {
 
         volumeChartConfig.apply {
             // 图高度
-            height = DimensionUtil.dp2px(this@Sample2Activity, 30f)
+            height = DimensionUtil.dp2px(this@Sample2Activity, 40f)
 
 
             // 长按左侧标签配置
@@ -584,7 +582,7 @@ class Sample2Activity : AppCompatActivity() {
                 Pair(period_one_minute, Period.ONE_MINUTE),
                 Pair(period_five_minutes, Period.FIVE_MINUTES),
                 Pair(period_sixty_minutes, Period.SIXTY_MINUTES),
-                Pair(period_day_time, Period.DAY_TIME)
+                Pair(period_day_time, Period.DAY_TIME),
             )
         )
 
@@ -616,7 +614,8 @@ class Sample2Activity : AppCompatActivity() {
                 Pair(index_boll, Index.BOLL()),
                 Pair(index_macd, Index.MACD()),
                 Pair(index_kdj, Index.KDJ()),
-                Pair(index_rsi, Index.RSI())
+                Pair(index_rsi, Index.RSI()),
+                Pair(index_vol, Index.VOL()),
             )
         )
 
@@ -654,6 +653,13 @@ class Sample2Activity : AppCompatActivity() {
                             stockChartConfig.removeChildCharts(rsiChartFactory!!)
                         } else {
                             stockChartConfig.addChildCharts(rsiChartFactory!!)
+                        }
+                    }
+                    Index.VOL::class -> {
+                        if (stockChartConfig.childChartFactories.contains(volumeChartFactory!!)) {
+                            stockChartConfig.removeChildCharts(volumeChartFactory!!)
+                        } else {
+                            stockChartConfig.addChildCharts(volumeChartFactory!!)
                         }
                     }
                 }
@@ -702,6 +708,10 @@ class Sample2Activity : AppCompatActivity() {
                 Index.RSI::class -> {
                     button.isSelected =
                         stockChartConfig.childChartFactories.contains(rsiChartFactory!!)
+                }
+                Index.VOL::class -> {
+                    button.isSelected =
+                        stockChartConfig.childChartFactories.contains(volumeChartFactory!!)
                 }
             }
         }

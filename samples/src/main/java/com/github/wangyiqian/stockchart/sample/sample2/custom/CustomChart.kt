@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.github.wangyiqian.stockchart.util.DimensionUtil
 /**
  * 自定义图示例：每天的平均价连线
  *
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/2/9
  */
 class CustomChart(

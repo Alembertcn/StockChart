@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,6 +15,7 @@ package com.github.wangyiqian.stockchart.childchart.volumechart
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import com.github.wangyiqian.stockchart.IStockChart
 import com.github.wangyiqian.stockchart.childchart.base.BaseChildChart
 import com.github.wangyiqian.stockchart.entities.FLAG_EMPTY
@@ -24,7 +25,7 @@ import kotlin.math.max
 /**
  * 成交量图
  *
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/1/28
  */
 class VolumeChart(
@@ -33,12 +34,27 @@ class VolumeChart(
 ) : BaseChildChart<VolumeChartConfig>(stockChart, chartConfig) {
 
     private val volumePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+
     private val highlightHorizontalLinePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
     private val highlightVerticalLinePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
     private val highlightLabelPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
     private val highlightLabelBgPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
 
-    override fun onKEntitiesChanged() {}
+    private val indexTextPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    private val indexStarterTextBgPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    private val indexStarterRightIconPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    private var indexStarterRectF = RectF()
+    private var indexList: List<List<Float?>>? = null
+    private var drawnIndexTextHeight = 0f
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        indexList = chartConfig.index?.calculate(getKEntities())
+    }
+
+    override fun onKEntitiesChanged() {
+        indexList = chartConfig.index?.calculate(getKEntities())
+    }
 
     override fun getYValueRange(startIndex: Int, endIndex: Int, result: FloatArray) {
         var yMax = getKEntities()[startIndex].getVolume().toFloat()
@@ -64,6 +80,74 @@ class VolumeChart(
             }
             is VolumeChartConfig.VolumeChartType.HOLLOW -> {
                 drawVolumeChart(canvas, true)
+            }
+        }
+
+
+        // draw index text
+        chartConfig.index?.let { index ->
+            indexList?.let { indexList ->
+                val highlight = getHighlight()
+                var indexIdx =
+                    highlight?.getIdx() ?: stockChart.findLastNotEmptyKEntityIdxInDisplayArea()
+                indexTextPaint.textSize = index.textSize
+                var left = index.textMarginLeft
+                var top = index.textMarginTop
+                indexTextPaint.getFontMetrics(tmpFontMetrics)
+                val textHeight = tmpFontMetrics.bottom - tmpFontMetrics.top
+                if (!index.startText.isNullOrEmpty()) {
+                    indexTextPaint.color = index.startTextColor
+                    indexStarterTextBgPaint.color = chartConfig.indexStarterBgColor
+                    val textWidth = indexTextPaint.measureText(index.startText)
+                    val textLeft = left + chartConfig.indexStarterBgPaddingHorizontal
+                    var width = textWidth + chartConfig.indexStarterBgPaddingHorizontal * 2
+                    val height = textHeight + top
+                    val indexStarterRightIconMarginLeft = 10
+                    chartConfig.indexStarterRightIcon?.also {
+                        width += it.width + indexStarterRightIconMarginLeft
+                    }
+                    canvas.drawRoundRect(
+                        left,
+                        top,
+                        left + width,
+                        top + height,
+                        5f,
+                        5f,
+                        indexStarterTextBgPaint
+                    )
+                    indexStarterRectF.set(left, top, left + width, top + height)
+                    chartConfig.indexStarterRightIcon?.also {
+                        canvas.drawBitmap(
+                            it,
+                            textLeft + textWidth + indexStarterRightIconMarginLeft,
+                            top + (height - it.height) / 2,
+                            indexStarterRightIconPaint
+                        )
+                    }
+                    canvas.drawText(
+                        index.startText,
+                        textLeft,
+                        -tmpFontMetrics.top + top,
+                        indexTextPaint
+                    )
+                    left += width + index.textSpace
+                    drawnIndexTextHeight = height
+                } else {
+                    indexStarterRectF.set(0f, 0f, 0f, 0f)
+                }
+                indexList.forEachIndexed { lineIdx, pointList ->
+                    indexTextPaint.color = chartConfig.indexTextColor
+                    val value = if (indexIdx != null && indexIdx in pointList.indices && pointList[indexIdx] != null) pointList[indexIdx] else null
+                    val text = index.textFormatter.invoke(lineIdx, value)
+                    drawnIndexTextHeight = textHeight + index.textMarginTop
+                    canvas.drawText(
+                        text,
+                        left,
+                        -tmpFontMetrics.top + top,
+                        indexTextPaint
+                    )
+                    left += indexTextPaint.measureText(text) + index.textSpace
+                }
             }
         }
     }
@@ -206,6 +290,7 @@ class VolumeChart(
 
                         highlightHorizontalLineRight -= bgWidth
                     }
+
 
                     val saveCount = canvas.saveLayer(
                         getChartMainDisplayArea().left,

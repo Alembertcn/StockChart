@@ -10,7 +10,7 @@ import com.github.wangyiqian.stockchart.entities.GestureEvent
 import kotlin.math.abs
 
 /**
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2023/3/9
  */
 class RsiChart(stockChart: IStockChart, chartConfig: RsiChartConfig) :

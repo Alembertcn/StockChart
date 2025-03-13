@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -26,7 +26,7 @@ import com.github.wangyiqian.stockchart.listener.OnKEntitiesChangedListener
 /**
  * 所有的StockChart的子View都需要继承此类
  *
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/1/28
  */
 abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructor(

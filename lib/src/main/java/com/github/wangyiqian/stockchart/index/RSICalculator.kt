@@ -7,7 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2023/3/9
  */
 object RSICalculator : ICalculator {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@ package com.github.wangyiqian.stockchart.index
 
 import com.github.wangyiqian.stockchart.*
 import com.github.wangyiqian.stockchart.entities.IKEntity
+import com.github.wangyiqian.stockchart.util.NumberFormatUtil
 
 /**
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/2/18
  */
 open abstract class Index(
@@ -158,6 +159,30 @@ open abstract class Index(
         textSize
     ) {
         override fun calculate(input: List<IKEntity>) = RSICalculator.calculate(param, input)
+    }
+
+    class VOL(
+        param: String = "",
+        startText: String = "VOL",
+        startTextColor: Int = DEFAULT_INDEX_START_TEXT_COLOR,
+        textFormatter: (idx: Int, value: Float?) -> String =  DefaultIndexTextFormatter.VOL,
+        textMarginLeft: Float = DEFAULT_INDEX_TEXT_MARGIN_LEFT,
+        textMarginTopDp: Float = DEFAULT_INDEX_TEXT_MARGIN_TOP,
+        textSpace: Float = DEFAULT_INDEX_TEXT_SPACE,
+        textSize: Float = DEFAULT_INDEX_TEXT_SIZE
+    ) : Index(
+        param,
+        startText,
+        startTextColor,
+        textFormatter,
+        textMarginLeft,
+        textMarginTopDp,
+        textSpace,
+        textSize
+    ) {
+        override fun calculate(input: List<IKEntity>): List<List<Float?>>{
+            return  mutableListOf(input.map { it.getVolume().toFloat() }.toList())
+        }
     }
 }
 

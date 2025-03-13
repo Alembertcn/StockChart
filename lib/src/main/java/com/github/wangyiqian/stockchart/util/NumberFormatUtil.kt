@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -16,7 +16,7 @@ package com.github.wangyiqian.stockchart.util
 import java.text.DecimalFormat
 
 /**
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/2/26
  */
 object NumberFormatUtil {
@@ -31,4 +31,37 @@ object NumberFormatUtil {
         format(price)
     }
 
+
+    private val numberDecimalFormat = DecimalFormat().apply {
+        maximumFractionDigits = 2
+        minimumFractionDigits = 2
+    }
+    /**
+     * 格式化成交量
+     */
+    fun formatVolume(volume: Long?): String? {
+        if(volume == null) return null
+        var magnitude: Float
+        var unit = ""
+        when {
+            volume > 1_0000_0000_0000f -> {
+                magnitude = 1_0000_0000_0000f
+                unit = "万亿"
+            }
+            volume > 1_0000_0000f -> {
+                magnitude = 1_0000_0000f
+                unit = "亿"
+            }
+            volume > 1_0000f -> {
+                magnitude = 1_0000f
+                unit = "万"
+            }
+            else -> {
+                magnitude = 1f
+                unit = ""
+            }
+        }
+
+        return "${numberDecimalFormat.format(volume / magnitude)}${unit}股"
+    }
 }

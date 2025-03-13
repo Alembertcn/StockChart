@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -13,13 +13,17 @@
 
 package com.github.wangyiqian.stockchart.childchart.volumechart
 
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.view.View
 import com.github.wangyiqian.stockchart.*
 import com.github.wangyiqian.stockchart.childchart.base.*
+import com.github.wangyiqian.stockchart.index.Index
 import com.github.wangyiqian.stockchart.listener.OnHighlightListener
 
 /**
  * 成交量图配置
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/2/7
  */
 class VolumeChartConfig(
@@ -27,7 +31,7 @@ class VolumeChartConfig(
     marginTop: Int = DEFAULT_CHILD_CHART_MARGIN_TOP,
     marginBottom: Int = DEFAULT_CHILD_CHART_MARGIN_BOTTOM,
     onHighlightListener: OnHighlightListener? = null,
-    chartMainDisplayAreaPaddingTop: Float = 0f,
+    chartMainDisplayAreaPaddingTop: Float = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP/2,
     chartMainDisplayAreaPaddingBottom: Float = 0f,
     // 柱子样式
     var volumeChartType: VolumeChartType = VolumeChartType.CANDLE(),
@@ -38,7 +42,20 @@ class VolumeChartConfig(
     // 柱子之间的空间占比柱子宽度
     var barSpaceRatio: Float = DEFAULT_VOLUME_BAR_SPACE_RATIO,
     // 柱子空心时的线条宽度
-    var hollowChartLineStrokeWidth: Float = DEFAULT_VOLUME_CHART_HOLLOW_CHART_LINE_STROKE_WIDTH
+    var hollowChartLineStrokeWidth: Float = DEFAULT_VOLUME_CHART_HOLLOW_CHART_LINE_STROKE_WIDTH,
+
+    // 需要展示的指标配置
+    var index: Index? = Index.VOL(),
+    // 指标头文字背景色
+    var indexStarterBgColor: Int = Color.TRANSPARENT,
+    // 指标头文字背景水平内间距
+    var indexStarterBgPaddingHorizontal: Float = 0f,
+    // 指标头文字右侧图标
+    var indexStarterRightIcon: Bitmap? = null,
+    // 指标文字颜色
+    var indexTextColor: Int =DEFAULT_INDEX_START_TEXT_COLOR,
+    // 指标头文字点击事件
+    var indexStarterClickListener: ((View) -> Unit)? = null
 ) : BaseChildChartConfig(
     height,
     marginTop,

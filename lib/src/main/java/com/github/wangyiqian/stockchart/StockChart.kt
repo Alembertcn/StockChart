@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 WangYiqian
+ * Copyright 2025 hai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import kotlin.math.min
  * 股票图，可包含K线图、成交量图、MACD图...
  * 子图目前只提供垂直线性布局
  *
- * @author wangyiqian E-mail: wangyiqian9891@gmail.com
+ * @author hai
  * @version 创建时间: 2021/1/28
  */
 class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
