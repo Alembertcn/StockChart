@@ -21,6 +21,7 @@ import com.github.wangyiqian.stockchart.sample.R.*
 import com.github.wangyiqian.stockchart.sample.sample1.Sample1Activity
 import com.github.wangyiqian.stockchart.sample.sample2.Sample2Activity
 import com.github.wangyiqian.stockchart.sample.sample3.Sample3Activity
+import com.github.wangyiqian.stockchart.sample.sample4.Sample4Activity
 
 /**
  * @author hai
@@ -43,5 +44,8 @@ class MainActivity : AppCompatActivity() {
 
     fun sample3(view: View) {
         startActivity(Intent(this, Sample3Activity::class.java))
+    }
+    fun sample4(view: View) {
+        startActivity(Intent(this, Sample4Activity::class.java))
     }
 }

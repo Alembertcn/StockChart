@@ -15,6 +15,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:dividerPadding="5dp"
+    android:paddingHorizontal="10dp"
     android:orientation="vertical">
 
     <Button
@@ -34,5 +36,11 @@
         android:layout_height="wrap_content"
         android:onClick="sample3"
         android:text="示例三：自定义子图-大盘异动" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sample4"
+        android:text="示例四：项目适配" />
 
 </LinearLayout>

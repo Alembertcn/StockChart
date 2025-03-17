@@ -84,7 +84,8 @@ val DEFAULT_K_CHART_LEFT_LABEL_CONFIG =
         Color.LTGRAY,
         15f,
         15f,
-        15f
+        15f,
+        null
     )
 val DEFAULT_K_CHART_HIGHLIGHT_LABEL_LEFT = HighlightLabelConfig()
 const val DEFAULT_AVG_LINE_WIDTH = 2f

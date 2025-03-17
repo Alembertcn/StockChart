@@ -1016,6 +1016,9 @@ open class KChart(
             for (i in 1..config.count) {
                 tmp2FloatArray[0] = 0f
                 tmp2FloatArray[1] = pos + labelHeight / 2
+                config.textColorFormatter?.invoke(tmp2FloatArray[1])?.let {
+                    labelPaint.color = it
+                }
                 mapPointsReal2Value(tmp2FloatArray)
                 val text = config.formatter.invoke(tmp2FloatArray[1])
                 val startX = if (isLeft) {

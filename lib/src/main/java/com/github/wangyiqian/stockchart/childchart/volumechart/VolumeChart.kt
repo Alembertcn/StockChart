@@ -197,7 +197,9 @@ class VolumeChart(
     override fun drawHighlight(canvas: Canvas) {
         getHighlight()?.let { highlight ->
             if (stockChart.getConfig().showHighlightHorizontalLine) {
-                if (highlight.y >= getChartDisplayArea().top && highlight.y <= getChartDisplayArea().bottom) {
+                val highlightAreaTop = getChartDisplayArea().top + drawnIndexTextHeight
+
+                if (highlight.y >= highlightAreaTop && highlight.y <= getChartDisplayArea().bottom) {
 
                     highlightHorizontalLinePaint.color =
                         stockChart.getConfig().highlightHorizontalLineColor
@@ -224,8 +226,8 @@ class VolumeChart(
                         tmpRectF.top = highlight.y - bgHeight / 2
                         tmpRectF.right = bgWidth
                         tmpRectF.bottom = highlight.y + bgHeight / 2
-                        if (tmpRectF.top < getChartDisplayArea().top) {
-                            tmpRectF.offset(0f, getChartDisplayArea().top - tmpRectF.top)
+                        if (tmpRectF.top < highlightAreaTop) {
+                            tmpRectF.offset(0f, highlightAreaTop - tmpRectF.top)
                         } else if (tmpRectF.bottom > getChartDisplayArea().bottom) {
                             tmpRectF.offset(0f, getChartDisplayArea().bottom - tmpRectF.bottom)
                         }
@@ -265,8 +267,8 @@ class VolumeChart(
                         tmpRectF.top = highlight.y - bgHeight / 2
                         tmpRectF.right = getChartDisplayArea().right
                         tmpRectF.bottom = highlight.y + bgHeight / 2
-                        if (tmpRectF.top < getChartDisplayArea().top) {
-                            tmpRectF.offset(0f, getChartDisplayArea().top - tmpRectF.top)
+                        if (tmpRectF.top < highlightAreaTop) {
+                            tmpRectF.offset(0f, highlightAreaTop - tmpRectF.top)
                         } else if (tmpRectF.bottom > getChartDisplayArea().bottom) {
                             tmpRectF.offset(0f, getChartDisplayArea().bottom - tmpRectF.bottom)
                         }

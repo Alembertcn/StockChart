@@ -255,6 +255,14 @@ class StockChartConfig {
 
     private var onGestureListeners = mutableSetOf<OnGestureListener>()
 
+    fun addChildChart(childChartFactorie: AbsChildChartFactory<*>,index:Int = -1) {
+        if(index<0){
+            this.childChartFactories.add(childChartFactorie)
+        }else{
+            this.childChartFactories.add(index,childChartFactorie)
+        }
+    }
+
     fun addChildCharts(vararg childChartFactories: AbsChildChartFactory<*>) {
         this.childChartFactories.addAll(childChartFactories.toList())
     }

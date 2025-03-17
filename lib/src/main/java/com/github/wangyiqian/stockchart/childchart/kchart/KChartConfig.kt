@@ -13,7 +13,6 @@
 
 package com.github.wangyiqian.stockchart.childchart.kchart
 
-import androidx.annotation.ColorInt
 import com.github.wangyiqian.stockchart.*
 import com.github.wangyiqian.stockchart.childchart.base.*
 import com.github.wangyiqian.stockchart.index.Index
@@ -100,7 +99,7 @@ open class KChartConfig(
         // 实心蜡烛图
         class CANDLE(
             highestAndLowestLabelConfig: HighestAndLowestLabelConfig = HighestAndLowestLabelConfig(
-                { "${NumberFormatUtil.formatPrice(it)}" },
+                { NumberFormatUtil.formatPrice(it) },
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_COLOR,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
@@ -111,7 +110,7 @@ open class KChartConfig(
         // 空心蜡烛图
         class HOLLOW(
             highestAndLowestLabelConfig: HighestAndLowestLabelConfig = HighestAndLowestLabelConfig(
-                { "${NumberFormatUtil.formatPrice(it)}" },
+                { NumberFormatUtil.formatPrice(it) },
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_COLOR,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
@@ -130,7 +129,7 @@ open class KChartConfig(
         // 竹节（美国线）图
         class BAR(
             highestAndLowestLabelConfig: HighestAndLowestLabelConfig = HighestAndLowestLabelConfig(
-                { "${NumberFormatUtil.formatPrice(it)}" },
+                { NumberFormatUtil.formatPrice(it) },
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_COLOR,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
@@ -172,6 +171,7 @@ open class KChartConfig(
         // 顶部外间距
         var marginTop: Float,
         // 底部外间距
-        var marginBottom: Float
+        var marginBottom: Float,
+        var textColorFormatter: ((price: Float) -> Int)?=null
     )
 }
