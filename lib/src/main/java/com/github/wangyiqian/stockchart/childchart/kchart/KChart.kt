@@ -13,6 +13,7 @@
 
 package com.github.wangyiqian.stockchart.childchart.kchart
 
+import CirclePaint
 import android.graphics.*
 import com.github.wangyiqian.stockchart.IStockChart
 import com.github.wangyiqian.stockchart.childchart.base.BaseChildChart
@@ -20,6 +21,7 @@ import com.github.wangyiqian.stockchart.entities.FLAG_EMPTY
 import com.github.wangyiqian.stockchart.entities.FLAG_LINE_STARTER
 import com.github.wangyiqian.stockchart.entities.containFlag
 import com.github.wangyiqian.stockchart.index.Index
+import com.github.wangyiqian.stockchart.util.DimensionUtil
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -66,6 +68,9 @@ open class KChart(
     private val labelPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
     private val avgPriceLinePaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeCap = Paint.Cap.ROUND }
+    }
+    private val circleDrawer by lazy {
+        CirclePaint(this)
     }
 
     private var indexList: List<List<Float?>>? = null
@@ -986,6 +991,8 @@ open class KChart(
             preIdx = idx
         }
         canvas.restoreToCount(saveCount)
+
+        circleDrawer.onDraw(canvas, tmp4FloatArray[2], tmp4FloatArray[3],chartConfig)
     }
 
     private fun drawLabels(canvas: Canvas) {

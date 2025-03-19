@@ -84,7 +84,8 @@ open class KChartConfig(
     // y轴范围最小值，在增加或修改K线数据之前指定才有效
     var yValueMin: Float? = null,
     // y轴范围最大值，在增加或修改K线数据之前指定才有效
-    var yValueMax: Float? = null
+    var yValueMax: Float? = null,
+    var showCircle: Boolean = false
 ) : BaseChildChartConfig(
     height,
     marginTop,

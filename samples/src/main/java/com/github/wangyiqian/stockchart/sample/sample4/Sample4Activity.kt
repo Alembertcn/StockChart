@@ -45,7 +45,8 @@ import com.github.wangyiqian.stockchart.sample.sample2.custom.CustomChartConfig
 import com.github.wangyiqian.stockchart.sample.sample2.custom.CustomChartFactory
 import com.github.wangyiqian.stockchart.util.DimensionUtil
 import com.github.wangyiqian.stockchart.util.NumberFormatUtil
-import kotlinx.android.synthetic.main.activity_sample2.*
+import kotlinx.android.synthetic.main.activity_sample2.stock_chart
+import kotlinx.android.synthetic.main.activity_sample4.*
 import kotlinx.android.synthetic.main.layout_sample2_option_buttons.*
 
 /**
@@ -113,7 +114,7 @@ class Sample4Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sample2)
+        setContentView(R.layout.activity_sample4)
 
         // StockChart初始化
         initStockChart()
@@ -124,9 +125,14 @@ class Sample4Activity : AppCompatActivity() {
         initChartTypeButtons()
         initIndexButtons()
         initCustomChartButtons()
+        startAnim.setOnClickListener {
+            kChartConfig.showCircle = true
+            stock_chart.notifyChanged()
+        }
 
         // 切换到到日K，首次加载数据
         changePeriod(Period.DAY)
+
     }
 
     private fun initChartTypeButtons() {
@@ -153,6 +159,8 @@ class Sample4Activity : AppCompatActivity() {
         initCustomChart()
 
         stockChartConfig.apply {
+            chartMainDisplayAreaPaddingLeft = DimensionUtil.dp2px(this@Sample4Activity,2.5f).toFloat()
+            chartMainDisplayAreaPaddingRight = DimensionUtil.dp2px(this@Sample4Activity,2.5f).toFloat()
             // 将需要显示的子图的工厂添加进StockChart配置
             addChildCharts(
                 kChartFactory!!,
