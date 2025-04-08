@@ -45,6 +45,11 @@ class StockChartConfig {
      */
     var showEndIndex = 0
 
+    // x轴范围最小值，在增加或修改K线数据之前指定才有效
+    var xValueMin: Float? = null
+    // x轴范围最大值，在增加或修改K线数据之前指定才有效
+    var xValueMax: Float? = null
+
     /**
      * 是否支持滑动
      */

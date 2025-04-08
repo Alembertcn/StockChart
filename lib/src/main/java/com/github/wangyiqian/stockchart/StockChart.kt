@@ -366,6 +366,12 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
                         highlight.valueX = valueX
                         highlight.valueY = valueY
                     }
+                    // 校验最大最小
+                    if (config.xValueMin != null && config.xValueMax != null) {
+                        highlight.valueX = valueX.coerceIn(config.xValueMin,config.xValueMax)
+                        highlight.valueX = min(highlight.valueX,config.getKEntitiesSize() - 1f)
+                    }
+
                     highlight?.apply { childChart.getConfig().onHighlightListener?.onHighlight(this) }
                 }
                 notifyChanged()

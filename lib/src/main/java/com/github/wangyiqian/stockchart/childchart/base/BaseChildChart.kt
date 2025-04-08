@@ -22,6 +22,7 @@ import com.github.wangyiqian.stockchart.entities.FLAG_EMPTY
 import com.github.wangyiqian.stockchart.entities.GestureEvent
 import com.github.wangyiqian.stockchart.entities.containFlag
 import com.github.wangyiqian.stockchart.listener.OnKEntitiesChangedListener
+import kotlin.math.min
 
 /**
  * 所有的StockChart的子View都需要继承此类
@@ -153,6 +154,12 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
      * 统一规则，子类不可定制，
      */
     fun getXValueRange(startIndex: Int, endIndex: Int, result: FloatArray) {
+        val stockChartConfig = stockChart.getConfig()
+        if (stockChartConfig.xValueMin != null && stockChartConfig.xValueMax != null) {
+            result[0] = stockChartConfig.xValueMin!!
+            result[1] = stockChartConfig.xValueMax!!
+            return
+        }
         result[0] = startIndex.toFloat()
         result[1] = endIndex.toFloat() + getXValueUnitLen()
     }

@@ -31,7 +31,7 @@ abstract class BaseChildChartConfig(
     /**
      * 主数据显示区域的底部内间距
      */
-    var chartMainDisplayAreaPaddingBottom: Float
+    var chartMainDisplayAreaPaddingBottom: Float,
 ) {
     var height: Int = 0
         set(value) {

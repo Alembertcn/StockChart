@@ -16,6 +16,7 @@ package com.github.wangyiqian.stockchart
 import android.graphics.Matrix
 import android.widget.OverScroller
 import kotlin.math.abs
+import kotlin.math.max
 
 /**
  * 管理StockChart的Matrix
@@ -389,12 +390,13 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
      * 检查如果移出了边界就需要回来
      */
     fun checkScrollBack() {
-        val kEntitiesSize = stockChart.getConfig().getKEntitiesSize()
+        val kEntitiesSize = stockChart.getConfig().getKEntitiesSize().toFloat()
+        val xValueMax = stockChart.getConfig().xValueMax?:0.0f
 
-        // 计算此时的边界
+        // 计算此时的边界 右边界根据是否设置最大值决定
         tmp4FloatArray[0] = 0f
         tmp4FloatArray[1] = 0f
-        tmp4FloatArray[2] = kEntitiesSize.toFloat() // 多一个是因为边界要在最后一个点的右侧，要多加一个宽度
+        tmp4FloatArray[2] =max(kEntitiesSize,xValueMax)  // 多一个是因为边界要在最后一个点的右侧，要多加一个宽度
         tmp4FloatArray[3] = 0f
         stockChart.getChildCharts()[0].mapPointsValue2Real(tmp4FloatArray)
         val limitLeft = tmp4FloatArray[0]

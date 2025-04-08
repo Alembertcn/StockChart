@@ -442,7 +442,13 @@ class Sample4Activity : AppCompatActivity() {
 
                 // 设置时间条样式
                 timeBarConfig.type = timeBarType
-
+                if(timeBarType is  TimeBarConfig.Type.DayTime){
+                    stockChartConfig.xValueMin = 0.0f
+                    stockChartConfig.xValueMax = 100.0f
+                }else{
+                    stockChartConfig.xValueMin = null
+                    stockChartConfig.xValueMax = null
+                }
                 // 通知更新
                 stock_chart.notifyChanged()
                 currentPage = page

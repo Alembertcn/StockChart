@@ -21,7 +21,6 @@ import com.github.wangyiqian.stockchart.entities.FLAG_EMPTY
 import com.github.wangyiqian.stockchart.entities.FLAG_LINE_STARTER
 import com.github.wangyiqian.stockchart.entities.containFlag
 import com.github.wangyiqian.stockchart.index.Index
-import com.github.wangyiqian.stockchart.util.DimensionUtil
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -163,7 +162,7 @@ open class KChart(
         indexList?.forEach { valueList ->
             valueList.filterIndexed { idx, _ -> idx in startIndex..endIndex }.filterNotNull()
                 .apply {
-                    if (size > 0) {
+                    if (isNotEmpty()) {
                         yMax = max(yMax, max()!!)
                         yMin = min(yMin, min()!!)
                     }
