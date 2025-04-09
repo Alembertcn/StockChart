@@ -571,13 +571,35 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
     }
 
     private fun drawLabelOfDayTimeType(canvas: Canvas) {
+        when (val labelParis = (chartConfig.type as? TimeBarConfig.Type.DayTime)?.labelParis) {
+            null -> {
+                stockChart.findFirstNotEmptyKEntityIdxInDisplayArea()?.let { idx ->
+                    doDrawLabelOfDayTimeType(canvas, idx)
+                }
 
-        stockChart.findFirstNotEmptyKEntityIdxInDisplayArea()?.let { idx ->
-            doDrawLabelOfDayTimeType(canvas, idx)
-        }
+                stockChart.findLastNotEmptyKEntityIdxInDisplayArea()?.let { idx ->
+                    doDrawLabelOfDayTimeType(canvas, idx)
+                }
+            }
+            else -> {
+                labelParis.entries.forEach {
+                    val label = it.value
+                    val labelWidth = labelPaint.measureText(label)
+                    val labelHalfWidth = labelWidth / 2
 
-        stockChart.findLastNotEmptyKEntityIdxInDisplayArea()?.let { idx ->
-            doDrawLabelOfDayTimeType(canvas, idx)
+                    tmp2FloatArray[0] = it.key + 0.5f
+                    tmp2FloatArray[1] = 0f
+                    mapPointsValue2Real(tmp2FloatArray)
+                    val centerRealX = tmp2FloatArray[0]
+
+                    var x = centerRealX - labelHalfWidth
+                    if (x + labelWidth > getChartMainDisplayArea().right ) x = getChartMainDisplayArea().right  - labelWidth
+                    if (x < getChartMainDisplayArea().left ) x = getChartMainDisplayArea().left
+                    val y =
+                        getChartDisplayArea().top + getChartDisplayArea().height() / 2 + (tmpFontMetrics.bottom - tmpFontMetrics.top) / 2 - tmpFontMetrics.bottom
+                    canvas.drawText(label, x, y, labelPaint)
+                }
+            }
         }
     }
 

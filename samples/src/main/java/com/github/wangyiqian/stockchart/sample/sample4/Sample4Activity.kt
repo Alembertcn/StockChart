@@ -454,6 +454,7 @@ class Sample4Activity : AppCompatActivity() {
                     kChartConfig.preClosePrice = 622.0f
                     kChartConfig.chartMainDisplayAreaPaddingTop = 0f
                     kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
+                    timeBarType.labelParis = mutableMapOf(0 to "9:31",50 to "11:30" ,100 to "15:30")
                 }else{
                     stockChartConfig.xValueMin = null
                     stockChartConfig.xValueMax = null

@@ -113,7 +113,8 @@ class TimeBarConfig(
 
         class DayTime(
             labelDateFormat: DateFormat = SimpleDateFormat("HH:mm"),
-            highlightLabelDateFormat: DateFormat = SimpleDateFormat("HH:mm")
+            highlightLabelDateFormat: DateFormat = SimpleDateFormat("HH:mm"),
+            var labelParis:Map<Int,String>? = mutableMapOf(0 to "9:00",50 to "11:00",100 to "15:00")
         ) : Type(labelDateFormat, highlightLabelDateFormat)
     }
 
