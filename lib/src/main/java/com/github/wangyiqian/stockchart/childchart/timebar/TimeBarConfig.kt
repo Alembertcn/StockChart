@@ -54,11 +54,11 @@ class TimeBarConfig(
     chartMainDisplayAreaPaddingBottom
 ) {
 
-    sealed class Type(val labelDateFormat: DateFormat, val highlightLabelDateFormat: DateFormat) {
+    sealed class Type(val labelDateFormat: DateFormat, val highlightLabelDateFormat: DateFormat,val diffLabelDateFormat:DateFormat=SimpleDateFormat("yyyy/MM/dd")) {
 
         class Day(
             labelDateFormat: DateFormat = SimpleDateFormat("MM/dd"),
-            highlightLabelDateFormat: DateFormat = SimpleDateFormat("MM/dd")
+            highlightLabelDateFormat: DateFormat = SimpleDateFormat("MM/dd"),
         ) : Type(labelDateFormat, highlightLabelDateFormat)
 
         class FiveDays(
@@ -67,14 +67,15 @@ class TimeBarConfig(
         ) : Type(labelDateFormat, highlightLabelDateFormat)
 
         class Week(
-            labelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM"),
+            labelDateFormat: DateFormat = SimpleDateFormat("MM/dd"),
             highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd")
         ) : Type(labelDateFormat, highlightLabelDateFormat)
 
         class Month(
-            labelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM"),
-            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM")
-        ) : Type(labelDateFormat, highlightLabelDateFormat)
+            labelDateFormat: DateFormat = SimpleDateFormat("MM/dd"),
+            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd"),
+            diffLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM")
+        ) : Type(labelDateFormat, highlightLabelDateFormat, diffLabelDateFormat)
 
         class Quarter(
             labelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM"),
@@ -98,18 +99,27 @@ class TimeBarConfig(
 
         class OneMinute(
             labelDateFormat: DateFormat = SimpleDateFormat("HH:mm"),
-            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
-        ) : Type(labelDateFormat, highlightLabelDateFormat)
+            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm"),
+            diffLabelDateFormat: DateFormat = SimpleDateFormat("MM/dd HH:mm")
+        ) : Type(labelDateFormat, highlightLabelDateFormat,diffLabelDateFormat)
 
         class FiveMinutes(
             labelDateFormat: DateFormat = SimpleDateFormat("HH:mm"),
-            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
-        ) : Type(labelDateFormat, highlightLabelDateFormat)
+            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm"),
+            diffLabelDateFormat: DateFormat = SimpleDateFormat("MM/dd HH:mm")
+        ) : Type(labelDateFormat, highlightLabelDateFormat,diffLabelDateFormat)
+
+        class ThirtyMinutes(
+            labelDateFormat: DateFormat = SimpleDateFormat("HH:mm"),
+            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm"),
+            diffLabelDateFormat: DateFormat = SimpleDateFormat("MM/dd HH:mm")
+        ) : Type(labelDateFormat, highlightLabelDateFormat,diffLabelDateFormat)
 
         class SixtyMinutes(
             labelDateFormat: DateFormat = SimpleDateFormat("HH:mm"),
-            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
-        ) : Type(labelDateFormat, highlightLabelDateFormat)
+            highlightLabelDateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm"),
+            diffLabelDateFormat: DateFormat = SimpleDateFormat("MM/dd HH:mm")
+        ) : Type(labelDateFormat, highlightLabelDateFormat,diffLabelDateFormat)
 
         class DayTime(
             labelDateFormat: DateFormat = SimpleDateFormat("HH:mm"),

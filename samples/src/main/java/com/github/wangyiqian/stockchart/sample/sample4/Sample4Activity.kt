@@ -68,6 +68,7 @@ class Sample4Activity : AppCompatActivity() {
         YTD,                // 年初至今
         ONE_MINUTE,         // 一分
         FIVE_MINUTES,       // 5分
+        THIRTY_MINUTES,       // 30分
         SIXTY_MINUTES,      // 60分
         DAY_TIME,           // 分时
     }
@@ -78,7 +79,7 @@ class Sample4Activity : AppCompatActivity() {
 
     private var period = Period.DAY
     private var kChartType: KChartConfig.KChartType = KChartConfig.KChartType.CANDLE()
-    private var kChartIndex: Index? = Index.MA()
+    private var kChartIndex: Index?=null
     private var currentPage = 0
 
     // 总配置
@@ -117,6 +118,7 @@ class Sample4Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sample4)
+        kChartIndex =Index.MA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")
 
         // StockChart初始化
         initStockChart()
@@ -522,6 +524,11 @@ class Sample4Activity : AppCompatActivity() {
                     doAfterLoad(list, 60, TimeBarConfig.Type.FiveMinutes())
                 }
             }
+            Period.THIRTY_MINUTES -> {
+                DataMock.loadSixtyMinutesData(this, page) { list ->
+                    doAfterLoad(list, 60, TimeBarConfig.Type.ThirtyMinutes())
+                }
+            }
             Period.SIXTY_MINUTES -> {
                 DataMock.loadSixtyMinutesData(this, page) { list ->
                     doAfterLoad(list, 60, TimeBarConfig.Type.SixtyMinutes())
@@ -589,7 +596,6 @@ class Sample4Activity : AppCompatActivity() {
         this.period = period
         loadData(period = this.period)
         refreshOptionButtonsState()
-        refreshStockTypeButtonsState()
     }
 
     private fun changeKChartType(kChartType: KChartConfig.KChartType) {
@@ -604,6 +610,7 @@ class Sample4Activity : AppCompatActivity() {
         volumeChartConfig.volumeChartType =
             if (this.kChartType is KChartConfig.KChartType.HOLLOW) VolumeChartConfig.VolumeChartType.HOLLOW() else VolumeChartConfig.VolumeChartType.CANDLE()
         stock_chart.notifyChanged()
+        refreshOptionButtonsState()
     }
 
 
@@ -655,12 +662,7 @@ class Sample4Activity : AppCompatActivity() {
         }
         stock_chart.notifyChanged()
         currentType = i
-        refreshStockTypeButtonsState()
-    }
-
-    private fun refreshStockTypeButtonsState(){
-        kchart_type_simple.isSelected = currentType == 0
-        kchart_type_profession.isSelected = currentType != 0
+        refreshOptionButtonsState()
     }
 
     private fun initPeriodButtons() {
@@ -676,6 +678,7 @@ class Sample4Activity : AppCompatActivity() {
                 Pair(period_ytd, Period.YTD),
                 Pair(period_one_minute, Period.ONE_MINUTE),
                 Pair(period_five_minutes, Period.FIVE_MINUTES),
+                Pair(period_thirty_minutes, Period.THIRTY_MINUTES),
                 Pair(period_sixty_minutes, Period.SIXTY_MINUTES),
                 Pair(period_day_time, Period.DAY_TIME),
             )
@@ -704,9 +707,9 @@ class Sample4Activity : AppCompatActivity() {
     private fun initIndexButtons() {
         indexOptionButton.putAll(
             listOf(
-                Pair(index_ma, Index.MA()),
-                Pair(index_ema, Index.EMA()),
-                Pair(index_boll, Index.BOLL()),
+                Pair(index_ma, Index.MA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
+                Pair(index_ema, Index.EMA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
+                Pair(index_boll, Index.BOLL(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
                 Pair(index_macd, Index.MACD()),
                 Pair(index_kdj, Index.KDJ()),
                 Pair(index_rsi, Index.RSI()),
@@ -812,5 +815,8 @@ class Sample4Activity : AppCompatActivity() {
         }
 
         custom.isSelected = stockChartConfig.childChartFactories.contains(customChartFactory!!)
+
+        kchart_type_simple.isSelected = currentType == 0
+        kchart_type_profession.isSelected = currentType != 0
     }
 }

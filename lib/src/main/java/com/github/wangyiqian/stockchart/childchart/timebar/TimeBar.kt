@@ -19,8 +19,12 @@ import com.github.wangyiqian.stockchart.IStockChart
 import com.github.wangyiqian.stockchart.childchart.base.BaseChildChart
 import com.github.wangyiqian.stockchart.entities.FLAG_EMPTY
 import com.github.wangyiqian.stockchart.entities.containFlag
+import com.github.wangyiqian.stockchart.util.DataTimeUtil
 import com.github.wangyiqian.stockchart.util.DimensionUtil
+import java.text.DateFormat
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author hai
@@ -57,20 +61,31 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
         labelPaint.color = chartConfig.labelTextColor
         labelPaint.getFontMetrics(tmpFontMetrics)
 
-        when (chartConfig.type) {
-            is TimeBarConfig.Type.Day -> drawLabelOfDayType(canvas)
-            is TimeBarConfig.Type.FiveDays -> drawLabelOfFiveDaysType(canvas)
-            is TimeBarConfig.Type.Week -> drawLabelOfWeekType(canvas)
-            is TimeBarConfig.Type.Month -> drawLabelOfMonthType(canvas)
-            is TimeBarConfig.Type.Quarter -> drawLabelOfQuarterType(canvas)
-            is TimeBarConfig.Type.Year -> drawLabelOfYearType(canvas)
-            is TimeBarConfig.Type.FiveYears -> drawLabelOfFiveYearsType(canvas)
-            is TimeBarConfig.Type.YTD -> drawLabelOfYTDType(canvas)
-            is TimeBarConfig.Type.OneMinute -> drawLabelOfOneMinuteType(canvas)
-            is TimeBarConfig.Type.FiveMinutes -> drawLabelOfFiveMinutesType(canvas)
-            is TimeBarConfig.Type.SixtyMinutes -> drawLabelOfSixtyMinutesType(canvas)
-            is TimeBarConfig.Type.DayTime -> drawLabelOfDayTimeType(canvas)
+//        when (chartConfig.type) {
+//            is TimeBarConfig.Type.Day -> drawLabelOfDayType(canvas)
+//            is TimeBarConfig.Type.FiveDays -> drawLabelOfFiveDaysType(canvas)
+//            is TimeBarConfig.Type.Week -> drawLabelOfWeekType(canvas)
+//            is TimeBarConfig.Type.Month -> drawLabelOfMonthType(canvas)
+//            is TimeBarConfig.Type.Quarter -> drawLabelOfQuarterType(canvas)
+//            is TimeBarConfig.Type.Year -> drawLabelOfYearType(canvas)
+//            is TimeBarConfig.Type.FiveYears -> drawLabelOfFiveYearsType(canvas)
+//            is TimeBarConfig.Type.YTD -> drawLabelOfYTDType(canvas)
+//            is TimeBarConfig.Type.OneMinute -> drawLabelOfOneMinuteType(canvas)
+//            is TimeBarConfig.Type.FiveMinutes -> drawLabelOfFiveMinutesType(canvas)
+//            is TimeBarConfig.Type.SixtyMinutes -> drawLabelOfSixtyMinutesType(canvas)
+//            is TimeBarConfig.Type.DayTime -> drawLabelOfDayTimeType(canvas)
+//        }
+
+        chartConfig.type.let {
+            when (it) {
+                is TimeBarConfig.Type.OneMinute,is TimeBarConfig.Type.FiveMinutes,is TimeBarConfig.Type.ThirtyMinutes,is TimeBarConfig.Type.SixtyMinutes -> drawLabelOfDynamic(canvas,it.labelDateFormat,it.diffLabelDateFormat,{ o1,o2->
+                     !DataTimeUtil.isHalfHourTimePoint(o2)
+                },{o1,o2->!DataTimeUtil.isSameDay(o1,o2)})
+                is TimeBarConfig.Type.DayTime -> drawLabelOfDayTimeType(canvas)
+                else -> drawLabelOfDynamic(canvas,chartConfig.type.labelDateFormat,chartConfig.type.diffLabelDateFormat)
+            }
         }
+
     }
 
     override fun preDrawHighlight(canvas: Canvas) {
@@ -88,22 +103,45 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
     override fun drawAddition(canvas: Canvas) {
     }
 
-    private fun drawLabelOfDayType(canvas: Canvas) {
-
+    /**
+     * 动态绘制坐标
+     *
+     * @param canvas
+     * @param labelDateFormat
+     * @param diffLabelDateFormat
+     */
+    private fun drawLabelOfDynamic(canvas: Canvas, labelDateFormat: DateFormat, diffLabelDateFormat: DateFormat, sameCheck:(date1:Long, date2:Long)->Boolean = { o1, o2->
+        DataTimeUtil.isSameMoth(o1, o2) && DataTimeUtil.isSameYear(o1, o2)
+    }, useDiffCheck:(date1:Long,date2:Long)->Boolean = { o1, o2->
+        !DataTimeUtil.isSameYear(o1, o2)
+    }) {
         var lastDrawRight = getChartMainDisplayArea().left
+        val labelMinSpace = DimensionUtil.dp2px(context,20f)
         var lastDrawLabel = ""
-        val labelMinSpace = DimensionUtil.dp2px(context, 50f)
-
+        var lastDrawTime = 0L
+        val y =  getChartDisplayArea().top + getChartDisplayArea().height() / 2 + (tmpFontMetrics.bottom - tmpFontMetrics.top) / 2 - tmpFontMetrics.bottom
         getKEntities().forEachIndexed { idx, kEntity ->
-
             if (kEntity.containFlag(FLAG_EMPTY)) return@forEachIndexed
 
+            val firstIndex = stockChart.findFirstNotEmptyKEntityIdxInDisplayArea()?:0
+            val lastIndex = stockChart.findLastNotEmptyKEntityIdxInDisplayArea()?:Int.MAX_VALUE
             val time = kEntity.getTime()
-            tmpDate.time = time
-            val label = chartConfig.type.labelDateFormat.format(tmpDate)
-            if (label == lastDrawLabel) {
+            if (idx == firstIndex - 1) {
+                tmpDate.time=time
+                lastDrawTime=time
+            }
+            if (idx !in firstIndex..lastIndex) {
                 return@forEachIndexed
             }
+
+            // 上一个时间
+            val preTime = tmpDate.time
+            tmpDate.time=time
+            // k不展示相同的坐标
+            if (sameCheck.invoke(preTime,time)) {
+                return@forEachIndexed
+            }
+            val label =if(!useDiffCheck(lastDrawTime,time) && lastDrawLabel.isNotEmpty()) labelDateFormat.format(tmpDate) else diffLabelDateFormat.format(tmpDate)
 
             val labelWidth = labelPaint.measureText(label)
             val labelHalfWidth = labelWidth / 2
@@ -111,18 +149,64 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
             tmp2FloatArray[0] = idx + 0.5f
             tmp2FloatArray[1] = 0f
             mapPointsValue2Real(tmp2FloatArray)
-            val centerRealX = tmp2FloatArray[0]
+            var centerRealX = tmp2FloatArray[0]
+
             if (centerRealX - labelHalfWidth < lastDrawRight + labelMinSpace || centerRealX + labelHalfWidth > getChartMainDisplayArea().right) {
+                val max = max(lastDrawRight +labelHalfWidth,getChartMainDisplayArea().right-labelHalfWidth)
+                val min = min(lastDrawRight +labelHalfWidth,getChartMainDisplayArea().right-labelHalfWidth)
+                centerRealX = centerRealX.coerceIn(min,max)
+            }
+            if(centerRealX-labelHalfWidth<lastDrawRight+labelMinSpace){
                 return@forEachIndexed
             }
-
             val x = centerRealX - labelHalfWidth
-            val y =
-                getChartDisplayArea().top + getChartDisplayArea().height() / 2 + (tmpFontMetrics.bottom - tmpFontMetrics.top) / 2 - tmpFontMetrics.bottom
             canvas.drawText(label, x, y, labelPaint)
-
-            lastDrawLabel = label
             lastDrawRight = x + labelWidth
+            lastDrawLabel = label
+            lastDrawTime = time
+        }
+    }
+    private fun drawLabelOfDayType(canvas: Canvas) {
+        var lastDrawRight = getChartMainDisplayArea().left
+        val labelMinSpace = DimensionUtil.dp2px(context,10f)
+        var lastDrawLabel = ""
+        val y =  getChartDisplayArea().top + getChartDisplayArea().height() / 2 + (tmpFontMetrics.bottom - tmpFontMetrics.top) / 2 - tmpFontMetrics.bottom
+        getKEntities().forEachIndexed { idx, kEntity ->
+            if (kEntity.containFlag(FLAG_EMPTY)) return@forEachIndexed
+
+            val firstIndex = stockChart.findFirstNotEmptyKEntityIdxInDisplayArea()?:0
+            val lastIndex = stockChart.findLastNotEmptyKEntityIdxInDisplayArea()?:Int.MAX_VALUE
+            val time = kEntity.getTime()
+            if (idx == firstIndex - 1) {
+                tmpDate.time=time
+            }
+            if (idx !in firstIndex..lastIndex) {
+                return@forEachIndexed
+            }
+            // 日k不展示月份相同的坐标
+            val sameMoth = DataTimeUtil.isSameMoth(time, tmpDate.time)
+            val sameYear = DataTimeUtil.isSameYear(time, tmpDate.time)
+            if (sameMoth && sameYear) {
+                return@forEachIndexed
+            }
+            tmpDate.time=time
+            val label =if(sameYear && lastDrawLabel.isNotEmpty()) chartConfig.type.labelDateFormat.format(tmpDate) else chartConfig.type.diffLabelDateFormat.format(tmpDate)
+
+            val labelWidth = labelPaint.measureText(label)
+            val labelHalfWidth = labelWidth / 2
+
+            tmp2FloatArray[0] = idx + 0.5f
+            tmp2FloatArray[1] = 0f
+            mapPointsValue2Real(tmp2FloatArray)
+            var centerRealX = tmp2FloatArray[0]
+
+            if (centerRealX - labelHalfWidth < lastDrawRight + labelMinSpace || centerRealX + labelHalfWidth > getChartMainDisplayArea().right) {
+                centerRealX = centerRealX.coerceIn(lastDrawRight+ labelMinSpace +labelHalfWidth,getChartMainDisplayArea().right-labelHalfWidth)
+            }
+            val x = centerRealX - labelHalfWidth
+            canvas.drawText(label, x, y, labelPaint)
+            lastDrawRight = x + labelWidth
+            lastDrawLabel = label
         }
     }
 

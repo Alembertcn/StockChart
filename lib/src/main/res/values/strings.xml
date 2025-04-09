@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quo_chart_no_restoration">不复权</string>
+    <string name="quo_chart_front_restoration">前复权</string>
+    <string name="quo_chart_back_restoration">后复权</string>
+</resources>

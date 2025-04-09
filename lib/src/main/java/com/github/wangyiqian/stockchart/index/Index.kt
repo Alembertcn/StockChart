@@ -13,6 +13,7 @@
 
 package com.github.wangyiqian.stockchart.index
 
+import android.graphics.Color
 import com.github.wangyiqian.stockchart.*
 import com.github.wangyiqian.stockchart.entities.IKEntity
 import com.github.wangyiqian.stockchart.util.NumberFormatUtil
@@ -29,7 +30,9 @@ open abstract class Index(
     var textMarginLeft: Float,
     var textMarginTop: Float,
     var textSpace: Float,
-    var textSize: Float
+    var textSize: Float,
+    var preFixText:String?=null,
+    var preFixTextColor: Int = Color.GRAY
 ) {
 
     abstract fun calculate(input: List<IKEntity>): List<List<Float?>>
@@ -42,7 +45,8 @@ open abstract class Index(
         textMarginLeft: Float = DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTop: Float = DEFAULT_INDEX_TEXT_MARGIN_TOP,
         textSpace: Float = DEFAULT_INDEX_TEXT_SPACE,
-        textSize: Float = DEFAULT_INDEX_TEXT_SIZE
+        textSize: Float = DEFAULT_INDEX_TEXT_SIZE,
+        preFixText: String? =null
     ) : Index(
         param,
         startText,
@@ -51,7 +55,8 @@ open abstract class Index(
         textMarginLeft,
         textMarginTop,
         textSpace,
-        textSize
+        textSize,
+        preFixText
     ) {
         override fun calculate(input: List<IKEntity>) = MACalculator.calculate(param, input)
     }
@@ -64,11 +69,12 @@ open abstract class Index(
         textMarginLeft: Float = DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTop: Float = DEFAULT_INDEX_TEXT_MARGIN_TOP,
         textSpace: Float = DEFAULT_INDEX_TEXT_SPACE,
-        textSize: Float = DEFAULT_INDEX_TEXT_SIZE
+        textSize: Float = DEFAULT_INDEX_TEXT_SIZE,
+        preFixText: String? =null
     ) : Index(
         param,
         startText,
-        startTextColor, textFormatter, textMarginLeft, textMarginTop, textSpace, textSize
+        startTextColor, textFormatter, textMarginLeft, textMarginTop, textSpace, textSize,preFixText
     ) {
         override fun calculate(input: List<IKEntity>) = EMACalculator.calculate(param, input)
     }
@@ -81,7 +87,8 @@ open abstract class Index(
         textMarginLeft: Float = DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTopDp: Float = DEFAULT_INDEX_TEXT_MARGIN_TOP,
         textSpace: Float = DEFAULT_INDEX_TEXT_SPACE,
-        textSize: Float = DEFAULT_INDEX_TEXT_SIZE
+        textSize: Float = DEFAULT_INDEX_TEXT_SIZE,
+        preFixText: String? =null
     ) : Index(
         param,
         startText,
@@ -90,7 +97,8 @@ open abstract class Index(
         textMarginLeft,
         textMarginTopDp,
         textSpace,
-        textSize
+        textSize,
+        preFixText
     ) {
         override fun calculate(input: List<IKEntity>) = BollCalculator.calculate(param, input)
     }

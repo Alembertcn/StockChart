@@ -225,14 +225,15 @@ open class KChart(
             }
         }
         drawAvgPriceLine(canvas)
+        drawCostPriceLine(canvas)
+        drawPreClosePriceLine(canvas)
+        drawLabels(canvas)
         drawHighestAndLowestLabel(canvas)
         drawIndex(canvas)
     }
 
     override fun preDrawHighlight(canvas: Canvas) {
-        drawCostPriceLine(canvas)
-        drawPreClosePriceLine(canvas)
-        drawLabels(canvas)
+
     }
 
     override fun drawHighlight(canvas: Canvas) {
@@ -678,6 +679,24 @@ open class KChart(
                 var top = index.textMarginTop
                 indexTextPaint.getFontMetrics(tmpFontMetrics)
                 val textHeight = tmpFontMetrics.bottom - tmpFontMetrics.top
+
+                if (!index.preFixText.isNullOrEmpty()) {
+                    indexTextPaint.color = index.preFixTextColor
+                    val measureTextWidth = indexTextPaint.measureText(index.preFixText)
+                    indexTextPaint.style = Paint.Style.STROKE
+                    canvas.drawRoundRect(left,top,left+measureTextWidth,(textHeight+ top),10f,10f,indexTextPaint)
+                    indexTextPaint.style = Paint.Style.FILL
+
+                    canvas.drawText(
+                        index.preFixText!!,
+                        left,
+                        -tmpFontMetrics.top + top,
+                        indexTextPaint
+                    )
+                    left += measureTextWidth + index.textSpace
+                    drawnIndexTextHeight = textHeight + index.textMarginTop
+                }
+
                 if (!index.startText.isNullOrEmpty()) {
                     indexTextPaint.color = index.startTextColor
                     canvas.drawText(
