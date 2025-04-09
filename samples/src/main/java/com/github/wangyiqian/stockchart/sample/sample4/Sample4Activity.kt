@@ -19,6 +19,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.wangyiqian.stockchart.DEFAULT_AVG_LINE_COLOR
+import com.github.wangyiqian.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
+import com.github.wangyiqian.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
 import com.github.wangyiqian.stockchart.DEFAULT_GRID_LINE_COLOR
 import com.github.wangyiqian.stockchart.StockChartConfig
 import com.github.wangyiqian.stockchart.childchart.base.HighlightLabelConfig
@@ -280,13 +282,17 @@ class Sample4Activity : AppCompatActivity() {
 
             // 左侧标签设置
             leftLabelConfig = KChartConfig.LabelConfig(
-                5,
+                3,
                 { "${NumberFormatUtil.formatPrice(it)}" },
                 DimensionUtil.sp2px(this@Sample4Activity, 8f).toFloat(),
                 Color.parseColor("#E4E4E4"),
-                DimensionUtil.dp2px(this@Sample4Activity, 10f).toFloat(),
-                DimensionUtil.dp2px(this@Sample4Activity, 30f).toFloat(),
-                DimensionUtil.dp2px(this@Sample4Activity, 30f).toFloat()
+                DimensionUtil.dp2px(this@Sample4Activity, 5f).toFloat(),0f,0f,
+                {
+                    when (preClosePrice) {
+                        null,it-> leftLabelConfig!!.textColor
+                        else -> if(it>preClosePrice!!) Color.RED else Color.GREEN
+                    }
+                }
             )
 
             // 长按左侧标签配置
@@ -445,9 +451,15 @@ class Sample4Activity : AppCompatActivity() {
                 if(timeBarType is  TimeBarConfig.Type.DayTime){
                     stockChartConfig.xValueMin = 0.0f
                     stockChartConfig.xValueMax = 100.0f
+                    kChartConfig.preClosePrice = 622.0f
+                    kChartConfig.chartMainDisplayAreaPaddingTop = 0f
+                    kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
                 }else{
                     stockChartConfig.xValueMin = null
                     stockChartConfig.xValueMax = null
+                    kChartConfig.preClosePrice = null
+                    kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
+                    kChartConfig.chartMainDisplayAreaPaddingBottom = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
                 }
                 // 通知更新
                 stock_chart.notifyChanged()

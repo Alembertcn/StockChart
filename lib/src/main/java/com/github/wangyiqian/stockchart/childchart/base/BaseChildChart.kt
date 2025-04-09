@@ -97,6 +97,11 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
         prepare()
     }
 
+    override fun invalidate() {
+        setDisplayArea()
+        super.invalidate()
+    }
+
     private fun setDisplayArea() {
 
         // x轴显示区域固定死 子类不可各自实现

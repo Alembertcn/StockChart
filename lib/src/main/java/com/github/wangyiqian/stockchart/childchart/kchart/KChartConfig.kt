@@ -13,6 +13,8 @@
 
 package com.github.wangyiqian.stockchart.childchart.kchart
 
+import android.graphics.DashPathEffect
+import android.graphics.PathEffect
 import com.github.wangyiqian.stockchart.*
 import com.github.wangyiqian.stockchart.childchart.base.*
 import com.github.wangyiqian.stockchart.index.Index
@@ -63,6 +65,13 @@ open class KChartConfig(
     var costPriceLineColor: Int = DEFAULT_K_CHART_COST_PRICE_LINE_COLOR,
     // 成本线宽度
     var costPriceLineWidth: Float = DEFAULT_K_CHART_COST_PRICE_LINE_WIDTH,
+    // 昨收线价格
+    var preClosePrice: Float? = null,
+    // 昨收线颜色
+    var preCloseLineColor: Int = DEFAULT_K_CHART_COST_PRICE_LINE_COLOR,
+    // 昨收线宽度
+    var preCloseLineWidth: Float = DEFAULT_K_CHART_COST_PRICE_LINE_WIDTH,
+    var preClosePriceLineEffect: PathEffect? = DashPathEffect(floatArrayOf(20f, 10f), 0f),
     // 指标线条宽度
     var indexStrokeWidth: Float = DEFAULT_K_CHART_INDEX_STROKE_WIDTH,
     // 柱子之间的空间占比柱子宽度
@@ -85,7 +94,9 @@ open class KChartConfig(
     var yValueMin: Float? = null,
     // y轴范围最大值，在增加或修改K线数据之前指定才有效
     var yValueMax: Float? = null,
-    var showCircle: Boolean = false
+    // y轴依赖昨收价的百分比 null表示不依赖昨收
+    var minYRangePByPreClose: Float? = 0.01f,
+    var showCircle: Boolean = false,
 ) : BaseChildChartConfig(
     height,
     marginTop,
@@ -95,7 +106,7 @@ open class KChartConfig(
     chartMainDisplayAreaPaddingBottom
 ) {
     sealed class KChartType(
-        var highestAndLowestLabelConfig: HighestAndLowestLabelConfig?
+        var highestAndLowestLabelConfig: HighestAndLowestLabelConfig?,
     ) {
         // 实心蜡烛图
         class CANDLE(
@@ -105,7 +116,7 @@ open class KChartConfig(
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH
-            )
+            ),
         ) : KChartType(highestAndLowestLabelConfig)
 
         // 空心蜡烛图
@@ -116,7 +127,7 @@ open class KChartConfig(
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH
-            )
+            ),
         ) : KChartType(highestAndLowestLabelConfig)
 
         // 折线图
@@ -135,7 +146,7 @@ open class KChartConfig(
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
                 DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH
-            )
+            ),
         ) : KChartType(highestAndLowestLabelConfig)
     }
 
@@ -152,7 +163,7 @@ open class KChartConfig(
         // 标签线宽度
         var lineStrokeWidth: Float,
         // 标签线长度
-        var lineLength: Float
+        var lineLength: Float,
     )
 
     /**
@@ -173,6 +184,6 @@ open class KChartConfig(
         var marginTop: Float,
         // 底部外间距
         var marginBottom: Float,
-        var textColorFormatter: ((price: Float) -> Int)?=null
+        var textColorFormatter: ((price: Float) -> Int)? = null,
     )
 }

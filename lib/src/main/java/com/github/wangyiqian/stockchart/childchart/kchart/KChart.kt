@@ -127,6 +127,15 @@ open class KChart(
 
         var yMin = 0f
         var yMax = 0f
+        val preClosePrice = chartConfig.preClosePrice
+        val minYRangePByPreClose = chartConfig.minYRangePByPreClose
+        //默认为昨收价百分比
+        if(preClosePrice !=null){
+            minYRangePByPreClose?.let {
+                yMin = preClosePrice*(1-it)
+                yMax = preClosePrice*(1+it)
+            }
+        }
 
         getKEntities().filterIndexed { index, kEntity ->
             index in startIndex..endIndex && !kEntity.containFlag(
@@ -141,7 +150,7 @@ open class KChart(
                     }
                     else -> {
                         forEachIndexed { index, kEntity ->
-                            if (index == 0) {
+                            if (yMin ==0f && yMax == 0f && index == 0) {
                                 yMin = kEntity.getClosePrice()
                                 yMax = kEntity.getClosePrice()
                             } else {
@@ -163,23 +172,30 @@ open class KChart(
             valueList.filterIndexed { idx, _ -> idx in startIndex..endIndex }.filterNotNull()
                 .apply {
                     if (isNotEmpty()) {
-                        yMax = max(yMax, max()!!)
-                        yMin = min(yMin, min()!!)
+                        yMax = max(yMax, max())
+                        yMin = min(yMin, min())
                     }
                 }
+        }
+        // 校验距离昨收价格相同
+        if (preClosePrice != null && minYRangePByPreClose != null && abs(yMin - preClosePrice) != abs(yMax - preClosePrice)) {
+                val delta = max(abs(yMin - preClosePrice) ,abs(yMax - preClosePrice) )
+                yMin = preClosePrice - delta
+                yMax =  preClosePrice + delta
         }
 
         if (abs(yMin - yMax) > stockChart.getConfig().valueTendToZero) {
             result[0] = yMin
             result[1] = yMax
         } else { // 约等于0
-            var delta = abs(chartConfig.costPrice ?: 0f - yMin) * 2
+            var delta = abs((preClosePrice ?: chartConfig.costPrice ?: 0f) - yMin) * 2
             if (delta == yMin) {
                 delta = abs(yMin / 2f)
             }
             result[0] = yMin - delta
             result[1] = yMax + delta
         }
+
         chartConfig.yValueMin?.apply { result[0] = this }
         chartConfig.yValueMax?.apply { result[1] = this }
     }
@@ -215,6 +231,7 @@ open class KChart(
 
     override fun preDrawHighlight(canvas: Canvas) {
         drawCostPriceLine(canvas)
+        drawPreClosePriceLine(canvas)
         drawLabels(canvas)
     }
 
@@ -474,6 +491,33 @@ open class KChart(
         chartConfig.costPrice?.let {
             costPriceLinePaint.color = chartConfig.costPriceLineColor
             costPriceLinePaint.strokeWidth = chartConfig.costPriceLineWidth
+            costPriceLinePaint.pathEffect = null
+            tmp2FloatArray[0] = 0f
+            tmp2FloatArray[1] = it
+            mapPointsValue2Real(tmp2FloatArray)
+            canvas.drawLine(
+                getChartDisplayArea().left,
+                tmp2FloatArray[1],
+                getChartDisplayArea().right,
+                tmp2FloatArray[1],
+                costPriceLinePaint
+            )
+        }
+        canvas.restoreToCount(saveCount)
+    }
+
+    private fun drawPreClosePriceLine(canvas: Canvas) {
+        val saveCount = canvas.saveLayer(
+            getChartMainDisplayArea().left,
+            getChartDisplayArea().top,
+            getChartMainDisplayArea().right,
+            getChartDisplayArea().bottom,
+            null
+        )
+        chartConfig.preClosePrice?.let {
+            costPriceLinePaint.color = chartConfig.costPriceLineColor
+            costPriceLinePaint.strokeWidth = chartConfig.costPriceLineWidth
+            costPriceLinePaint.pathEffect = chartConfig.preClosePriceLineEffect
             tmp2FloatArray[0] = 0f
             tmp2FloatArray[1] = it
             mapPointsValue2Real(tmp2FloatArray)
@@ -1010,9 +1054,11 @@ open class KChart(
             labelPaint.color = config.textColor
             labelPaint.getFontMetrics(tmpFontMetrics)
             val labelHeight = tmpFontMetrics.bottom - tmpFontMetrics.top
-            val areaTop =
-                getChartDisplayArea().top + drawnIndexTextHeight + config.marginTop
-            val areaBottom = getChartDisplayArea().bottom - config.marginBottom
+//            val areaTop = getChartDisplayArea().top + drawnIndexTextHeight + config.marginTop
+//            val areaBottom = getChartDisplayArea().bottom - config.marginBottom
+            val areaTop = getChartMainDisplayArea().top
+            val areaBottom = getChartMainDisplayArea().bottom
+
             var verticalSpace = 0f
             if (config.count > 1) {
                 verticalSpace =
@@ -1021,12 +1067,16 @@ open class KChart(
             var pos = areaTop
             for (i in 1..config.count) {
                 tmp2FloatArray[0] = 0f
-                tmp2FloatArray[1] = pos + labelHeight / 2
-                config.textColorFormatter?.invoke(tmp2FloatArray[1])?.let {
-                    labelPaint.color = it
+                tmp2FloatArray[1] = when (i) {
+                    1 -> areaTop
+                    config.count->areaBottom
+                    else -> pos + labelHeight / 2
                 }
                 mapPointsReal2Value(tmp2FloatArray)
                 val text = config.formatter.invoke(tmp2FloatArray[1])
+                config.textColorFormatter?.invoke(tmp2FloatArray[1])?.let {
+                    labelPaint.color = it
+                }
                 val startX = if (isLeft) {
                     config.horizontalMargin
                 } else {
