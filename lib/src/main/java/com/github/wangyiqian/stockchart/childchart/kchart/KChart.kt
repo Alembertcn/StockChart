@@ -236,6 +236,7 @@ open class KChart(
 
     }
 
+
     override fun drawHighlight(canvas: Canvas) {
         getHighlight()?.let { highlight ->
             val highlightAreaTop = getChartDisplayArea().top + drawnIndexTextHeight
@@ -479,7 +480,8 @@ open class KChart(
         }
     }
 
-    override fun drawAddition(canvas: Canvas) {}
+    override fun drawAddition(canvas: Canvas) {
+    }
 
     private fun drawCostPriceLine(canvas: Canvas) {
         val saveCount = canvas.saveLayer(
@@ -1054,7 +1056,13 @@ open class KChart(
         }
         canvas.restoreToCount(saveCount)
 
-        circleDrawer.onDraw(canvas, tmp4FloatArray[2], tmp4FloatArray[3],chartConfig)
+        // 绘制小园点
+        chartConfig.lastPrice?.let {
+            tmp2FloatArray[0] = preIdx.toFloat() + 1
+            tmp2FloatArray[1] = it
+            mapPointsValue2Real(tmp2FloatArray)
+            circleDrawer.onDraw(canvas, tmp4FloatArray[2], tmp4FloatArray[3],tmp2FloatArray[0],tmp2FloatArray[1],lineKChartLinePaint,chartConfig)
+        }
     }
 
     private fun drawLabels(canvas: Canvas) {

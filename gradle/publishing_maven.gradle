@@ -1,0 +1,70 @@
+apply plugin: 'maven-publish'
+version = publishVersion
+group = publishGroup
+// https://developer.android.com/studio/build/maven-publish-plugin?hl=zh-cn
+// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:publications
+afterEvaluate {
+    publishing{
+        publications{
+            release(MavenPublication){
+                groupId publishGroup
+                artifactId moduleName
+                version publishVersion
+                from components.release
+
+                pom.withXml {
+                    def rootNode = asNode()
+
+                    // 步骤1：收集所有项目依赖的Maven信息
+                    def projectDependencies = configurations.implementation.allDependencies
+                            .findAll { it instanceof ProjectDependency }
+                            .collect { dep ->
+                                def targetProject = (dep as ProjectDependency).dependencyProject
+                                // 带错误提示的属性获取
+                                def publishGroup = targetProject.extensions.extraProperties.get('publishGroup')
+                                def publishVersion = targetProject.extensions.extraProperties.get('publishVersion')
+                                def moduleName = targetProject.extensions.extraProperties.find('moduleName') ?: targetProject.name
+                                return [
+                                        groupId: publishGroup,
+                                        artifactId: moduleName,
+                                        version: publishVersion
+                                ]
+                            }
+
+                    // 步骤2：仅在存在项目依赖时创建节点
+                    if (!projectDependencies.empty) {
+                        def dependenciesNode = rootNode.dependencies?.get(0)  // 查找现有节点
+                        def needCreateNode =  dependenciesNode == null
+
+                        if (needCreateNode) {
+                            dependenciesNode = rootNode.appendNode('dependencies')
+                        }
+
+                        projectDependencies.each { dep ->
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', dep.groupId)
+                            dependencyNode.appendNode('artifactId', dep.artifactId)
+                            dependencyNode.appendNode('version', dep.version)
+                            dependencyNode.appendNode('scope', 'runtime')
+                        }
+                    } else {
+                        // 步骤3：主动清理自动生成的空节点（如果有）
+                        rootNode.children().removeIf { node ->
+                            node.name().getLocalPart() == 'dependencies' && node.children().empty
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                // change to point to your repo, e.g. http://my.org/repo
+                url = "https://web-gy.httester.com/repository/maven-releases"
+                credentials {
+                    username getLocalEnv("WB_REPO_USER")
+                    password getLocalEnv("WB_REPO_PWD")
+                }
+            }
+        }
+    }
+}

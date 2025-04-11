@@ -16,7 +16,6 @@ plugins {
     id 'kotlin-android'
 }
 
-group='com.github.wangyiqian'
 
 android {
     compileSdkVersion 32
@@ -48,3 +47,12 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 }
+
+ext{
+    publishVersion = "1.0"
+    publishGroup = "wb.compose"
+    moduleName = 'stock_chart'
+    descContent = '股票插件'
+}
+
+apply from: rootProject.file("./gradle/publishing_maven.gradle")

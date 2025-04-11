@@ -739,6 +739,7 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
                 val centerRealX = tmp2FloatArray[0]
 
                 val bgPadding = 10f
+                val bgPaddingV = 10f
                 var x = centerRealX - labelHalfWidth
                 if (x - bgPadding < getChartMainDisplayArea().left) {
                     x = getChartMainDisplayArea().left + bgPadding
@@ -746,13 +747,14 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
                 if (x + labelWidth + bgPadding > getChartMainDisplayArea().right) {
                     x = getChartMainDisplayArea().right - labelWidth - bgPadding
                 }
-                val y =
-                    getChartDisplayArea().top + getChartDisplayArea().height() / 2 + (tmpFontMetrics.bottom - tmpFontMetrics.top) / 2 - tmpFontMetrics.bottom
-                canvas.drawRect(
+                val fontHeight = tmpFontMetrics.bottom - tmpFontMetrics.top
+                val y = getChartDisplayArea().top + getChartDisplayArea().height() / 2 + fontHeight / 2 - tmpFontMetrics.bottom
+                canvas.drawRoundRect(
                     x - bgPadding,
-                    getChartDisplayArea().top,
+                    getChartMainDisplayArea().top,
                     x + labelWidth + bgPadding,
-                    getChartDisplayArea().bottom,
+                    getChartMainDisplayArea().bottom,
+                    10f,10f,
                     highlightLabelBgPaint
                 )
                 canvas.drawText(label, x, y, highlightLabelPaint)

@@ -97,6 +97,7 @@ open class KChartConfig(
     // y轴依赖昨收价的百分比 null表示不依赖昨收
     var minYRangePByPreClose: Float? = 0.01f,
     var showCircle: Boolean = false,
+    var lastPrice: Float? = null,
 ) : BaseChildChartConfig(
     height,
     marginTop,
@@ -186,4 +187,9 @@ open class KChartConfig(
         var marginBottom: Float,
         var textColorFormatter: ((price: Float) -> Int)? = null,
     )
+
+    fun updateTimeDayLast(last:Float){
+        showCircle=true
+        lastPrice = last
+    }
 }

@@ -11,7 +11,7 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample4.custom
+package wb.lib.module_chart.custom
 
 import android.graphics.Canvas
 import android.graphics.Color

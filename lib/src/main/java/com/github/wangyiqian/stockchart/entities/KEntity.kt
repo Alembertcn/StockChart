@@ -13,6 +13,8 @@
 
 package com.github.wangyiqian.stockchart.entities
 
+import java.math.BigDecimal
+
 /**
  * K线数据实体类
  *
@@ -27,6 +29,7 @@ open class KEntity(
     private var volume: Long,
     private var time: Long,
     private var avgPrice: Float? = null,
+    private var amount: BigDecimal? = null,
     private var flag: Int = FLAG_DEFAULT
 ) : IKEntity {
 
@@ -81,6 +84,6 @@ open class KEntity(
     }
 
     companion object {
-        fun obtainEmptyKEntity() = KEntity(0f, 0f, 0f, 0f, 0, 0, null, FLAG_EMPTY)
+        fun obtainEmptyKEntity() = KEntity(0f, 0f, 0f, 0f, 0, 0, null,null, FLAG_EMPTY)
     }
 }

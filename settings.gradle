@@ -14,3 +14,4 @@
 include ':samples'
 include ':lib'
 rootProject.name = "StockChart"
+include ':module_chart'

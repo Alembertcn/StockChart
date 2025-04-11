@@ -13,10 +13,57 @@
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.7.10"
+    ext{
+        kotlin_version = "1.7.10"
+        localProps = new Properties()
+        if(project.rootProject.file('local.properties').exists()){
+            project.rootProject.file('local.properties').withInputStream { stream ->
+                localProps.load(stream)
+            }
+        }
+        //获取本地定义的变量
+        getLocalEnv = { key->
+            return localProps.get(key) ?: System.getenv(key) // 优先返回属性文件的值，否则返回环境变量
+        }
+    }
     repositories {
+        mavenLocal()
+        println("userName ${ System.getenv("WB_REPO_USER")} pwd ${System.getenv("WB_REPO_PWD")}")
+        if(rootProject.file("app/repo").exists()){
+            maven { url "${rootProject.file("app/repo").absolutePath}" }
+        }
+        if(rootProject.file("repo").exists()){
+            maven { url "${rootProject.file("repo").absolutePath}" }
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'https://web-gy.httester.com/repository/maven-public/'
+            credentials{
+                username getLocalEnv("WB_REPO_USER")
+                password getLocalEnv("WB_REPO_PWD")
+            }
+        }
+
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        // 配置Mob Maven库
+        maven { url "https://mvn.mob.com/android" }
+        maven { url "https://mirrors.tencent.com/repository/maven/tencent_public" }
+        maven { url "https://mirrors.tencent.com/repository/maven/liteavsdk" }
+        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
+
+
+        maven {
+            url "https://maven.aliyun.com/repository/gradle-plugin"
+        }
         google()
-        maven { url "https://maven.aliyun.com/repository/jcenter" }
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.+'
@@ -25,14 +72,59 @@ buildscript {
     }
 }
 
+
 allprojects {
     repositories {
+        mavenLocal()
+        mavenLocal()
+        println("userName ${ System.getenv("WB_REPO_USER")} pwd ${System.getenv("WB_REPO_PWD")}")
+        if(rootProject.file("app/repo").exists()){
+            maven { url "${rootProject.file("app/repo").absolutePath}" }
+        }
+        if(rootProject.file("repo").exists()){
+            maven { url "${rootProject.file("repo").absolutePath}" }
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'https://web-gy.httester.com/repository/maven-public/'
+            credentials{
+                username getLocalEnv("WB_REPO_USER")
+                password getLocalEnv("WB_REPO_PWD")
+            }
+        }
+
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        // 配置Mob Maven库
+        maven { url "https://mvn.mob.com/android" }
+        maven { url "https://mirrors.tencent.com/repository/maven/tencent_public" }
+        maven { url "https://mirrors.tencent.com/repository/maven/liteavsdk" }
+        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
+
+
+        maven {
+            url "https://maven.aliyun.com/repository/gradle-plugin"
+        }
         google()
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
         maven { url "https://maven.aliyun.com/repository/jcenter" }
+
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+// 在根 build.gradle 中
+//subprojects {
+//    tasks.withType(PublishToMavenRepository).configureEach {
+//        dependsOn(project.tasks.matching { it.name == 'publish' })
+//    }
+//}

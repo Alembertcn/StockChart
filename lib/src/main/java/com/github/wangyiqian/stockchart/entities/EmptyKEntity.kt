@@ -20,4 +20,4 @@ package com.github.wangyiqian.stockchart.entities
  * @version 创建时间: 2021/1/29
  */
 @Deprecated("")
-open class EmptyKEntity : KEntity(0f, 0f, 0f, 0f, 0, 0, null, FLAG_EMPTY)
+open class EmptyKEntity : KEntity(0f, 0f, 0f, 0f, 0, 0, null, null,FLAG_EMPTY)
