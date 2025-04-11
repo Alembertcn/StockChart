@@ -11,7 +11,7 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample
+package com.github.stockchart.sample
 
 import java.text.DecimalFormat
 

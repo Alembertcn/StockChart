@@ -1,7 +1,8 @@
 package wb.lib.module_chart
 
 
-import com.github.wangyiqian.stockchart.entities.Highlight
+import com.github.stockchart.entities.Highlight
+import com.github.stockchart.entities.IKEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONObject
 import java.math.BigDecimal
@@ -33,7 +34,7 @@ object AssetType {
 }
 
 interface OnCrossLineMoveListener {
-    fun onCrossLineMove(index: Highlight)
+    fun onCrossLineMove(index: Highlight, kEntity: IKEntity)
 
     fun onCrossLineDismiss()
 }

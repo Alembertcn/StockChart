@@ -45,7 +45,7 @@ afterEvaluate {
                             dependencyNode.appendNode('groupId', dep.groupId)
                             dependencyNode.appendNode('artifactId', dep.artifactId)
                             dependencyNode.appendNode('version', dep.version)
-                            dependencyNode.appendNode('scope', 'runtime')
+                            dependencyNode.appendNode('scope', 'compile')
                         }
                     } else {
                         // 步骤3：主动清理自动生成的空节点（如果有）

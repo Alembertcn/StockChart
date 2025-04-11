@@ -11,10 +11,10 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample3.data
+package com.github.stockchart.sample.sample3.data
 
-import com.github.wangyiqian.stockchart.entities.FLAG_DEFAULT
-import com.github.wangyiqian.stockchart.entities.IKEntity
+import com.github.stockchart.entities.FLAG_DEFAULT
+import com.github.stockchart.entities.IKEntity
 
 /**
  * @author hai

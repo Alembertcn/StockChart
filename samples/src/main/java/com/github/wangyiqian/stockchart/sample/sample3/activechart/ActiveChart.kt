@@ -11,14 +11,14 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample3.activechart
+package com.github.stockchart.sample.sample3.activechart
 
 import android.graphics.*
-import com.github.wangyiqian.stockchart.IStockChart
-import com.github.wangyiqian.stockchart.childchart.base.BaseChildChart
-import com.github.wangyiqian.stockchart.entities.*
-import com.github.wangyiqian.stockchart.sample.sample3.data.ActiveInfo
-import com.github.wangyiqian.stockchart.sample.sample3.data.IActiveChartKEntity
+import com.github.stockchart.IStockChart
+import com.github.stockchart.childchart.base.BaseChildChart
+import com.github.stockchart.entities.*
+import com.github.stockchart.sample.sample3.data.ActiveInfo
+import com.github.stockchart.sample.sample3.data.IActiveChartKEntity
 import java.lang.Float.max
 import java.text.DateFormat
 import java.text.SimpleDateFormat

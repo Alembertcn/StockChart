@@ -11,14 +11,14 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample4
+package com.github.stockchart.sample.sample4
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.github.wangyiqian.stockchart.childchart.timebar.TimeBarConfig
-import com.github.wangyiqian.stockchart.sample.DataMock
-import com.github.wangyiqian.stockchart.sample.R
-import com.github.wangyiqian.stockchart.sample.sample2.Sample2Activity
+import com.github.stockchart.childchart.timebar.TimeBarConfig
+import com.github.stockchart.sample.DataMock
+import com.github.stockchart.sample.R
+import com.github.stockchart.sample.sample2.Sample2Activity
 import wb.lib.module_chart.ChartFragment
 import wb.lib.module_chart.Period
 

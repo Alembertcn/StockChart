@@ -11,9 +11,9 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample3.activechart
+package com.github.stockchart.sample.sample3.activechart
 
-import com.github.wangyiqian.stockchart.sample.sample3.data.ActiveInfo
+import com.github.stockchart.sample.sample3.data.ActiveInfo
 
 /**
  * @author hai

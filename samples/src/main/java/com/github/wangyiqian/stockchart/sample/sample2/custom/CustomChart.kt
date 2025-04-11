@@ -11,17 +11,17 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample2.custom
+package com.github.stockchart.sample.sample2.custom
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import com.github.wangyiqian.stockchart.IStockChart
-import com.github.wangyiqian.stockchart.childchart.base.BaseChildChart
-import com.github.wangyiqian.stockchart.entities.FLAG_EMPTY
-import com.github.wangyiqian.stockchart.entities.IKEntity
-import com.github.wangyiqian.stockchart.entities.containFlag
-import com.github.wangyiqian.stockchart.util.DimensionUtil
+import com.github.stockchart.IStockChart
+import com.github.stockchart.childchart.base.BaseChildChart
+import com.github.stockchart.entities.FLAG_EMPTY
+import com.github.stockchart.entities.IKEntity
+import com.github.stockchart.entities.containFlag
+import com.github.stockchart.util.DimensionUtil
 
 /**
  * 自定义图示例：每天的平均价连线

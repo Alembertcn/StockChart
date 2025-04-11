@@ -11,14 +11,14 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample3.activechart
+package com.github.stockchart.sample.sample3.activechart
 
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.PathEffect
-import com.github.wangyiqian.stockchart.*
-import com.github.wangyiqian.stockchart.childchart.base.BaseChildChartConfig
-import com.github.wangyiqian.stockchart.listener.OnHighlightListener
+import com.github.stockchart.*
+import com.github.stockchart.childchart.base.BaseChildChartConfig
+import com.github.stockchart.listener.OnHighlightListener
 
 /**
  * @author hai
@@ -26,22 +26,22 @@ import com.github.wangyiqian.stockchart.listener.OnHighlightListener
  */
 class ActiveChartConfig(
     // 图高度
-    height: Int = DEFAULT_CHILD_CHART_HEIGHT,
+    height: Int = com.github.stockchart.DEFAULT_CHILD_CHART_HEIGHT,
     // 顶部外间距
-    marginTop: Int = DEFAULT_CHILD_CHART_MARGIN_TOP,
+    marginTop: Int = com.github.stockchart.DEFAULT_CHILD_CHART_MARGIN_TOP,
     // 底部外间距
-    marginBottom: Int = DEFAULT_CHILD_CHART_MARGIN_BOTTOM,
+    marginBottom: Int = com.github.stockchart.DEFAULT_CHILD_CHART_MARGIN_BOTTOM,
     onHighlightListener: OnHighlightListener? = null,
     // K线绘制区域顶部内间距
-    chartMainDisplayAreaPaddingTop: Float = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP,
+    chartMainDisplayAreaPaddingTop: Float = com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP,
     // K线绘制区域底部内间距
-    chartMainDisplayAreaPaddingBottom: Float = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM,
+    chartMainDisplayAreaPaddingBottom: Float = com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM,
     // 山峰图线条颜色
-    var mountainChartColor: Int = DEFAULT_K_CHART_MOUNTAIN_CHART_COLOR,
+    var mountainChartColor: Int = com.github.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_COLOR,
     // 山峰图的线条宽度
-    var mountainChartStrokeWidth: Float = DEFAULT_K_CHART_MOUNTAIN_CHART_STROKE_WIDTH,
+    var mountainChartStrokeWidth: Float = com.github.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_STROKE_WIDTH,
     // 山峰图的封闭渐变色
-    var mountainChartLinearGradientColors: IntArray = DEFAULT_K_CHART_MOUNTAIN_CHART_LINEAR_GRADIENT_COLORS,
+    var mountainChartLinearGradientColors: IntArray = com.github.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_LINEAR_GRADIENT_COLORS,
     // 昨收价
     var preClosePrice: Float? = null,
     // 昨收线颜色

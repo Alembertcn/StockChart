@@ -11,23 +11,23 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample3
+package com.github.stockchart.sample.sample3
 
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.github.wangyiqian.stockchart.StockChartConfig
-import com.github.wangyiqian.stockchart.entities.IKEntity
-import com.github.wangyiqian.stockchart.entities.KEntity
-import com.github.wangyiqian.stockchart.sample.DataMock
-import com.github.wangyiqian.stockchart.sample.R
-import com.github.wangyiqian.stockchart.sample.sample3.activechart.ActiveChartConfig
-import com.github.wangyiqian.stockchart.sample.sample3.activechart.ActiveChartFactory
-import com.github.wangyiqian.stockchart.sample.sample3.activechart.OnActiveIndustryClickListener
-import com.github.wangyiqian.stockchart.sample.sample3.data.ActiveInfo
-import com.github.wangyiqian.stockchart.util.DimensionUtil
+import com.github.stockchart.StockChartConfig
+import com.github.stockchart.entities.IKEntity
+import com.github.stockchart.entities.KEntity
+import com.github.stockchart.sample.DataMock
+import com.github.stockchart.sample.R
+import com.github.stockchart.sample.sample3.activechart.ActiveChartConfig
+import com.github.stockchart.sample.sample3.activechart.ActiveChartFactory
+import com.github.stockchart.sample.sample3.activechart.OnActiveIndustryClickListener
+import com.github.stockchart.sample.sample3.data.ActiveInfo
+import com.github.stockchart.util.DimensionUtil
 import kotlinx.android.synthetic.main.activity_sample3.*
 import java.util.*
 

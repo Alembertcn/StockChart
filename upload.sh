@@ -1,0 +1,1 @@
+./gradlew :lib:publish && ./gradlew :module_chart:publish

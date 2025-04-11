@@ -90,7 +90,7 @@ dependencies {
 
 ```xml
 
-<com.github.wangyiqian.stockchart.StockChart android:id="@+id/stock_chart"
+<com.github.stockchart.StockChart android:id="@+id/stock_chart"
     android:layout_width="match_parent" android:layout_height="wrap_content" />
 ```
 

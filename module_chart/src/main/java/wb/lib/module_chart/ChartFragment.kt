@@ -7,34 +7,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.github.wangyiqian.stockchart.DEFAULT_AVG_LINE_COLOR
-import com.github.wangyiqian.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
-import com.github.wangyiqian.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
-import com.github.wangyiqian.stockchart.DEFAULT_GRID_LINE_COLOR
-import com.github.wangyiqian.stockchart.StockChartConfig
-import com.github.wangyiqian.stockchart.childchart.base.HighlightLabelConfig
-import com.github.wangyiqian.stockchart.childchart.kchart.KChartConfig
-import com.github.wangyiqian.stockchart.childchart.kchart.KChartFactory
-import com.github.wangyiqian.stockchart.childchart.kdjchart.KdjChartConfig
-import com.github.wangyiqian.stockchart.childchart.kdjchart.KdjChartFactory
-import com.github.wangyiqian.stockchart.childchart.macdchart.MacdChartConfig
-import com.github.wangyiqian.stockchart.childchart.macdchart.MacdChartFactory
-import com.github.wangyiqian.stockchart.childchart.rskchart.RsiChartConfig
-import com.github.wangyiqian.stockchart.childchart.rskchart.RsiChartFactory
-import com.github.wangyiqian.stockchart.childchart.timebar.TimeBarConfig
-import com.github.wangyiqian.stockchart.childchart.timebar.TimeBarFactory
-import com.github.wangyiqian.stockchart.childchart.volumechart.VolumeChartConfig
-import com.github.wangyiqian.stockchart.childchart.volumechart.VolumeChartFactory
-import com.github.wangyiqian.stockchart.entities.FLAG_EMPTY
-import com.github.wangyiqian.stockchart.entities.Highlight
-import com.github.wangyiqian.stockchart.entities.IKEntity
-import com.github.wangyiqian.stockchart.entities.KEntity
-import com.github.wangyiqian.stockchart.entities.containFlag
-import com.github.wangyiqian.stockchart.index.Index
-import com.github.wangyiqian.stockchart.listener.OnHighlightListener
-import com.github.wangyiqian.stockchart.listener.OnLoadMoreListener
-import com.github.wangyiqian.stockchart.util.DimensionUtil
-import com.github.wangyiqian.stockchart.util.NumberFormatUtil
+import com.github.stockchart.StockChartConfig
+import com.github.stockchart.childchart.base.HighlightLabelConfig
+import com.github.stockchart.childchart.kchart.KChartConfig
+import com.github.stockchart.childchart.kchart.KChartFactory
+import com.github.stockchart.childchart.kdjchart.KdjChartConfig
+import com.github.stockchart.childchart.kdjchart.KdjChartFactory
+import com.github.stockchart.childchart.macdchart.MacdChartConfig
+import com.github.stockchart.childchart.macdchart.MacdChartFactory
+import com.github.stockchart.childchart.rskchart.RsiChartConfig
+import com.github.stockchart.childchart.rskchart.RsiChartFactory
+import com.github.stockchart.childchart.timebar.TimeBarConfig
+import com.github.stockchart.childchart.timebar.TimeBarFactory
+import com.github.stockchart.childchart.volumechart.VolumeChartConfig
+import com.github.stockchart.childchart.volumechart.VolumeChartFactory
+import com.github.stockchart.entities.FLAG_EMPTY
+import com.github.stockchart.entities.Highlight
+import com.github.stockchart.entities.IKEntity
+import com.github.stockchart.entities.KEntity
+import com.github.stockchart.entities.containFlag
+import com.github.stockchart.index.Index
+import com.github.stockchart.listener.OnHighlightListener
+import com.github.stockchart.listener.OnLoadMoreListener
+import com.github.stockchart.util.DimensionUtil
+import com.github.stockchart.util.NumberFormatUtil
 import kotlinx.android.synthetic.main.fragment_chart.llConfig
 import kotlinx.android.synthetic.main.fragment_chart.startAnim
 import kotlinx.android.synthetic.main.fragment_chart.stock_chart
@@ -300,7 +296,6 @@ class ChartFragment:Fragment(), IChartCompose {
                 }
 
                 override fun onHighlight(highlight: Highlight) {
-                    onCrossLineMoveListener?.onCrossLineMove(highlight)
 
                     val idx = highlight.getIdx()
                     val kEntities = stockChartConfig.kEntities
@@ -308,6 +303,8 @@ class ChartFragment:Fragment(), IChartCompose {
 
                     if (idx in kEntities.indices) {
                         val kEntity = kEntities[idx]
+                        onCrossLineMoveListener?.onCrossLineMove(highlight,kEntity)
+
                         if (kEntity.containFlag(FLAG_EMPTY)) {
                             showContent = ""
                         } else if (kChartType is KChartConfig.KChartType.LINE || kChartType is KChartConfig.KChartType.MOUNTAIN) {
@@ -529,8 +526,10 @@ class ChartFragment:Fragment(), IChartCompose {
                 stockChartConfig.xValueMin = null
                 stockChartConfig.xValueMax = null
                 kChartConfig.preClosePrice = null
-                kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
-                kChartConfig.chartMainDisplayAreaPaddingBottom = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
+                kChartConfig.chartMainDisplayAreaPaddingTop =
+                    com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
+                kChartConfig.chartMainDisplayAreaPaddingBottom =
+                    com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
             }
             // 通知更新
             stock_chart.notifyChanged()
@@ -848,11 +847,11 @@ class ChartFragment:Fragment(), IChartCompose {
             // 专业版
             stockChartConfig.apply {
                 showHighlightHorizontalLine = true
-                gridLineColor = DEFAULT_GRID_LINE_COLOR
+                gridLineColor = com.github.stockchart.DEFAULT_GRID_LINE_COLOR
                 addChildChart(timeBarFactory!!,1)
             }
             kChartConfig.apply {
-                avgLineColor = DEFAULT_AVG_LINE_COLOR
+                avgLineColor = com.github.stockchart.DEFAULT_AVG_LINE_COLOR
                 // 左侧标签设置
                 leftLabelConfig = KChartConfig.LabelConfig(
                     5,

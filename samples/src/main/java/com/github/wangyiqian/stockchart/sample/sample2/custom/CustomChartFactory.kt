@@ -11,10 +11,10 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample2.custom
+package com.github.stockchart.sample.sample2.custom
 
-import com.github.wangyiqian.stockchart.IStockChart
-import com.github.wangyiqian.stockchart.childchart.base.AbsChildChartFactory
+import com.github.stockchart.IStockChart
+import com.github.stockchart.childchart.base.AbsChildChartFactory
 
 /**
  * @author hai

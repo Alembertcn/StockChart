@@ -1,12 +1,12 @@
-//package com.github.wangyiqian.stockchart.sample.sample4
+//package com.github.stockchart.sample.sample4
 //
 //import android.widget.Toast
 //import androidx.lifecycle.viewModelScope
-//import com.github.wangyiqian.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
-//import com.github.wangyiqian.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
-//import com.github.wangyiqian.stockchart.childchart.timebar.TimeBarConfig
-//import com.github.wangyiqian.stockchart.entities.IKEntity
-//import com.github.wangyiqian.stockchart.sample.DataMock
+//import com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
+//import com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
+//import com.github.stockchart.childchart.timebar.TimeBarConfig
+//import com.github.stockchart.entities.IKEntity
+//import com.github.stockchart.sample.DataMock
 //import com.wbroker.core.base.BaseAction
 //import com.wbroker.core.base.BaseState
 //import com.wbroker.core.base.BaseViewModel

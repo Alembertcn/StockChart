@@ -11,15 +11,15 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample
+package com.github.stockchart.sample
 
 import android.content.Context
-import com.github.wangyiqian.stockchart.entities.FLAG_LINE_STARTER
-import com.github.wangyiqian.stockchart.entities.IKEntity
-import com.github.wangyiqian.stockchart.entities.KEntity
-import com.github.wangyiqian.stockchart.sample.sample3.data.ActiveChartKEntity
-import com.github.wangyiqian.stockchart.sample.sample3.data.ActiveInfo
-import com.github.wangyiqian.stockchart.sample.sample3.data.ActiveResponse
+import com.github.stockchart.entities.FLAG_LINE_STARTER
+import com.github.stockchart.entities.IKEntity
+import com.github.stockchart.entities.KEntity
+import com.github.stockchart.sample.sample3.data.ActiveChartKEntity
+import com.github.stockchart.sample.sample3.data.ActiveInfo
+import com.github.stockchart.sample.sample3.data.ActiveResponse
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject

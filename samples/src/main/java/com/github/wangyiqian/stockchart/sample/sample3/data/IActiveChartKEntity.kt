@@ -11,7 +11,7 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample3.data
+package com.github.stockchart.sample.sample3.data
 
 /**
  * @author hai

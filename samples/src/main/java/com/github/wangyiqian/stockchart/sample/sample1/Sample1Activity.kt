@@ -11,18 +11,18 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample.sample1
+package com.github.stockchart.sample.sample1
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.github.wangyiqian.stockchart.StockChartConfig
-import com.github.wangyiqian.stockchart.childchart.kchart.KChartConfig
-import com.github.wangyiqian.stockchart.childchart.kchart.KChartFactory
-import com.github.wangyiqian.stockchart.childchart.timebar.TimeBarConfig
-import com.github.wangyiqian.stockchart.childchart.timebar.TimeBarFactory
-import com.github.wangyiqian.stockchart.entities.IKEntity
-import com.github.wangyiqian.stockchart.sample.DataMock
-import com.github.wangyiqian.stockchart.sample.R
+import com.github.stockchart.StockChartConfig
+import com.github.stockchart.childchart.kchart.KChartConfig
+import com.github.stockchart.childchart.kchart.KChartFactory
+import com.github.stockchart.childchart.timebar.TimeBarConfig
+import com.github.stockchart.childchart.timebar.TimeBarFactory
+import com.github.stockchart.entities.IKEntity
+import com.github.stockchart.sample.DataMock
+import com.github.stockchart.sample.R
 import kotlinx.android.synthetic.main.activity_sample1.*
 
 /**

@@ -11,17 +11,17 @@
  *
  */
 
-package com.github.wangyiqian.stockchart.sample
+package com.github.stockchart.sample
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import com.github.wangyiqian.stockchart.sample.R.*
-import com.github.wangyiqian.stockchart.sample.sample1.Sample1Activity
-import com.github.wangyiqian.stockchart.sample.sample2.Sample2Activity
-import com.github.wangyiqian.stockchart.sample.sample3.Sample3Activity
-import com.github.wangyiqian.stockchart.sample.sample4.Sample4Activity
+import com.github.stockchart.sample.R.*
+import com.github.stockchart.sample.sample1.Sample1Activity
+import com.github.stockchart.sample.sample2.Sample2Activity
+import com.github.stockchart.sample.sample3.Sample3Activity
+import com.github.stockchart.sample.sample4.Sample4Activity
 
 /**
  * @author hai
