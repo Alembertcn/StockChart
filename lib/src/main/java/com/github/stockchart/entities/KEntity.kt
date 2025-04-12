@@ -29,7 +29,7 @@ open class KEntity(
     private var volume: Long,
     private var time: Long,
     private var avgPrice: Float? = null,
-    private var amount: BigDecimal? = null,
+    var amount: BigDecimal? = null,
     private var flag: Int = FLAG_DEFAULT
 ) : IKEntity {
 
