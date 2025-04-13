@@ -12,48 +12,49 @@ afterEvaluate {
                 version publishVersion
                 from components.release
 
-                pom.withXml {
-                    def rootNode = asNode()
-
-                    // 步骤1：收集所有项目依赖的Maven信息
-                    def projectDependencies = configurations.implementation.allDependencies
-                            .findAll { it instanceof ProjectDependency }
-                            .collect { dep ->
-                                def targetProject = (dep as ProjectDependency).dependencyProject
-                                // 带错误提示的属性获取
-                                def publishGroup = targetProject.extensions.extraProperties.get('publishGroup')
-                                def publishVersion = targetProject.extensions.extraProperties.get('publishVersion')
-                                def moduleName = targetProject.extensions.extraProperties.find('moduleName') ?: targetProject.name
-                                return [
-                                        groupId: publishGroup,
-                                        artifactId: moduleName,
-                                        version: publishVersion
-                                ]
-                            }
-
-                    // 步骤2：仅在存在项目依赖时创建节点
-                    if (!projectDependencies.empty) {
-                        def dependenciesNode = rootNode.dependencies?.get(0)  // 查找现有节点
-                        def needCreateNode =  dependenciesNode == null
-
-                        if (needCreateNode) {
-                            dependenciesNode = rootNode.appendNode('dependencies')
-                        }
-
-                        projectDependencies.each { dep ->
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', dep.groupId)
-                            dependencyNode.appendNode('artifactId', dep.artifactId)
-                            dependencyNode.appendNode('version', dep.version)
-                            dependencyNode.appendNode('scope', 'compile')
-                        }
-                    } else {
-                        // 步骤3：主动清理自动生成的空节点（如果有）
-                        rootNode.children().removeIf { node ->
-                            node.name().getLocalPart() == 'dependencies' && node.children().empty
-                        }
-                    }
-                }
+                // 这里测试只要依赖项目也配置了push任务 生成的pop-default.xml里会自动处理 所以这里不需要单独处理 除非低版本没有自动转换 或者依赖项目没有配置发布任务
+//                pom.withXml {
+//                    def rootNode = asNode()
+//
+//                    // 步骤1：收集所有项目依赖的Maven信息
+//                    def projectDependencies = configurations.implementation.allDependencies
+//                            .findAll { it instanceof ProjectDependency }
+//                            .collect { dep ->
+//                                def targetProject = (dep as ProjectDependency).dependencyProject
+//                                // 带错误提示的属性获取
+//                                def publishGroup = targetProject.extensions.extraProperties.get('publishGroup')
+//                                def publishVersion = targetProject.extensions.extraProperties.get('publishVersion')
+//                                def moduleName = targetProject.extensions.extraProperties.find('moduleName') ?: targetProject.name
+//                                return [
+//                                        groupId: publishGroup,
+//                                        artifactId: moduleName,
+//                                        version: publishVersion
+//                                ]
+//                            }
+//
+//                    // 步骤2：仅在存在项目依赖时创建节点
+//                    if (!projectDependencies.empty) {
+//                        def dependenciesNode = rootNode.dependencies?.get(0)  // 查找现有节点
+//                        def needCreateNode =  dependenciesNode == null
+//
+//                        if (needCreateNode) {
+//                            dependenciesNode = rootNode.appendNode('dependencies')
+//                        }
+//
+//                        projectDependencies.each { dep ->
+//                            def dependencyNode = dependenciesNode.appendNode('dependency')
+//                            dependencyNode.appendNode('groupId', dep.groupId)
+//                            dependencyNode.appendNode('artifactId', dep.artifactId)
+//                            dependencyNode.appendNode('version', dep.version)
+//                            dependencyNode.appendNode('scope', 'compile')
+//                        }
+//                    } else {
+//                        // 步骤3：主动清理自动生成的空节点（如果有）
+//                        rootNode.children().removeIf { node ->
+//                            node.name().getLocalPart() == 'dependencies' && node.children().empty
+//                        }
+//                    }
+//                }
             }
         }
         repositories {

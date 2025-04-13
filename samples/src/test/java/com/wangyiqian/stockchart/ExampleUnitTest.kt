@@ -11,7 +11,7 @@
  *
  */
 
-package com.github.stockchart
+package com.wb.stockchart
 
 import org.junit.Test
 

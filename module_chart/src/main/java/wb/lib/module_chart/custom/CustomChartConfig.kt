@@ -14,21 +14,21 @@
 package wb.lib.module_chart.custom
 
 
-import com.github.stockchart.*
-import com.github.stockchart.childchart.base.*
-import com.github.stockchart.listener.OnHighlightListener
+import com.wb.stockchart.*
+import com.wb.stockchart.childchart.base.*
+import com.wb.stockchart.listener.OnHighlightListener
 
 /**
  * @author hai
  * @version 创建时间: 2021/2/9
  */
 class CustomChartConfig(
-    height: Int = com.github.stockchart.DEFAULT_CHILD_CHART_HEIGHT,
-    marginTop: Int = com.github.stockchart.DEFAULT_CHILD_CHART_MARGIN_TOP,
-    marginBottom: Int = com.github.stockchart.DEFAULT_CHILD_CHART_MARGIN_BOTTOM,
+    height: Int = com.wb.stockchart.DEFAULT_CHILD_CHART_HEIGHT,
+    marginTop: Int = com.wb.stockchart.DEFAULT_CHILD_CHART_MARGIN_TOP,
+    marginBottom: Int = com.wb.stockchart.DEFAULT_CHILD_CHART_MARGIN_BOTTOM,
     onHighlightListener: OnHighlightListener? = null,
-    chartMainDisplayAreaPaddingTop: Float = com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP,
-    chartMainDisplayAreaPaddingBottom: Float = com.github.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM,
+    chartMainDisplayAreaPaddingTop: Float = com.wb.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP,
+    chartMainDisplayAreaPaddingBottom: Float = com.wb.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM,
     var bigLabel: String? = null
 ) : BaseChildChartConfig(
     height,

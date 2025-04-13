@@ -13,8 +13,8 @@
 
 package wb.lib.module_chart.custom
 
-import com.github.stockchart.IStockChart
-import com.github.stockchart.childchart.base.AbsChildChartFactory
+import com.wb.stockchart.IStockChart
+import com.wb.stockchart.childchart.base.AbsChildChartFactory
 
 /**
  * @author hai

@@ -13,6 +13,7 @@
 
 package wb.lib.module_chart
 
+import java.math.BigDecimal
 import java.text.DecimalFormat
 
 /**
@@ -52,6 +53,33 @@ object Util {
         }
 
         return "${numberDecimalFormat.format(volume / magnitude)}${unit}股"
+    }
+    /**
+     * 格式化成交量
+     */
+    fun formatAmount(volume: BigDecimal): String {
+        var magnitude: BigDecimal
+        var unit = ""
+        when {
+            volume > 1_0000_0000_0000f.toBigDecimal()  -> {
+                magnitude = 1_0000_0000_0000f.toBigDecimal()
+                unit = "万亿"
+            }
+            volume > 1_0000_0000f.toBigDecimal() -> {
+                magnitude = 1_0000_0000f.toBigDecimal()
+                unit = "亿"
+            }
+            volume > 1_0000f.toBigDecimal() -> {
+                magnitude = 1_0000f.toBigDecimal()
+                unit = "万"
+            }
+            else -> {
+                magnitude = BigDecimal.ONE
+                unit = ""
+            }
+        }
+
+        return "${numberDecimalFormat.format(volume / magnitude)}${unit}"
     }
 
     /**
