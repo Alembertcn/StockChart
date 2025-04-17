@@ -13,10 +13,13 @@
 
 package com.wb.stockchart
 
+import android.graphics.Matrix
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import java.lang.reflect.Field
 import kotlin.math.abs
 
 /**
@@ -32,7 +35,9 @@ internal class TouchHelper(private val stockChart: IStockChart, private val call
 
     private val gestureDetector by lazy { GestureDetector(stockChart.getContext(), this) }
 
-    private val scaleGestureDetector by lazy { ScaleGestureDetector(stockChart.getContext(), this) }
+    private val scaleGestureDetector by lazy { ScaleGestureDetector(stockChart.getContext(), this)}
+
+    private val tmpMatrix by lazy { Matrix() }
 
     // 是否正在缩放
     private var isTouchScaling = false
@@ -91,7 +96,18 @@ internal class TouchHelper(private val stockChart: IStockChart, private val call
 
         if (!isLongPressing) {
             if (stockChart.getConfig().scaleAble) {
-                scaleGestureDetector.onTouchEvent(event)
+                if(event.pointerCount == 2){
+                    // 解决系统缩放最小间距校验导致的缩放限制
+                    // https://stackoverflow.com/questions/14524493/infinite-scaling-using-scalegesturedetector
+                    tmpMatrix.apply {
+                        reset()
+                        val centerX = (event.getX(0) + event.getX(1)) / 2
+                        val centerY = (event.getY(0) + event.getY(1)) / 2
+                        postScale(5f,1f, centerX,centerY)
+                    }
+                    event.transform(tmpMatrix)
+                    scaleGestureDetector.onTouchEvent(event)
+                }
             }
             if (!isTouchScaling && isTouchScalePointersLeave) {
                 gestureDetector.onTouchEvent(event)

@@ -140,7 +140,11 @@ class ChartFragment:Fragment() {
         }
 
         setIsDev(isDev)
-        changePeriod(Period.DAY_TIME)
+        if(isDev){
+            changePeriod(Period.DAY)
+        }else{
+            changePeriod(Period.DAY_TIME)
+        }
 
         scope?.launch {
             period.asStateFlow()
@@ -181,8 +185,8 @@ class ChartFragment:Fragment() {
         initCustomChart()
 
         stockChartConfig.apply {
-            chartMainDisplayAreaPaddingLeft = DimensionUtil.dp2px(this@ChartFragment.requireContext(),2.5f).toFloat()
-            chartMainDisplayAreaPaddingRight = DimensionUtil.dp2px(this@ChartFragment.requireContext(),2.5f).toFloat()
+            chartMainDisplayAreaPaddingLeft = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
+            chartMainDisplayAreaPaddingRight = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
             // 将需要显示的子图的工厂添加进StockChart配置
             if(!isDev){
                 addChildCharts(
@@ -204,7 +208,7 @@ class ChartFragment:Fragment() {
 
 
             // 最大缩放比例
-            scaleFactorMax = 2f
+            scaleFactorMax = 5f
 
             // 最小缩放比例
             scaleFactorMin = 0.5f
@@ -228,7 +232,6 @@ class ChartFragment:Fragment() {
         kChartFactory = KChartFactory(stock_chart, kChartConfig)
 
         kChartConfig.apply {
-
             // 指标线宽度
             indexStrokeWidth = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 0.5f).toFloat()
 
@@ -447,15 +450,15 @@ class ChartFragment:Fragment() {
         kEntities: List<IKEntity>,
         preClosePrice: Float?=null,
         timeBarType: TimeBarConfig.Type,
-        isAppend: Boolean=false,
-        initialPageSize:Int? = 60
+        appendDirect: Int=0,
+        initialPageSize:Int? = 48
     ) {
 
         // 设置时间条样式
         timeBarConfig.type = timeBarType
         if(timeBarType is  TimeBarConfig.Type.DayTime){
             stockChartConfig.xValueMin = 0.0f
-            stockChartConfig.xValueMax = timeBarType.totalPoint!!.toFloat()
+            stockChartConfig.xValueMax = timeBarType.totalPoint!!.toFloat() //一个点就需要0-1坐标
             kChartConfig.preClosePrice = preClosePrice
             kChartConfig.chartMainDisplayAreaPaddingTop = 0f
             kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
@@ -478,7 +481,9 @@ class ChartFragment:Fragment() {
 
 
         // 设置数据
-        if(isAppend){
+        if(appendDirect>0){
+            stockChartConfig.appendRightKEntities(kEntities)
+        }else if(appendDirect<0){
             stockChartConfig.appendLeftKEntities(kEntities)
         }else{
             if (initialPageSize != null) {
@@ -536,7 +541,7 @@ class ChartFragment:Fragment() {
                 stockChartConfig.apply {
                     scaleAble = true
                     scrollAble = true
-                    overScrollAble = true
+                    overScrollAble = false
                 }
                 kChartConfig.apply {
                     showAvgLine = false

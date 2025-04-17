@@ -53,6 +53,7 @@ import kotlinx.android.synthetic.main.activity_sample2.*
 import kotlinx.android.synthetic.main.activity_sample3.*
 import kotlinx.android.synthetic.main.layout_sample2_option_buttons.*
 import wb.lib.module_chart.Period
+import kotlin.math.max
 import kotlin.text.get
 import kotlin.text.toFloat
 import kotlin.text.toLong
@@ -405,7 +406,7 @@ class Sample2Activity : AppCompatActivity() {
                     if (initialPageSize != null) {
                         stockChartConfig.setKEntities(
                             kEntities,
-                            kEntities.size - initialPageSize,
+                            max(kEntities.size - initialPageSize,0),
                             kEntities.size - 1
                         )
                     } else {

@@ -46,7 +46,7 @@ import wb.lib.module_chart.Period
 class Sample4Activity : AppCompatActivity(), OnLoadMoreListener, OnHighlightListener {
     val fragment by lazy {
         ChartFragment().apply {
-            onLoadMoreListener = this@Sample4Activity
+//            onLoadMoreListener = this@Sample4Activity
             onHighlightListener = this@Sample4Activity
         }
     }
@@ -70,79 +70,102 @@ class Sample4Activity : AppCompatActivity(), OnLoadMoreListener, OnHighlightList
     // 加载模拟数据
     private fun loadData(page: Int = 0, period: Period) {
         isLoading = true
+        val isAppend = page-currentPage
         when (period) {
             Period.DAY -> {
                 DataMock.loadDayData(this, page) { list ->
-                    fragment.doAfterLoad(list, timeBarType = TimeBarConfig.Type.Day())
+                    fragment.doAfterLoad(list, timeBarType = TimeBarConfig.Type.Day(), appendDirect = isAppend)
                 }
             }
             Period.FIVE_DAYS -> {
                 DataMock.loadFiveDayData(this) { list ->
-                    fragment.doAfterLoad(list, timeBarType = FiveDays())
+                    fragment.doAfterLoad(list, timeBarType = FiveDays(), appendDirect = isAppend)
 
                 }
             }
             Period.WEEK -> {
                 DataMock.loadWeekData(this, page) { list ->
-                    fragment.doAfterLoad(list, timeBarType = Week())
-
+                    fragment.doAfterLoad(list, timeBarType = Week(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.MONTH -> {
                 DataMock.loadMonthData(this, page) { list ->
-                    fragment.doAfterLoad(list, timeBarType = Month())
+                    fragment.doAfterLoad(list, timeBarType = Month(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.QUARTER -> {
                 DataMock.loadQuarterData(this) { list ->
-                    fragment.doAfterLoad(list, timeBarType = Quarter())
+                    fragment.doAfterLoad(list, timeBarType = Quarter(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.YEAR -> {
                 DataMock.loadYearData(this) { list ->
-                    fragment.doAfterLoad(list, timeBarType = Year())
+                    fragment.doAfterLoad(list, timeBarType = Year(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.FIVE_YEARS -> {
                 DataMock.loadFiveYearData(this) { list ->
-                    fragment.doAfterLoad(list, timeBarType = FiveYears())
+                    fragment.doAfterLoad(list, timeBarType = FiveYears(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.YTD -> {
                 DataMock.loadYTDData(this) { list ->
-                    fragment.doAfterLoad(list, timeBarType = YTD())
+                    fragment.doAfterLoad(list, timeBarType = YTD(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.ONE_MINUTE -> {
                 DataMock.loadOneMinuteData(this, page) { list ->
-                    fragment.doAfterLoad(list, timeBarType = OneMinute())
+                    fragment.doAfterLoad(list, timeBarType = OneMinute(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.THIRTY_MINUTES,Period.FIVE_MINUTES -> {
                 DataMock.loadFiveMinutesData(this, page) { list ->
-                    fragment.doAfterLoad(list, timeBarType = FiveMinutes())
+                    fragment.doAfterLoad(list, timeBarType = FiveMinutes(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.SIXTY_MINUTES -> {
                 DataMock.loadSixtyMinutesData(this, page) { list ->
-                    fragment.doAfterLoad(list, timeBarType = SixtyMinutes())
+                    fragment.doAfterLoad(list, timeBarType = SixtyMinutes(), appendDirect = isAppend)
+                    currentPage = page
+                    isLoading = false
                 }
             }
             Period.DAY_TIME -> {
                 DataMock.loadDayTimeData(this) { list ->
-                    fragment.doAfterLoad(list, preClosePrice = 623.0f, timeBarType = DayTime(totalPoint = 280,  labelParis = mapOf(0 to "9:00",380 to "15:00")))
+                    fragment.doAfterLoad(list, preClosePrice = 623.0f, timeBarType = DayTime(totalPoint = 104,  labelParis = mapOf(0 to "9:30")))
+                    currentPage = page
+                    isLoading = false
                 }
             }
         }
-        currentPage = page
+
     }
 
     override fun onLeftLoadMore() {
-        loadData(++currentPage,fragment.period.value)
+        if (!isLoading) {
+            val period = fragment.period.value
+            loadData(currentPage+1,period)
+        }
     }
 
     override fun onRightLoadMore() {
-        loadData(--currentPage,fragment.period.value)
+        loadData(currentPage-1,fragment.period.value)
     }
 
     override fun onHighlightBegin() {

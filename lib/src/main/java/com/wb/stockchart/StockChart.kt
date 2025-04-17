@@ -21,6 +21,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.UiThread
+import com.wb.stockchart.childchart.base.BaseChildChart
 import com.wb.stockchart.childchart.base.IChildChart
 import com.wb.stockchart.entities.*
 import com.wb.stockchart.listener.OnKEntitiesChangedListener
@@ -121,16 +122,23 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
+    override fun findLastIdxInDisplayArea()=(getChildCharts()[0] as? BaseChildChart<*>)?.let {
+        tmp2FloatArray[0]=getChildCharts()[0].getChartMainDisplayArea().right
+        tmp2FloatArray[1] = 0f
+        childCharts[0].mapPointsReal2Value(tmp2FloatArray)
+        (tmp2FloatArray[0] +.5f).toInt()-1
+    }?:0
+
+    override fun findFirstIdxInDisplayArea()=(getChildCharts()[0] as? BaseChildChart<*>)?.let {
+        tmp2FloatArray[0]=getChildCharts()[0].getChartMainDisplayArea().left
+        tmp2FloatArray[1] = 0f
+        childCharts[0].mapPointsReal2Value(tmp2FloatArray)
+        (tmp2FloatArray[0] +.5f).toInt()+1
+    }?:0
     override fun findLastNotEmptyKEntityIdxInDisplayArea(): Int? {
         if (childCharts.isEmpty()) return null
-        val chartDisplayArea = childCharts[0].getChartDisplayArea()
-        tmp4FloatArray[0] = chartDisplayArea.left
-        tmp4FloatArray[1] = 0f
-        tmp4FloatArray[2] = chartDisplayArea.right
-        tmp4FloatArray[3] = 0f
-        childCharts[0].mapPointsReal2Value(tmp4FloatArray)
-        val leftIdx = (tmp4FloatArray[0] + 0.5f).toInt()
-        val rightIdx = (tmp4FloatArray[2] + 0.5f).toInt() - 1
+        val leftIdx = findFirstIdxInDisplayArea()
+        val rightIdx = findLastIdxInDisplayArea()
         var result: Int? = null
         for (i in rightIdx downTo leftIdx) {
             if (i in config.kEntities.indices && !config.kEntities[i].containFlag(FLAG_EMPTY)) {
@@ -316,7 +324,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
             if (getConfig().scaleAble) {
                 requestDisallowInterceptTouchEvent(true)
                 matrixHelper.handleTouchScaleBegin(focusX)
-                getConfig().getOnGestureListeners().forEach { it.onScaleBegin(focusX) }
+                getConfig().getOnGestureListeners().forEach { it.onScaleBegin(x) }
             }
         }
 
@@ -359,18 +367,25 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
                         highlight = Highlight(childChartX, childChartY, valueX, valueY)
                         highlightMap[childChart] = highlight
                         childChart.getConfig().onHighlightListener?.onHighlightBegin()
-
                     } else {
                         highlight.x = childChartX
                         highlight.y = childChartY
                         highlight.valueX = valueX
                         highlight.valueY = valueY
                     }
+
                     // 校验最大最小
-                    if (config.xValueMin != null && config.xValueMax != null) {
-                        highlight.valueX = valueX.coerceIn(config.xValueMin,config.xValueMax)
-                        highlight.valueX = min(highlight.valueX,config.getKEntitiesSize() - 1f)
+                    var idx = highlight.getIdx()
+                    if(idx !=idx.coerceIn(findFirstNotEmptyKEntityIdxInDisplayArea(),findLastNotEmptyKEntityIdxInDisplayArea())){
+                        idx = idx.coerceIn(findFirstNotEmptyKEntityIdxInDisplayArea(),findLastNotEmptyKEntityIdxInDisplayArea())
+                        highlight.valueX = idx.toFloat()
+                        tmp2FloatArray[0]=highlight.valueX
+                        tmp2FloatArray[1]=0f
+                        childChart.mapPointsValue2Real(tmp2FloatArray)
+                        highlight.x = tmp2FloatArray[0]
                     }
+
+
                     highlight.entry = config.getKEntity(highlight.getIdx())
 
                     highlight.apply { childChart.getConfig().onHighlightListener?.onHighlight(this) }
@@ -380,14 +395,9 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         override fun onTouchLeave() {
-            highlightMap.keys.forEach {
-                it.getConfig().onHighlightListener?.onHighlightEnd()
-            }
             getConfig().getOnGestureListeners().forEach { it.onTouchLeave() }
-            highlightMap.clear()
             notifyChanged()
             matrixHelper.checkScrollBack()
-
         }
 
         override fun onTap(x: Float, y: Float) {
@@ -414,7 +424,14 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         override fun onLongPressEnd(x: Float, y: Float) {
+            highlightMap.keys.forEach {
+                it.getConfig().onHighlightListener?.onHighlightEnd()
+            }
+            highlightMap.clear()
+
             getConfig().getOnGestureListeners().forEach { it.onLongPressEnd(x, y) }
+
+            notifyChanged()
         }
 
     }

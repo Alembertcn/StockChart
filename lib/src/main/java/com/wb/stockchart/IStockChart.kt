@@ -70,6 +70,13 @@ interface IStockChart {
     fun getHighlight(childChart: IChildChart): Highlight?
 
 
+
+    /**
+     * 获取显示区域内的最后一个下标
+     */
+    fun findLastIdxInDisplayArea(): Int
+    fun findFirstIdxInDisplayArea(): Int
+
     /**
      * 获取显示区域最后一个不为空的K线数据点下标
      */

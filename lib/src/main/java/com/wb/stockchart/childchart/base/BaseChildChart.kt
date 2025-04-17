@@ -168,7 +168,14 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
         }
 
         result[0] = startIndex.toFloat()
-        result[1] = (stockChartConfig.minShowCount?.let { max(startIndex+it,endIndex) }?.toFloat() ?: endIndex.toFloat()) + getXValueUnitLen()
+        result[1] = (stockChartConfig.minShowCount?.let {
+            if(stockChart.getConfig().getKEntitiesSize()>it){
+                result[0] = min((endIndex-it),startIndex).toFloat()
+                endIndex
+            }else{
+                max(startIndex+it,endIndex)
+            }
+        }?.toFloat() ?: endIndex.toFloat()) + getXValueUnitLen()
     }
 
     /**

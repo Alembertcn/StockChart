@@ -14,9 +14,10 @@
 package com.wb.stockchart
 
 import android.graphics.Matrix
+import android.util.Log
 import android.widget.OverScroller
+import com.wb.stockchart.childchart.base.BaseChildChart
 import kotlin.math.abs
-import kotlin.math.max
 
 /**
  * 管理StockChart的Matrix
@@ -65,23 +66,51 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
      * 处理开始双指缩放
      */
     fun handleTouchScaleBegin(focusX: Float) {
-        // 计算出缩放中心点对应的x逻辑坐标值
-        tmp2FloatArray[0] = focusX - stockChart.getTouchArea().left
-        tmp2FloatArray[1] = 0f
-        stockChart.getChildCharts()[0].mapPointsReal2Value(tmp2FloatArray)
-        val scaleFocusXValue = tmp2FloatArray[0]
+//        scalePx = caculatePx1()
+        scalePx = caculatePx2(focusX)
+    }
 
-        // 计算缩放阶段真正的缩放中心
-        tmp2FloatArray[0] = scaleFocusXValue
-        tmp2FloatArray[1] = 0f
+    // 优先右边缩放
+    private fun caculatePx1(): Float{
+        val firstNotEmpty = stockChart.findFirstNotEmptyKEntityIdxInDisplayArea()
+        val lastNotEmpty = stockChart.findLastNotEmptyKEntityIdxInDisplayArea()
+        val lastInx = stockChart.findLastIdxInDisplayArea()
+        tmp2FloatArray[0] = when{
+            firstNotEmpty == 0 -> 0f
+            lastNotEmpty == lastInx -> lastInx.toFloat()
+            else->firstNotEmpty?.toFloat()?:0f
+        }
+        tmp2FloatArray[0]+=.5f
+
         tmpMatrix.apply {
             reset()
             postConcat(stockChart.getChildCharts()[0].getCoordinateMatrix())
             postConcat(xScaleMatrix)
             postConcat(fixXScaleMatrix)
+
             mapPoints(tmp2FloatArray)
         }
-        scalePx = tmp2FloatArray[0]
+        return tmp2FloatArray[0]
+    }
+
+    // focusX 缩放原点
+    private fun caculatePx2(focusX: Float): Float{
+        val kEntitiesSize = stockChart.getConfig().getKEntitiesSize()
+        val chart = stockChart.getChildCharts()[0]
+        tmp2FloatArray[0] = focusX - stockChart.getTouchArea().left
+        tmp2FloatArray[1] = 0f
+        chart.mapPointsReal2Value(tmp2FloatArray)
+        tmp2FloatArray[0] = tmp2FloatArray[0].coerceIn(0f,kEntitiesSize-1f)
+
+        tmpMatrix.apply {
+            reset()
+            postConcat(stockChart.getChildCharts()[0].getCoordinateMatrix())
+            postConcat(xScaleMatrix)
+            postConcat(fixXScaleMatrix)
+
+            mapPoints(tmp2FloatArray)
+        }
+        return tmp2FloatArray[0]
     }
 
     // 目前总共缩放了多少
@@ -99,7 +128,7 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
         val totalScaleX = getTotalScaleX()
 
         // 计算在限制范围内要缩放多少
-        var targetScaleFactor = when {
+        val targetScaleFactor = when {
             totalScaleX * scaleFactor > stockChart.getConfig().scaleFactorMax -> {
                 stockChart.getConfig().scaleFactorMax / totalScaleX
             }
@@ -115,9 +144,10 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
         tmp4FloatArray[1] = 0f
         tmp4FloatArray[2] = 1f
         tmp4FloatArray[3] = 0f
+        val chart = stockChart.getChildCharts()[0]
         tmpMatrix.apply {
             reset()
-            postConcat(stockChart.getChildCharts()[0].getCoordinateMatrix())
+            postConcat(chart.getCoordinateMatrix())
             postConcat(xScaleMatrix)
             mapPoints(tmp4FloatArray)
         }
@@ -125,11 +155,13 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
 
         val kEntitiesSize = stockChart.getConfig().getKEntitiesSize()
 
-        if (lengthOfOneIndex * kEntitiesSize < stockChart.getTouchArea().right - stockChart.getTouchArea().left) {
-            // 总内容缩小不能小于显示区域宽度
-            val scaleX =
-                (stockChart.getTouchArea().right - stockChart.getTouchArea().left) / (lengthOfOneIndex * kEntitiesSize)
-            xScaleMatrix.postScale(scaleX, 1f, scalePx, 0f)
+        // 总内容缩小不能小于显示区域宽度
+        var overScrollDx = 0f
+       if (lengthOfOneIndex * kEntitiesSize < stockChart.getTouchArea().right - stockChart.getTouchArea().left) {
+           tmp2FloatArray[0]=0f
+           tmp2FloatArray[1]=0f
+           chart.mapPointsValue2Real(tmp2FloatArray)
+           overScrollDx = tmp2FloatArray[0]-chart.getChartMainDisplayArea().left
         } else if (!stockChart.getConfig().scrollSmoothly) {
             // 如果是"一格一格"地滑，则缩放使得显示范围内比例是"一格"的整数倍
             tmp4FloatArray[0] = 0f
@@ -138,18 +170,32 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
             tmp4FloatArray[3] = 0f
             tmpMatrix.apply {
                 reset()
-                postConcat(stockChart.getChildCharts()[0].getCoordinateMatrix())
+                postConcat(chart.getCoordinateMatrix())
                 postConcat(xScaleMatrix)
                 mapPoints(tmp4FloatArray)
             }
             // 重新计算"一格"长度
             val lengthOfOneIndex = tmp4FloatArray[2] - tmp4FloatArray[0]
             val xRange =
-                abs(stockChart.getChildCharts()[0].getChartMainDisplayArea().left - stockChart.getChildCharts()[0].getChartMainDisplayArea().right)
+                abs(chart.getChartMainDisplayArea().left - chart.getChartMainDisplayArea().right)
             if (xRange != 0f) {
                 val scaleX = xRange / (xRange - xRange % lengthOfOneIndex)
                 fixXScaleMatrix.postScale(scaleX, 1f, scalePx, 0f)
             }
+        }
+
+
+        if(overScrollDx==0f){
+            tmp2FloatArray[0]=0f
+            tmp2FloatArray[1]=0f
+            chart.mapPointsValue2Real(tmp2FloatArray)
+            if(tmp2FloatArray[0]-chart.getChartMainDisplayArea().left>0){
+                overScrollDx = tmp2FloatArray[0]-chart.getChartMainDisplayArea().left
+            }
+        }
+        Log.d("shh","onScale scalePx:$scalePx firstLeft:${tmp2FloatArray[0]} dx:$overScrollDx")
+        if(overScrollDx!=0f){
+            scrollMatrix.postTranslate(-overScrollDx,0f)
         }
 
         stockChart.notifyChanged()
@@ -273,7 +319,6 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
         velocityX: Float,
         velocityY: Float
     ) {
-
         val kEntitiesSize = stockChart.getConfig().getKEntitiesSize()
 
         if (stockChart.getConfig().scrollAble
@@ -390,17 +435,19 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
      * 检查如果移出了边界就需要回来
      */
     fun checkScrollBack() {
-        val kEntitiesSize = stockChart.getConfig().getKEntitiesSize().toFloat()
-        val xValueMax = stockChart.getConfig().xValueMax?:0.0f
-
+        val kEntitiesSize = stockChart.getConfig().getKEntitiesSize()
+        (stockChart.getChildCharts()[0] as BaseChildChart<*>).getXValueRange(0,kEntitiesSize,tmp2FloatArray)
         // 计算此时的边界 右边界根据是否设置最大值决定
         tmp4FloatArray[0] = 0f
         tmp4FloatArray[1] = 0f
-        tmp4FloatArray[2] =max(kEntitiesSize,xValueMax)  // 多一个是因为边界要在最后一个点的右侧，要多加一个宽度
+        tmp4FloatArray[2] = tmp2FloatArray[1] // 多一个是因为边界要在最后一个点的右侧，要多加一个宽度
         tmp4FloatArray[3] = 0f
+
         stockChart.getChildCharts()[0].mapPointsValue2Real(tmp4FloatArray)
         val limitLeft = tmp4FloatArray[0]
         val limitRight = tmp4FloatArray[2]
+        val chartWidth = limitRight -limitLeft
+
 
         // 显示区域
         val mainDisplayArea = stockChart.getChildCharts()[0].getChartMainDisplayArea()
@@ -408,7 +455,7 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
         var dx = 0
         if (limitLeft > mainDisplayArea.left) { // 左边界滑过头
             dx = (mainDisplayArea.left - limitLeft).toInt()
-        } else if (limitRight < mainDisplayArea.right) { // 右边界滑过头
+        } else if (chartWidth>=mainDisplayArea.width() && limitRight < mainDisplayArea.right) { // 右边界滑过头
             dx = (mainDisplayArea.right - limitRight).toInt()
         }
 
