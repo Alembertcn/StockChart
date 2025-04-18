@@ -350,7 +350,6 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         override fun onLongPressMove(x: Float, y: Float) {
-
             if (getConfig().showHighlightHorizontalLine
                 || getConfig().showHighlightVerticalLine
                 || childCharts.find { it.getConfig().onHighlightListener != null } != null
@@ -360,8 +359,17 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
                     val childChartX = x - childChart.view().left
                     val childChartY = y - childChart.view().top
                     childChart.getHighlightValue(childChartX, childChartY, tmp2FloatArray)
-                    val valueX = tmp2FloatArray[0]
+                    var valueX = tmp2FloatArray[0]
                     val valueY = tmp2FloatArray[1]
+
+                    // 这里防止手机边缘限制这里根据中心点优化偏移量
+                    val centerX = (childChart.view().left+childChart.view().right)/2
+                    if(x<centerX){
+                        valueX-=.5f
+                    }else{
+                        valueX+=.5f
+                    }
+
                     var highlight = highlightMap[childChart]
                     if (highlight == null) {
                         highlight = Highlight(childChartX, childChartY, valueX, valueY)
