@@ -44,14 +44,6 @@ buildscript {
             }
         }
 
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url "$rootDir/../node_modules/react-native/android"
-        }
-        maven {
-            // Android JSC is installed from npm
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
         // 配置Mob Maven库
         maven { url "https://mvn.mob.com/android" }
         maven { url "https://mirrors.tencent.com/repository/maven/tencent_public" }
@@ -76,8 +68,6 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
-        mavenLocal()
-        println("userName ${ System.getenv("WB_REPO_USER")} pwd ${System.getenv("WB_REPO_PWD")}")
         if(rootProject.file("app/repo").exists()){
             maven { url "${rootProject.file("app/repo").absolutePath}" }
         }
@@ -93,14 +83,6 @@ allprojects {
             }
         }
 
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url "$rootDir/../node_modules/react-native/android"
-        }
-        maven {
-            // Android JSC is installed from npm
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
         // 配置Mob Maven库
         maven { url "https://mvn.mob.com/android" }
         maven { url "https://mirrors.tencent.com/repository/maven/tencent_public" }
