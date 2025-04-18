@@ -18,7 +18,7 @@
     android:background="@android:color/darker_gray"
     android:orientation="vertical">
 
-    <com.wb.stockchart.StockChart
+    <com.androidx.stockchart.StockChart
         android:id="@+id/stockChart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

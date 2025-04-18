@@ -1,13 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-android-extensions'
 }
 
 android {
     namespace 'wb.lib.module_chart'
     compileSdk 34
-
+//    resourcePrefix "moduleChart_"  // 强制资源以 moduleA_ 开头
     defaultConfig {
         minSdk 26
 
@@ -28,6 +27,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures{
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -45,7 +47,7 @@ dependencies {
 }
 
 ext{
-    publishVersion = "1.3"
+    publishVersion = "1.1"
     publishGroup = "wb.lib"
     moduleName = 'module_chart'
     descContent = '股票插件'

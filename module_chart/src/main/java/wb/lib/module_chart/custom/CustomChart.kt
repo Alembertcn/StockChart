@@ -16,12 +16,12 @@ package wb.lib.module_chart.custom
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import com.wb.stockchart.IStockChart
-import com.wb.stockchart.childchart.base.BaseChildChart
-import com.wb.stockchart.entities.FLAG_EMPTY
-import com.wb.stockchart.entities.IKEntity
-import com.wb.stockchart.entities.containFlag
-import com.wb.stockchart.util.DimensionUtil
+import com.androidx.stockchart.IStockChart
+import com.androidx.stockchart.childchart.base.BaseChildChart
+import com.androidx.stockchart.entities.FLAG_EMPTY
+import com.androidx.stockchart.entities.IKEntity
+import com.androidx.stockchart.entities.containFlag
+import com.androidx.stockchart.util.DimensionUtil
 
 /**
  * 自定义图示例：每天的平均价连线

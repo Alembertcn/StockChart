@@ -17,7 +17,7 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <com.wb.stockchart.StockChart
+    <com.androidx.stockchart.StockChart
         android:id="@+id/stock_chart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

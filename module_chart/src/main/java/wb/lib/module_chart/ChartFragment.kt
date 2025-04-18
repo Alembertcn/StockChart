@@ -7,39 +7,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.wb.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
-import com.wb.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
-import com.wb.stockchart.DEFAULT_K_CHART_COST_PRICE_LINE_COLOR
-import com.wb.stockchart.StockChartConfig
-import com.wb.stockchart.childchart.base.HighlightLabelConfig
-import com.wb.stockchart.childchart.kchart.KChartConfig
-import com.wb.stockchart.childchart.kchart.KChartConfig.KChartType
-import com.wb.stockchart.childchart.kchart.KChartFactory
-import com.wb.stockchart.childchart.kdjchart.KdjChartConfig
-import com.wb.stockchart.childchart.kdjchart.KdjChartFactory
-import com.wb.stockchart.childchart.macdchart.MacdChartConfig
-import com.wb.stockchart.childchart.macdchart.MacdChartFactory
-import com.wb.stockchart.childchart.rskchart.RsiChartConfig
-import com.wb.stockchart.childchart.rskchart.RsiChartFactory
-import com.wb.stockchart.childchart.timebar.TimeBarConfig
-import com.wb.stockchart.childchart.timebar.TimeBarFactory
-import com.wb.stockchart.childchart.volumechart.VolumeChartConfig
-import com.wb.stockchart.childchart.volumechart.VolumeChartFactory
-import com.wb.stockchart.entities.FLAG_EMPTY
-import com.wb.stockchart.entities.Highlight
-import com.wb.stockchart.entities.IKEntity
-import com.wb.stockchart.entities.containFlag
-import com.wb.stockchart.index.Index
-import com.wb.stockchart.listener.OnHighlightListener
-import com.wb.stockchart.listener.OnLoadMoreListener
-import com.wb.stockchart.util.DimensionUtil
-import com.wb.stockchart.util.NumberFormatUtil
-import kotlinx.android.synthetic.main.fragment_chart.llConfig
-import kotlinx.android.synthetic.main.fragment_chart.startAnim
-import kotlinx.android.synthetic.main.fragment_chart.stock_chart
-import kotlinx.android.synthetic.main.fragment_chart.tv_highlight_info
-import kotlinx.android.synthetic.main.layout_sample2_option_buttons.custom
-import kotlinx.android.synthetic.main.layout_sample2_option_buttons.*
+import com.androidx.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
+import com.androidx.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
+import com.androidx.stockchart.DEFAULT_K_CHART_COST_PRICE_LINE_COLOR
+import com.androidx.stockchart.StockChartConfig
+import com.androidx.stockchart.childchart.base.HighlightLabelConfig
+import com.androidx.stockchart.childchart.kchart.KChartConfig
+import com.androidx.stockchart.childchart.kchart.KChartFactory
+import com.androidx.stockchart.childchart.kdjchart.KdjChartConfig
+import com.androidx.stockchart.childchart.kdjchart.KdjChartFactory
+import com.androidx.stockchart.childchart.macdchart.MacdChartConfig
+import com.androidx.stockchart.childchart.macdchart.MacdChartFactory
+import com.androidx.stockchart.childchart.rskchart.RsiChartConfig
+import com.androidx.stockchart.childchart.rskchart.RsiChartFactory
+import com.androidx.stockchart.childchart.timebar.TimeBarConfig
+import com.androidx.stockchart.childchart.timebar.TimeBarFactory
+import com.androidx.stockchart.childchart.volumechart.VolumeChartConfig
+import com.androidx.stockchart.childchart.volumechart.VolumeChartFactory
+import com.androidx.stockchart.entities.FLAG_EMPTY
+import com.androidx.stockchart.entities.Highlight
+import com.androidx.stockchart.entities.IKEntity
+import com.androidx.stockchart.entities.containFlag
+import com.androidx.stockchart.index.Index
+import com.androidx.stockchart.listener.OnHighlightListener
+import com.androidx.stockchart.listener.OnLoadMoreListener
+import com.androidx.stockchart.util.DimensionUtil
+import com.androidx.stockchart.util.NumberFormatUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -49,6 +42,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import wb.lib.module_chart.custom.CustomChartConfig
 import wb.lib.module_chart.custom.CustomChartFactory
+import wb.lib.module_chart.databinding.FragmentChartBinding
 import kotlin.reflect.KClass
 
 /**
@@ -57,7 +51,7 @@ import kotlin.reflect.KClass
  * @desc
  */
 class ChartFragment:Fragment() {
-
+    private lateinit var binding: FragmentChartBinding
     private var periodOptionButtons = mutableMapOf<View, Period>()
     private var kChartTypeOptionButtons = mutableMapOf<View, KChartConfig.KChartType>()
     private var indexOptionButton = mutableMapOf<View, Index>()
@@ -114,7 +108,8 @@ class ChartFragment:Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.fragment_chart,container,false)
+        binding = FragmentChartBinding.inflate(inflater)
+        return binding.root
     }
 
 
@@ -133,7 +128,7 @@ class ChartFragment:Fragment() {
         initChartTypeButtons()
         initIndexButtons()
         initCustomChartButtons()
-        startAnim.setOnClickListener {
+        binding.startAnim.setOnClickListener {
             kChartConfig.preClosePrice?.let {
                 lastPrice = it * (0.99f + Math.random().toFloat()*0.02f)
             }
@@ -158,16 +153,16 @@ class ChartFragment:Fragment() {
     fun setIsDev(dev: Boolean){
         isDev = dev
         if(isDev){
-            llConfig?.visibility = View.VISIBLE
+            binding.llConfig?.visibility = View.VISIBLE
         }else{
-            llConfig?.visibility = View.GONE
+            binding.llConfig?.visibility = View.GONE
         }
     }
     private fun initChartTypeButtons() {
-        kchart_type_simple.setOnClickListener {
+        binding.llOptions.kchartTypeSimple.setOnClickListener {
             changeChartType(0)
         }
-        kchart_type_profession.setOnClickListener {
+        binding.llOptions.kchartTypeProfession.setOnClickListener {
             changeChartType(1)
         }
     }
@@ -185,8 +180,8 @@ class ChartFragment:Fragment() {
         initCustomChart()
 
         stockChartConfig.apply {
-            chartMainDisplayAreaPaddingLeft = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
-            chartMainDisplayAreaPaddingRight = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
+//            chartMainDisplayAreaPaddingLeft = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
+//            chartMainDisplayAreaPaddingRight = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
             // 将需要显示的子图的工厂添加进StockChart配置
             if(!isDev){
                 addChildCharts(
@@ -222,14 +217,14 @@ class ChartFragment:Fragment() {
 
 
         // 绑定配置
-        stock_chart.setConfig(stockChartConfig)
+        binding.stockChart.setConfig(stockChartConfig)
     }
 
     /**
      * K线图初始化
      */
     private fun initKChart() {
-        kChartFactory = KChartFactory(stock_chart, kChartConfig)
+        kChartFactory = KChartFactory(binding.stockChart, kChartConfig)
 
         kChartConfig.apply {
             // 指标线宽度
@@ -242,7 +237,7 @@ class ChartFragment:Fragment() {
                 }
 
                 override fun onHighlightEnd() {
-                    tv_highlight_info.text = ""
+                    binding.tvHighlightInfo.text = ""
                     this@ChartFragment.onHighlightListener?.onHighlightEnd()
                 }
 
@@ -268,7 +263,7 @@ class ChartFragment:Fragment() {
 
                             showContent = "$price，$changeRatio，$volume $amount"
                         } else if (kChartType is KChartConfig.KChartType.LINE || kChartType is KChartConfig.KChartType.MOUNTAIN) {
-                            val firstIdx = stock_chart.findFirstNotEmptyKEntityIdxInDisplayArea()
+                            val firstIdx = binding.stockChart.findFirstNotEmptyKEntityIdxInDisplayArea()
                             val price =
                                 "最新价:${NumberFormatUtil.formatPrice(kEntity.getClosePrice())}"
                             var changeRatio = "涨跌幅:——"
@@ -299,7 +294,7 @@ class ChartFragment:Fragment() {
                     }
 
                     // 长按信息显示到界面
-                    tv_highlight_info.text = showContent
+                    binding.tvHighlightInfo.text = showContent
                     this@ChartFragment.onHighlightListener?.onHighlight(highlight)
                 }
             }
@@ -339,7 +334,7 @@ class ChartFragment:Fragment() {
      * 成交量图初始化
      */
     private fun initVolumeChart() {
-        volumeChartFactory = VolumeChartFactory(stock_chart, volumeChartConfig)
+        volumeChartFactory = VolumeChartFactory(binding.stockChart, volumeChartConfig)
 
         volumeChartConfig.apply {
             // 图高度
@@ -366,7 +361,7 @@ class ChartFragment:Fragment() {
      * 时间条图初始化
      */
     private fun initTimeBar() {
-        timeBarFactory = TimeBarFactory(stock_chart, timeBarConfig)
+        timeBarFactory = TimeBarFactory(binding.stockChart, timeBarConfig)
 
         timeBarConfig.apply {
             // 背景色（时间条这里不像显示网格线，加个背景色覆盖掉）
@@ -382,7 +377,7 @@ class ChartFragment:Fragment() {
      * macd指标图初始化
      */
     private fun initMacdChart() {
-        macdChartFactory = MacdChartFactory(stock_chart, macdChartConfig)
+        macdChartFactory = MacdChartFactory(binding.stockChart, macdChartConfig)
 
         macdChartConfig.apply {
             // 图高度
@@ -401,7 +396,7 @@ class ChartFragment:Fragment() {
      * kdj指标图初始化
      */
     private fun initKdjChart() {
-        kdjChartFactory = KdjChartFactory(stock_chart, kdjChartConfig)
+        kdjChartFactory = KdjChartFactory(binding.stockChart, kdjChartConfig)
 
         kdjChartConfig.apply {
             // 图高度
@@ -420,7 +415,7 @@ class ChartFragment:Fragment() {
      * rsi指标图初始化
      */
     private fun initRsiChart() {
-        rsiChartFactory = RsiChartFactory(stock_chart, rsiChartConfig)
+        rsiChartFactory = RsiChartFactory(binding.stockChart, rsiChartConfig)
 
         rsiChartConfig.apply {
             // 图高度
@@ -439,7 +434,7 @@ class ChartFragment:Fragment() {
      * 自定义示例图初始化
      */
     private fun initCustomChart() {
-        customChartFactory = CustomChartFactory(stock_chart, customChartConfig)
+        customChartFactory = CustomChartFactory(binding.stockChart, customChartConfig)
         customChartConfig.apply {
             height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 50f)
             bigLabel = "这是自定义子图示例"
@@ -496,7 +491,7 @@ class ChartFragment:Fragment() {
                 stockChartConfig.setKEntities(kEntities)
             }
         }
-        stock_chart.notifyChanged()
+        binding.stockChart.notifyChanged()
     }
 
     private fun changePeriod(period: Period) {
@@ -565,26 +560,26 @@ class ChartFragment:Fragment() {
         // 成交量图根据K线图类型决定是空心还是实心
         volumeChartConfig.volumeChartType = if (this.kChartType is KChartConfig.KChartType.HOLLOW) VolumeChartConfig.VolumeChartType.HOLLOW() else VolumeChartConfig.VolumeChartType.CANDLE()
 //        volumeChartConfig.volumeChartType =  VolumeChartConfig.VolumeChartType.CANDLE()
-        stock_chart.notifyChanged()
+        binding.stockChart.notifyChanged()
         refreshOptionButtonsState()
     }
 
     private fun initPeriodButtons() {
         periodOptionButtons.putAll(
             arrayOf(
-                Pair(period_day, Period.DAY),
-                Pair(period_five_days, Period.FIVE_DAYS),
-                Pair(period_week, Period.WEEK),
-                Pair(period_month, Period.MONTH),
-                Pair(period_quarter, Period.QUARTER),
-                Pair(period_year, Period.YEAR),
-                Pair(period_five_years, Period.FIVE_YEARS),
-                Pair(period_ytd, Period.YTD),
-                Pair(period_one_minute, Period.ONE_MINUTE),
-                Pair(period_five_minutes, Period.FIVE_MINUTES),
-                Pair(period_thirty_minutes, Period.THIRTY_MINUTES),
-                Pair(period_sixty_minutes, Period.SIXTY_MINUTES),
-                Pair(period_day_time, Period.DAY_TIME),
+                Pair(binding.llOptions.periodDay, Period.DAY),
+                Pair(binding.llOptions.periodFiveDays, Period.FIVE_DAYS),
+                Pair(binding.llOptions.periodWeek, Period.WEEK),
+                Pair(binding.llOptions.periodMonth, Period.MONTH),
+                Pair(binding.llOptions.periodQuarter, Period.QUARTER),
+                Pair(binding.llOptions.periodYear, Period.YEAR),
+                Pair(binding.llOptions.periodFiveYears, Period.FIVE_YEARS),
+                Pair(binding.llOptions.periodYtd, Period.YTD),
+                Pair(binding.llOptions.periodOneMinute, Period.ONE_MINUTE),
+                Pair(binding.llOptions.periodFiveMinutes, Period.FIVE_MINUTES),
+                Pair(binding.llOptions.periodThirtyMinutes, Period.THIRTY_MINUTES),
+                Pair(binding.llOptions.periodSixtyMinutes, Period.SIXTY_MINUTES),
+                Pair(binding.llOptions.periodDayTime, Period.DAY_TIME),
             )
         )
 
@@ -596,11 +591,11 @@ class ChartFragment:Fragment() {
     private fun initKChartTypeButtons() {
         kChartTypeOptionButtons.putAll(
             listOf(
-                Pair(kchart_type_candle, KChartConfig.KChartType.CANDLE()),
-                Pair(kchart_type_hollow, KChartConfig.KChartType.HOLLOW()),
-                Pair(kchart_type_line, KChartConfig.KChartType.LINE()),
-                Pair(kchart_type_mountain, KChartConfig.KChartType.MOUNTAIN()),
-                Pair(kchart_type_bar, KChartConfig.KChartType.BAR())
+                Pair(binding.llOptions.kchartTypeCandle, KChartConfig.KChartType.CANDLE()),
+                Pair(binding.llOptions.kchartTypeHollow, KChartConfig.KChartType.HOLLOW()),
+                Pair(binding.llOptions.kchartTypeLine, KChartConfig.KChartType.LINE()),
+                Pair(binding.llOptions.kchartTypeMountain, KChartConfig.KChartType.MOUNTAIN()),
+                Pair(binding.llOptions.kchartTypeBar, KChartConfig.KChartType.BAR())
             )
         )
         kChartTypeOptionButtons.forEach { (button, kChatType) ->
@@ -611,13 +606,13 @@ class ChartFragment:Fragment() {
     private fun initIndexButtons() {
         indexOptionButton.putAll(
             listOf(
-                Pair(index_ma, Index.MA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
-                Pair(index_ema, Index.EMA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
-                Pair(index_boll, Index.BOLL(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
-                Pair(index_macd, Index.MACD()),
-                Pair(index_kdj, Index.KDJ()),
-                Pair(index_rsi, Index.RSI()),
-                Pair(index_vol, Index.VOL()),
+                Pair(binding.llOptions.indexMa, Index.MA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
+                Pair(binding.llOptions.indexEma, Index.EMA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
+                Pair(binding.llOptions.indexBoll, Index.BOLL(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
+                Pair(binding.llOptions.indexMacd, Index.MACD()),
+                Pair(binding.llOptions.indexKdj, Index.KDJ()),
+                Pair(binding.llOptions.indexRsi, Index.RSI()),
+                Pair(binding.llOptions.indexVol, Index.VOL()),
             )
         )
 
@@ -628,13 +623,13 @@ class ChartFragment:Fragment() {
         }
     }
     private fun initCustomChartButtons() {
-        custom.setOnClickListener {
+        binding.llOptions.custom.setOnClickListener {
             if (stockChartConfig.childChartFactories.contains(customChartFactory!!)) {
                 stockChartConfig.removeChildCharts(customChartFactory!!)
             } else {
                 stockChartConfig.addChildCharts(customChartFactory!!)
             }
-            stock_chart.notifyChanged()
+            binding.stockChart.notifyChanged()
             refreshOptionButtonsState()
         }
     }
@@ -674,10 +669,10 @@ class ChartFragment:Fragment() {
             }
         }
 
-        custom.isSelected = stockChartConfig.childChartFactories.contains(customChartFactory!!)
+        binding.llOptions.custom.isSelected = stockChartConfig.childChartFactories.contains(customChartFactory!!)
 
-        kchart_type_simple.isSelected = currentType == 0
-        kchart_type_profession.isSelected = currentType != 0
+        binding.llOptions.kchartTypeSimple.isSelected = currentType == 0
+        binding.llOptions.kchartTypeProfession.isSelected = currentType != 0
     }
 
 
@@ -705,11 +700,11 @@ class ChartFragment:Fragment() {
             // 专业版
             stockChartConfig.apply {
                 showHighlightHorizontalLine = true
-                gridLineColor = com.wb.stockchart.DEFAULT_GRID_LINE_COLOR
+                gridLineColor = com.androidx.stockchart.DEFAULT_GRID_LINE_COLOR
                 addChildChart(timeBarFactory!!,1)
             }
             kChartConfig.apply {
-                avgLineColor = com.wb.stockchart.DEFAULT_AVG_LINE_COLOR
+                avgLineColor = com.androidx.stockchart.DEFAULT_AVG_LINE_COLOR
                 preCloseLineColor = DEFAULT_K_CHART_COST_PRICE_LINE_COLOR
 
                 // 左侧标签设置
@@ -732,7 +727,7 @@ class ChartFragment:Fragment() {
             }
             volumeChartConfig.index = Index.VOL()
         }
-        stock_chart.notifyChanged()
+        binding.stockChart.notifyChanged()
         currentType = i
         refreshOptionButtonsState()
     }
@@ -742,7 +737,7 @@ class ChartFragment:Fragment() {
             field = value?.also {
                 if(period.value == Period.DAY_TIME && it>0.0){
                     kChartConfig.updateTimeDayLast(it)
-                    stock_chart.notifyChanged()
+                    binding.stockChart.notifyChanged()
                 }else{
                     kChartConfig.showCircle = false
                 }
@@ -807,7 +802,7 @@ class ChartFragment:Fragment() {
                 }
             }
         }
-        stock_chart.notifyChanged()
+        binding.stockChart.notifyChanged()
         refreshOptionButtonsState()
     }
 

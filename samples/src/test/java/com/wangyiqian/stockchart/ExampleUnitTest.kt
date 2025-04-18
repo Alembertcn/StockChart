@@ -11,7 +11,7 @@
  *
  */
 
-package com.wb.stockchart
+package com.androidx.stockchart
 
 import org.junit.Test
 

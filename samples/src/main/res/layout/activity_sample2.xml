@@ -24,7 +24,9 @@
         android:orientation="vertical">
 
         <!-- 各种选项按钮 -->
-        <include layout="@layout/layout_sample2_option_buttons" />
+        <include
+            android:id="@+id/ll_options"
+            layout="@layout/layout_sample2_option_buttons" />
 
         <!-- 长按时显示信息 -->
         <TextView
@@ -36,7 +38,7 @@
             android:textSize="8sp"
             android:lines="1"/>
 
-        <com.wb.stockchart.StockChart
+        <com.androidx.stockchart.StockChart
             android:id="@+id/stock_chart"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

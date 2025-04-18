@@ -12,7 +12,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wb.stockchart.sample">
+    package="com.androidx.stockchart.sample">
 
     <application
         android:allowBackup="true"
@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StockChart">
-        <activity android:name="com.wb.stockchart.sample.MainActivity"
+        <activity android:name="com.androidx.stockchart.sample.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,10 +29,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.wb.stockchart.sample.sample1.Sample1Activity" />
-        <activity android:name="com.wb.stockchart.sample.sample2.Sample2Activity" />
-        <activity android:name="com.wb.stockchart.sample.sample3.Sample3Activity" />
-        <activity android:name=".sample4.Sample4Activity" />
+        <activity android:name="com.androidx.stockchart.sample.sample1.Sample1Activity" />
+        <activity android:name="com.androidx.stockchart.sample.sample2.Sample2Activity" />
+        <activity android:name="com.androidx.stockchart.sample.sample3.Sample3Activity" />
+        <activity android:name="com.androidx.stockchart.sample.sample4.Sample4Activity" />
     </application>
 
 </manifest>

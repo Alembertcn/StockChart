@@ -10,7 +10,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
         <!-- 各种选项按钮 -->
-        <include layout="@layout/layout_sample2_option_buttons" />
+        <include
+            android:id="@+id/ll_options"
+            layout="@layout/layout_sample2_option_buttons" />
 
         <TextView
             android:text="闪烁"
@@ -30,7 +32,7 @@
     </LinearLayout>
 
 
-    <com.wb.stockchart.StockChart
+    <com.androidx.stockchart.StockChart
         android:id="@+id/stock_chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
