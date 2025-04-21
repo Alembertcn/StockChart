@@ -317,6 +317,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         TouchHelper.CallBack {
 
         override fun onTouchDown() {
+            handlerScroll = false
             matrixHelper.handleTouchDown()
         }
 
@@ -336,12 +337,24 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
         }
 
-        override fun onHScroll(distanceX: Float) {
+
+        var handlerScroll = false
+        override fun onHScroll(distanceX: Float):Boolean {
             if (getConfig().scrollAble) {
-                requestDisallowInterceptTouchEvent(true)
-                matrixHelper.handleTouchScroll(distanceX)
+                if(matrixHelper.handleTouchScroll(distanceX)){
+                    handlerScroll = true
+                }
+                requestDisallowInterceptTouchEvent(handlerScroll)
+
                 getConfig().getOnGestureListeners().forEach { it.onHScrolling() }
+                return handlerScroll
             }
+            return false
+        }
+
+        override fun onVScroll(distanceX: Float): Boolean {
+            requestDisallowInterceptTouchEvent(handlerScroll)
+            return false
         }
 
         override fun onTriggerFling(velocityX: Float, velocityY: Float) {
@@ -403,6 +416,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         override fun onTouchLeave() {
+            handlerScroll = false
             getConfig().getOnGestureListeners().forEach { it.onTouchLeave() }
             notifyChanged()
             matrixHelper.checkScrollBack()

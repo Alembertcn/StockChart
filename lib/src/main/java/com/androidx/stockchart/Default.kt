@@ -13,11 +13,12 @@
 
 package com.androidx.stockchart
 
-import android.graphics.Color
+import com.androidx.stock_chart.R
 import com.androidx.stockchart.childchart.base.HighlightLabelConfig
 import com.androidx.stockchart.childchart.kchart.KChartConfig
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.util.NumberFormatUtil
+import com.androidx.stockchart.util.ResourceUtil
 
 /**
  * 默认配置
@@ -39,86 +40,68 @@ const val DEFAULT_FRICTION_SCROLL_EXCEED_LIMIT = 0.3f
 const val DEFAULT_SCALE_FACTOR_MAX = 5f
 const val DEFAULT_SCALE_FACTOR_MIN = 0.5f
 const val DEFAULT_HIGHLIGHT_HORIZONTAL_LINE_WIDTH = 2f
-const val DEFAULT_HIGHLIGHT_HORIZONTAL_LINE_COLOR = Color.WHITE
 const val DEFAULT_HIGHLIGHT_VERTICAL_LINE_WIDTH = 2f
-const val DEFAULT_HIGHLIGHT_VERTICAL_LINE_COLOR = Color.WHITE
 const val DEFAULT_SHOW_HIGHLIGHT_HORIZONTAL_LINE = true
 const val DEFAULT_SHOW_HIGHLIGHT_VERTICAL_LINE = true
-val DEFAULT_RISE_COLOR = Color.parseColor("#E36245")
-val DEFAULT_DOWN_COLOR = Color.parseColor("#3FC08E")
 const val DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP = 60f
 const val DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM = 60f
-val DEFAULT_BACKGROUND_COUNT = Color.parseColor("#2C2C2C")
 const val DEFAULT_GRID_HORIZONTAL_LINE_COUNT = 0
 const val DEFAULT_GRID_VERTICAL_LINE_COUNT = 0
-val DEFAULT_GRID_LINE_COLOR = Color.parseColor("#676767")
 const val DEFAULT_GRID_LINE_STROKE_WIDTH = 1f
 const val DEFAULT_VALUE_TEND_TO_ZERO = 0.0001f
-
 // K线图
-const val DEFAULT_K_CHART_LINE_CHART_COLOR = Color.WHITE
 const val DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH = 3f
-const val DEFAULT_K_CHART_MOUNTAIN_CHART_COLOR = Color.WHITE
 const val DEFAULT_K_CHART_MOUNTAIN_CHART_STROKE_WIDTH = 3f
-val DEFAULT_K_CHART_MOUNTAIN_CHART_LINEAR_GRADIENT_COLORS =
-    intArrayOf(Color.parseColor("#50FFFFFF"), Color.parseColor("#002196F3"))
 const val DEFAULT_K_CHART_CANDLE_CHART_LINE_STROKE_WIDTH = 1.5f
 const val DEFAULT_K_CHART_HOLLOW_CHART_LINE_STROKE_WIDTH = 1.5f
 const val DEFAULT_K_CHART_BAR_CHART_LINE_STROKE_WIDTH = 3f
-val DEFAULT_K_CHART_COST_PRICE_LINE_COLOR = Color.parseColor("#7d7d7f")
 const val DEFAULT_K_CHART_COST_PRICE_LINE_WIDTH = 3f
 const val DEFAULT_K_CHART_INDEX_STROKE_WIDTH = 1f
-const val DEFAULT_K_CHART_BAR_SPACE_RATIO = 0.5f
+const val DEFAULT_K_CHART_BAR_SPACE_RATIO = 0.3f
 val DEFAULT_K_CHART_INDEX = Index.MA()
-val DEFAULT_K_CHART_INDEX_COLORS =
-    listOf(Color.parseColor("#F5EC58"), Color.parseColor("#FF7CE5"), Color.parseColor("#9EC7FE"))
-const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_COLOR = Color.WHITE
 const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE = 24f
-const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH = 3f
+const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH = 1f
 const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH = 30f
+
+
+// 时间条
+const val DEFAULT_TIME_BAR_HEIGHT = 60
+const val DEFAULT_TIME_BAR_LABEL_TEXT_SIZE = 30f
+const val DEFAULT_TIME_BAR_HIGHLIGHT_LABEL_TEXT_SIZE = 30f
+
 val DEFAULT_K_CHART_LEFT_LABEL_CONFIG =
     KChartConfig.LabelConfig(
         3,
         { "${NumberFormatUtil.formatPrice(it)}" },
-        24f,
-        Color.LTGRAY,
+        DEFAULT_TIME_BAR_LABEL_TEXT_SIZE,
+        ResourceUtil.getColor(R.color.stock_chart_axis_y_label),
         15f,
         15f,
         15f,
         null
     )
 val DEFAULT_K_CHART_HIGHLIGHT_LABEL_LEFT = HighlightLabelConfig()
-const val DEFAULT_AVG_LINE_WIDTH = 2f
-val DEFAULT_AVG_LINE_COLOR = Color.parseColor("#FF7B11")
-
+const val DEFAULT_AVG_LINE_WIDTH = 3f
 
 // Volume图
-const val DEFAULT_VOLUME_BAR_SPACE_RATIO = 0.5f
+const val DEFAULT_VOLUME_BAR_SPACE_RATIO = 0.3f
 const val DEFAULT_VOLUME_CHART_HOLLOW_CHART_LINE_STROKE_WIDTH = 1.5f
 
 // HighlightLabel
-const val DEFAULT_HIGHLIGHT_LABEL_BG_COLOR = Color.LTGRAY
 const val DEFAULT_HIGHLIGHT_LABEL_BG_CORNER = 6f
 const val DEFAULT_HIGHLIGHT_LABEL_PADDING = 6f
 const val DEFAULT_HIGHLIGHT_LABEL_TEXT_SIZE = 20f
-const val DEFAULT_HIGHLIGHT_LABEL_TEXT_COLOR = Color.WHITE
 
 // MACD指标图
-const val DEFAULT_MACD_DIF_LINE_COLOR = Color.WHITE
 const val DEFAULT_MACD_DIF_LINE_STROKE_WIDTH = 3f
-const val DEFAULT_MACD_DEA_LINE_COLOR = Color.YELLOW
 const val DEFAULT_MACD_DEA_LINE_STROKE_WIDTH = 3f
-const val DEFAULT_MACD_TEXT_COLOR = Color.GREEN
 const val DEFAULT_MACD_BAR_SPACE_RATIO = 0.8f
 val DEFAULT_MACD_INDEX = Index.MACD()
 
 // KDJ指标图
-const val DEFAULT_KDJ_K_LINE_COLOR = Color.WHITE
 const val DEFAULT_KDJ_K_LINE_STROKE_WIDTH = 3f
 
-const val DEFAULT_KDJ_D_LINE_COLOR = Color.YELLOW
 const val DEFAULT_KDJ_D_LINE_STROKE_WIDTH = 3f
-const val DEFAULT_KDJ_J_LINE_COLOR = Color.BLUE
 const val DEFAULT_KDJ_J_LINE_STROKE_WIDTH = 3f
 val DEFAULT_KDJ_INDEX = Index.KDJ()
 
@@ -127,7 +110,6 @@ const val DEFAULT_INDEX_TEXT_MARGIN_LEFT = 15f
 const val DEFAULT_INDEX_TEXT_MARGIN_TOP = 0f
 const val DEFAULT_INDEX_TEXT_SPACE = 15f
 const val DEFAULT_INDEX_TEXT_SIZE = 24f
-const val DEFAULT_INDEX_START_TEXT_COLOR = Color.LTGRAY
 
 object DefaultIndexParams {
     const val MA = "5,10,20"
@@ -197,13 +179,5 @@ object DefaultIndexStartText {
     const val KDJ = "KDJ(${com.androidx.stockchart.DefaultIndexParams.KDJ})"
 }
 
-// 时间条
-const val DEFAULT_TIME_BAR_HEIGHT = 60
-const val DEFAULT_TIME_BAR_LABEL_TEXT_SIZE = 30f
-const val DEFAULT_TIME_BAR_LABEL_TEXT_SIZE_COLOR = Color.LTGRAY
-const val DEFAULT_TIME_BAR_HIGHLIGHT_LABEL_TEXT_SIZE = 30f
-const val DEFAULT_TIME_BAR_HIGHLIGHT_LABEL_TEXT_COLOR = Color.WHITE
-const val DEFAULT_TIME_BAR_HIGHLIGHT_LABEL_BG_COLOR = Color.LTGRAY
-const val DEFAULT_TIME_BAR_BG_COLOR = Color.TRANSPARENT
 
 

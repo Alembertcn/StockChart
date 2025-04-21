@@ -16,8 +16,11 @@ package com.androidx.stockchart.sample.sample3.activechart
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.PathEffect
+import com.androidx.stock_chart.R
 import com.androidx.stockchart.childchart.base.BaseChildChartConfig
 import com.androidx.stockchart.listener.OnHighlightListener
+import com.androidx.stockchart.util.ResourceUtil
+import kotlin.IntArray
 
 /**
  * @author hai
@@ -36,15 +39,15 @@ class ActiveChartConfig(
     // K线绘制区域底部内间距
     chartMainDisplayAreaPaddingBottom: Float = com.androidx.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM,
     // 山峰图线条颜色
-    var mountainChartColor: Int = com.androidx.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_COLOR,
+    var mountainChartColor: Int = ResourceUtil.getColor(R.color.stock_chart_mountain_line),
     // 山峰图的线条宽度
     var mountainChartStrokeWidth: Float = com.androidx.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_STROKE_WIDTH,
     // 山峰图的封闭渐变色
-    var mountainChartLinearGradientColors: IntArray = com.androidx.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_LINEAR_GRADIENT_COLORS,
+    var mountainChartLinearGradientColors: IntArray = intArrayOf(ResourceUtil.getColor(R.color.stock_chart_mountain_line_gradient_start), ResourceUtil.getColor(R.color.stock_chart_mountain_line_gradient_end)),
     // 昨收价
     var preClosePrice: Float? = null,
     // 昨收线颜色
-    var preClosePriceLineColor: Int = Color.parseColor("#747378"),
+    var preClosePriceLineColor: Int = ResourceUtil.getColor(R.color.stock_chart_pre_close_price_line),
     // 昨收线宽度
     var preCloseLineStrokeWidth: Float = 2f,
     // 昨收线虚线配置

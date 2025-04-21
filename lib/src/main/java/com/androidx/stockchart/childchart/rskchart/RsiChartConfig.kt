@@ -3,10 +3,12 @@ package com.androidx.stockchart.childchart.rskchart
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.view.View
+import com.androidx.stock_chart.R
 import com.androidx.stockchart.childchart.base.BaseChildChartConfig
 import com.androidx.stockchart.childchart.base.HighlightLabelConfig
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.listener.OnHighlightListener
+import com.androidx.stockchart.util.ResourceUtil
 
 /**
  * @author hai
@@ -24,16 +26,7 @@ class RsiChartConfig(
     // 长按时高亮线右侧标签配置
     var highlightLabelRight: HighlightLabelConfig? = null,
     // 指标线的颜色
-    var indexColors: List<Int> = listOf(
-        Color.parseColor("#F5EC58"),
-        Color.parseColor("#FF7CE5"),
-        Color.parseColor("#9EC7FE"),
-        Color.parseColor("#fb0606"),
-        Color.parseColor("#a003fa"),
-        Color.parseColor("#02cefa"),
-        Color.parseColor("#02fa88"),
-        Color.parseColor("#fa6b02")
-    ),
+    var indexColors: List<Int> = listOf(ResourceUtil.getColor(R.color.stock_chart_index_line1), ResourceUtil.getColor(R.color.stock_chart_index_line2), ResourceUtil.getColor(R.color.stock_chart_index_line3)),
     // 指标线宽度
     var lineStrokeWidth: Float = 3f,
     // 虚线颜色

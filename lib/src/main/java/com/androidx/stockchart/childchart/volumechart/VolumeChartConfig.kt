@@ -16,9 +16,11 @@ package com.androidx.stockchart.childchart.volumechart
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.view.View
+import com.androidx.stock_chart.R
 import com.androidx.stockchart.childchart.base.*
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.listener.OnHighlightListener
+import com.androidx.stockchart.util.ResourceUtil
 
 /**
  * 成交量图配置
@@ -52,7 +54,7 @@ class VolumeChartConfig(
     // 指标头文字右侧图标
     var indexStarterRightIcon: Bitmap? = null,
     // 指标文字颜色
-    var indexTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+    var indexTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
     // 指标头文字点击事件
     var indexStarterClickListener: ((View) -> Unit)? = null
 ) : BaseChildChartConfig(

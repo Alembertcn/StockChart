@@ -13,7 +13,9 @@
 
 package com.androidx.stockchart.childchart.base
 
+import com.androidx.stock_chart.R
 import com.androidx.stockchart.util.NumberFormatUtil
+import com.androidx.stockchart.util.ResourceUtil
 
 /**
  * 高亮线配置
@@ -23,7 +25,7 @@ import com.androidx.stockchart.util.NumberFormatUtil
  */
 class HighlightLabelConfig(
     // 背景色
-    var bgColor: Int = com.androidx.stockchart.DEFAULT_HIGHLIGHT_LABEL_BG_COLOR,
+    var bgColor: Int = ResourceUtil.getColor(R.color.stock_chart_highlight_label_bg),
     // 背景圆角
     var bgCorner: Float = com.androidx.stockchart.DEFAULT_HIGHLIGHT_LABEL_BG_CORNER,
     // 内间距
@@ -31,7 +33,7 @@ class HighlightLabelConfig(
     // 文字大小
     var textSize: Float = com.androidx.stockchart.DEFAULT_HIGHLIGHT_LABEL_TEXT_SIZE,
     // 文字颜色
-    var textColor: Int = com.androidx.stockchart.DEFAULT_HIGHLIGHT_LABEL_TEXT_COLOR,
+    var textColor: Int = ResourceUtil.getColor(R.color.stock_chart_highlight_label),
     // 显示的内容格式化
     var textFormat: (value: Float) -> String = { value -> "${NumberFormatUtil.formatPrice(value)}" }
 )

@@ -13,9 +13,11 @@
 
 package com.androidx.stockchart.childchart.kdjchart
 
+import com.androidx.stock_chart.R
 import com.androidx.stockchart.childchart.base.*
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.listener.OnHighlightListener
+import com.androidx.stockchart.util.ResourceUtil
 
 /**
  * @author hai
@@ -33,15 +35,15 @@ class KdjChartConfig(
     // 长按时高亮线右侧标签配置
     var highlightLabelRight: HighlightLabelConfig? = null,
     // k线颜色
-    var kLineColor: Int = com.androidx.stockchart.DEFAULT_KDJ_K_LINE_COLOR,
+    var kLineColor: Int =  ResourceUtil.getColor(R.color.stock_chart_kdj_k),
     // k线宽度
     var kLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_KDJ_K_LINE_STROKE_WIDTH,
     // d线颜色
-    var dLineColor: Int = com.androidx.stockchart.DEFAULT_KDJ_D_LINE_COLOR,
+    var dLineColor: Int = ResourceUtil.getColor(R.color.stock_chart_kdj_d),
     // d线宽度
     var dLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_KDJ_D_LINE_STROKE_WIDTH,
     // j线颜色
-    var jLineColor: Int = com.androidx.stockchart.DEFAULT_KDJ_J_LINE_COLOR,
+    var jLineColor: Int = ResourceUtil.getColor(R.color.stock_chart_kdj_j),
     // j线宽度
     var jLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_KDJ_J_LINE_STROKE_WIDTH,
     // 需要展示的指标配置

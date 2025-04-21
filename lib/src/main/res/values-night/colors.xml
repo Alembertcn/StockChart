@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 图表默认颜色 这些颜色可以在主项目中覆写达到自定义效果  -->
+    <color name="stock_chart_up_color">#F7385C</color><!-- 行情UP颜色  涨-->
+    <color name="stock_chart_down_color">#06B098</color><!-- 行情DOWN颜色  跌 -->
+    <color name="stock_chart_equal_color">#8C9FAD</color><!-- 行情Equal颜色  不变 -->
+
+    <color name="stock_chart_index_line1">#FBCD0F</color>
+    <color name="stock_chart_index_line2">#35A1DA</color>
+    <color name="stock_chart_index_line3">#A653F6</color>
+    <color name="stock_chart_index_start_text">#fff</color>
+
+    <color name="stock_chart_macd_dif">#FBCD0F</color>
+    <color name="stock_chart_macd_text">#A653F6</color>
+    <color name="stock_chart_macd_dea">#35A1DA</color>
+
+    <color name="stock_chart_kdj_k">#FBCD0F</color>
+    <color name="stock_chart_kdj_d">#35A1DA</color>
+    <color name="stock_chart_kdj_j">#A653F6</color>
+
+    <color name="stock_chart_axis_x_label">#881F1F1F</color>
+    <color name="stock_chart_axis_y_label">#7c7c7c</color>
+
+    <!-- chart -->
+    <color name="stock_chart_grid">#88676767</color>
+    <color name="stock_chart_chart_bg">#00000000</color>
+    <color name="stock_chart_line">#ffffff</color>
+    <color name="stock_chart_mountain_line">#ffffff</color>
+    <color name="stock_chart_mountain_line_gradient_start">#50FFFFFF</color>
+    <color name="stock_chart_mountain_line_gradient_end">#002196F3</color>
+    <color name="stock_chart_cost_price_line">#7d7d7f</color>
+    <color name="stock_chart_pre_close_price_line">#7d7d7f</color>
+    <color name="stock_chart_avg_price_line">#FF7B11</color>
+    <color name="stock_chart_highest_lowest_label">#ffffff</color>
+
+    <color name="stock_chart_highlight_label_bg">#8c9fad</color>
+    <color name="stock_chart_highlight_label">#fff</color>
+    <color name="stock_chart_highlight_line">#fff</color><!-- 行情Equal颜色  不变 -->
+</resources>

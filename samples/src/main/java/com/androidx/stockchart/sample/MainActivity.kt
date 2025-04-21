@@ -14,6 +14,7 @@
 package com.androidx.stockchart.sample
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -21,6 +22,7 @@ import com.androidx.stockchart.sample.sample1.Sample1Activity
 import com.androidx.stockchart.sample.sample2.Sample2Activity
 import com.androidx.stockchart.sample.sample3.Sample3Activity
 import com.androidx.stockchart.sample.sample4.Sample4Activity
+import com.androidx.stockchart.util.ResourceUtil
 
 /**
  * @author hai
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        ResourceUtil.init(this)
         setContentView(R.layout.activity_main)
     }
 
@@ -47,5 +49,10 @@ class MainActivity : AppCompatActivity() {
     }
     fun sample4(view: View) {
         startActivity(Intent(this, Sample4Activity::class.java))
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        ResourceUtil.init(this)
     }
 }

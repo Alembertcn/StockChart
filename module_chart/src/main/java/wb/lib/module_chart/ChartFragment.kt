@@ -6,11 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.Fragment
 import com.androidx.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
 import com.androidx.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
-import com.androidx.stockchart.DEFAULT_K_CHART_COST_PRICE_LINE_COLOR
+import com.androidx.stockchart.DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH
+import com.androidx.stockchart.DEFAULT_TIME_BAR_LABEL_TEXT_SIZE
 import com.androidx.stockchart.StockChartConfig
+import com.androidx.stockchart.childchart.base.AbsChildChartFactory
 import com.androidx.stockchart.childchart.base.HighlightLabelConfig
 import com.androidx.stockchart.childchart.kchart.KChartConfig
 import com.androidx.stockchart.childchart.kchart.KChartFactory
@@ -27,12 +30,14 @@ import com.androidx.stockchart.childchart.volumechart.VolumeChartFactory
 import com.androidx.stockchart.entities.FLAG_EMPTY
 import com.androidx.stockchart.entities.Highlight
 import com.androidx.stockchart.entities.IKEntity
+import com.androidx.stockchart.entities.KEntity
 import com.androidx.stockchart.entities.containFlag
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.listener.OnHighlightListener
 import com.androidx.stockchart.listener.OnLoadMoreListener
 import com.androidx.stockchart.util.DimensionUtil
 import com.androidx.stockchart.util.NumberFormatUtil
+import com.androidx.stockchart.util.ResourceUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -61,7 +66,7 @@ class ChartFragment:Fragment() {
     private var kChartIndex: Index?=null
 
     // 总配置
-    private val stockChartConfig = StockChartConfig()
+    val stockChartConfig = StockChartConfig()
 
     // K线图工厂与配置
     private var kChartFactory: KChartFactory? = null
@@ -93,6 +98,7 @@ class ChartFragment:Fragment() {
 
     private var isLoading = false
     private var isDev = true
+    var isMatchHeight = false
     var onLoadMoreListener: OnLoadMoreListener? = null
     var onHighlightListener: OnHighlightListener?=null
     private var scope:CoroutineScope?=null
@@ -201,7 +207,6 @@ class ChartFragment:Fragment() {
                 )
             }
 
-
             // 最大缩放比例
             scaleFactorMax = 5f
 
@@ -209,8 +214,15 @@ class ChartFragment:Fragment() {
             scaleFactorMin = 0.5f
 
             // 网格线设置
-            gridVerticalLineCount = 3
-            gridHorizontalLineCount = 4
+            gridVerticalLineCount = 0
+            gridHorizontalLineCount = 5
+
+            horizontalGridLineTopOffsetCalculator = {
+                kChartConfig.chartMainDisplayAreaPaddingTop+kChartConfig.marginTop
+            }
+            horizontalGridLineSpaceCalculator={
+                (kChartConfig.height - kChartConfig.chartMainDisplayAreaPaddingTop-kChartConfig.chartMainDisplayAreaPaddingBottom-kChartConfig.marginTop-kChartConfig.marginBottom)/(gridHorizontalLineCount-1f)
+            }
 
             onLoadMoreListener = this@ChartFragment.onLoadMoreListener
         }
@@ -220,6 +232,46 @@ class ChartFragment:Fragment() {
         binding.stockChart.setConfig(stockChartConfig)
     }
 
+    fun getPreNotEmptyEntry(index: Int): IKEntity?{
+        for (idx in  index-1 downTo 0){
+            val kEntity = stockChartConfig.getKEntity(idx)
+            if (kEntity?.containFlag(FLAG_EMPTY) != true) {
+                return kEntity
+            }
+        }
+        return null
+    }
+
+   var performLayout=false
+    override fun onResume() {
+        super.onResume()
+        if (isMatchHeight && !performLayout){
+            performLayout = true
+            binding.flRoot.apply {
+                viewTreeObserver.addOnGlobalLayoutListener(object :OnGlobalLayoutListener{
+                    override fun onGlobalLayout() {
+                        if(binding.flRoot.height>0){
+                            var radio = 2.8f
+                            var totalHeight = view?.height?:0
+                            val unit = (totalHeight -60f)/(radio+1)
+                            kChartConfig.height =(unit*radio).toInt()
+                            volumeChartConfig.height =unit.toInt()
+                            rsiChartConfig.height =unit.toInt()
+                            kdjChartConfig.height =unit.toInt()
+                            volumeChartConfig.height =unit.toInt()
+                            macdChartConfig.height =unit.toInt()
+                            binding.stockChart.notifyChanged()
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        }
+                    }
+                })
+                if (layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT){
+                    layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                }
+                requestLayout()
+            }
+        }
+    }
     /**
      * K线图初始化
      */
@@ -229,7 +281,7 @@ class ChartFragment:Fragment() {
         kChartConfig.apply {
             // 指标线宽度
             indexStrokeWidth = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 0.5f).toFloat()
-
+            drawBorder = true
             // 监听长按信息
             onHighlightListener = object : OnHighlightListener {
                 override fun onHighlightBegin() {
@@ -274,6 +326,7 @@ class ChartFragment:Fragment() {
 
                             showContent = "$price，$changeRatio，$volume"
                         } else {
+                            Log.d("shh", "--->${highlight.entry == kEntity}")
                             val open = "开盘价:${NumberFormatUtil.formatPrice(kEntity.getOpenPrice())}"
                             val close =
                                 "收盘价:${NumberFormatUtil.formatPrice(kEntity.getClosePrice())}"
@@ -306,13 +359,13 @@ class ChartFragment:Fragment() {
             leftLabelConfig = KChartConfig.LabelConfig(
                 3,
                 { "${NumberFormatUtil.formatPrice(it)}" },
-                DimensionUtil.sp2px(this@ChartFragment.requireContext(), 8f).toFloat(),
-                Color.parseColor("#E4E4E4"),
+                DEFAULT_TIME_BAR_LABEL_TEXT_SIZE,
+                resources.getColor(R.color.stock_chart_axis_y_label),
                 DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat(),0f,0f,
                 {
                     when (NumberFormatUtil.formatPrice(preClosePrice?:it)) {
-                        NumberFormatUtil.formatPrice(it)-> leftLabelConfig!!.textColor
-                        else -> if(it>preClosePrice!!) Color.RED else Color.GREEN
+                        NumberFormatUtil.formatPrice(it)-> stockChartConfig.equalColor
+                        else -> if(it>preClosePrice!!) stockChartConfig.riseColor else stockChartConfig.downColor
                     }
                 }
             )
@@ -339,7 +392,7 @@ class ChartFragment:Fragment() {
         volumeChartConfig.apply {
             // 图高度
             height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 40f)
-
+            drawBorder = true
 
             // 长按左侧标签配置
             highlightLabelLeft = HighlightLabelConfig(
@@ -453,10 +506,12 @@ class ChartFragment:Fragment() {
         timeBarConfig.type = timeBarType
         if(timeBarType is  TimeBarConfig.Type.DayTime){
             stockChartConfig.xValueMin = 0.0f
-            stockChartConfig.xValueMax = timeBarType.totalPoint!!.toFloat() //一个点就需要0-1坐标
+            stockChartConfig.xValueMax = timeBarType.totalPoint!!.toFloat()//一个点就需要0-1坐标
             kChartConfig.preClosePrice = preClosePrice
-            kChartConfig.chartMainDisplayAreaPaddingTop = 0f
-            kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
+            kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH/2
+            kChartConfig.chartMainDisplayAreaPaddingBottom = DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH/2
+            kChartConfig.marginTop = 0
+            kChartConfig.leftLabelConfig?.count = 3
             // 分时图只有两种类型自动校验
             if (period.value != Period.DAY_TIME && period.value != Period.FIVE_DAYS) {
                 changePeriod(Period.DAY_TIME)
@@ -470,8 +525,10 @@ class ChartFragment:Fragment() {
             stockChartConfig.xValueMin = null
             stockChartConfig.xValueMax = null
             stockChartConfig.minShowCount = initialPageSize?:60
-            kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
-            kChartConfig.chartMainDisplayAreaPaddingBottom = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
+            kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP/2
+            kChartConfig.marginTop = (DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP/2).toInt()
+            kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
+            kChartConfig.leftLabelConfig?.count = 5
         }
 
 
@@ -700,19 +757,19 @@ class ChartFragment:Fragment() {
             // 专业版
             stockChartConfig.apply {
                 showHighlightHorizontalLine = true
-                gridLineColor = com.androidx.stockchart.DEFAULT_GRID_LINE_COLOR
+                gridLineColor = ResourceUtil.getColor(R.color.stock_chart_grid)
                 addChildChart(timeBarFactory!!,1)
             }
             kChartConfig.apply {
-                avgLineColor = com.androidx.stockchart.DEFAULT_AVG_LINE_COLOR
-                preCloseLineColor = DEFAULT_K_CHART_COST_PRICE_LINE_COLOR
+                avgLineColor = ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_avg_price_line)
+                preCloseLineColor = ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_pre_close_price_line)
 
                 // 左侧标签设置
                 leftLabelConfig = KChartConfig.LabelConfig(
                     3,
                     { "${NumberFormatUtil.formatPrice(it)}" },
-                    DimensionUtil.sp2px(this@ChartFragment.requireContext(), 8f).toFloat(),
-                    Color.parseColor("#E4E4E4"),
+                    DEFAULT_TIME_BAR_LABEL_TEXT_SIZE,
+                    ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_axis_y_label),
                     DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat(),0f,0f,
                     {
                         when (preClosePrice) {
@@ -736,7 +793,7 @@ class ChartFragment:Fragment() {
         set(value) {
             field = value?.also {
                 if(period.value == Period.DAY_TIME && it>0.0){
-                    kChartConfig.updateTimeDayLast(it)
+                    kChartConfig.updateTimeDayLast(it,stockChartConfig.getKEntitiesSize()< (stockChartConfig.xValueMax?.toInt()?:0))
                     binding.stockChart.notifyChanged()
                 }else{
                     kChartConfig.showCircle = false
@@ -802,6 +859,49 @@ class ChartFragment:Fragment() {
                 }
             }
         }
+        binding.stockChart.notifyChanged()
+        refreshOptionButtonsState()
+    }
+
+    var lastFactory: AbsChildChartFactory<*>? = null
+    fun changeIndexTypeOnlyOne(index: Index){
+        if (lastFactory == null) {
+            lastFactory = volumeChartFactory
+        }
+        if (index::class in arrayOf(Index.MA::class, Index.EMA::class, Index.BOLL::class)){
+                if (period.value == Period.DAY_TIME || period.value == Period.FIVE_DAYS) return
+
+                kChartIndex =
+                    if (kChartIndex != null && kChartIndex!!::class == index::class) {
+                        null
+                    } else {
+                        index
+                    }
+                kChartConfig.index = kChartIndex
+        }else{
+           var currentFactory =  when (index::class) {
+                Index.MACD::class -> {
+                    macdChartFactory
+                }
+                Index.KDJ::class -> {
+                    kdjChartFactory
+                }
+                Index.RSI::class -> {
+                    rsiChartFactory
+                }
+                else -> {
+                    volumeChartFactory
+                }
+            }
+            if(lastFactory!=currentFactory){
+                lastFactory?.let {
+                    stockChartConfig.removeChildCharts(it)
+                }
+                stockChartConfig.addChildCharts(currentFactory!!)
+                lastFactory = currentFactory
+            }
+        }
+
         binding.stockChart.notifyChanged()
         refreshOptionButtonsState()
     }

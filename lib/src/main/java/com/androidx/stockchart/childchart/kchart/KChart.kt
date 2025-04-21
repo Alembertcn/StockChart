@@ -151,7 +151,7 @@ open class KChart(
                     else -> {
                         forEachIndexed { index, kEntity ->
                             if (yMin ==0f && yMax == 0f && index == 0) {
-                                yMin = kEntity.getClosePrice()
+                                yMin =  kEntity.getClosePrice()
                                 yMax = kEntity.getClosePrice()
                             } else {
                                 yMin = min(yMin, kEntity.getClosePrice())
@@ -606,6 +606,16 @@ open class KChart(
         val lineLength = config.lineLength
         val lineEndX =
             if (isLeft) tmp2FloatArray[0] - lineLength else tmp2FloatArray[0] + lineLength
+
+        val text = "${config.formatter.invoke(price)}"
+        val textWidth = highestAndLowestLabelPaint.measureText(text)
+        val textStartX = if (isLeft) lineEndX - textWidth else lineEndX
+        highestAndLowestLabelPaint.getFontMetrics(tmpFontMetrics)
+        val labelHeight = tmpFontMetrics.bottom - tmpFontMetrics.top
+        //矫正在显示范围内
+        tmp2FloatArray[1]=tmp2FloatArray[1].coerceIn(getChartMainDisplayArea().top-labelHeight / 2f,getChartMainDisplayArea().bottom-labelHeight / 2f)
+        val baseLine = tmp2FloatArray[1] + labelHeight / 2 - tmpFontMetrics.bottom
+
         canvas.drawLine(
             tmp2FloatArray[0],
             tmp2FloatArray[1],
@@ -613,12 +623,7 @@ open class KChart(
             tmp2FloatArray[1],
             highestAndLowestLabelPaint
         )
-        val text = "${config.formatter.invoke(price)}"
-        val textWidth = highestAndLowestLabelPaint.measureText(text)
-        val textStartX = if (isLeft) lineEndX - textWidth else lineEndX
-        highestAndLowestLabelPaint.getFontMetrics(tmpFontMetrics)
-        val baseLine =
-            tmp2FloatArray[1] + (tmpFontMetrics.bottom - tmpFontMetrics.top) / 2 - tmpFontMetrics.bottom
+
         canvas.drawText(text, textStartX, baseLine, highestAndLowestLabelPaint)
     }
 
@@ -855,6 +860,8 @@ open class KChart(
 
             avgPriceLinePaint.strokeWidth = chartConfig.avgLineStrokeWidth
             avgPriceLinePaint.color = chartConfig.avgLineColor
+            val topLimit = getChartDisplayArea().top + chartConfig.lineChartStrokeWidth/2
+            val bottomLimit = getChartDisplayArea().bottom - chartConfig.lineChartStrokeWidth/2
             var preAvgIdx = -1
             for (idx in getKEntities().indices) {
 
@@ -875,9 +882,9 @@ open class KChart(
                 mapPointsValue2Real(tmp4FloatArray)
                 canvas.drawLine(
                     tmp4FloatArray[0],
-                    tmp4FloatArray[1],
+                    tmp4FloatArray[1]/*.coerceIn(topLimit,bottomLimit)*/,
                     tmp4FloatArray[2],
-                    tmp4FloatArray[3],
+                    tmp4FloatArray[3]/*.coerceIn(topLimit,bottomLimit)*/,
                     avgPriceLinePaint
                 )
                 preAvgIdx = idx
@@ -988,7 +995,6 @@ open class KChart(
         )
 
         candleKChartPaint.strokeWidth = chartConfig.candleChartLineStrokeWidth
-
         val barWidth = 1 * (1 - chartConfig.barSpaceRatio)
         val spaceWidth = 1 * chartConfig.barSpaceRatio
         var left = spaceWidth / 2f
@@ -1028,6 +1034,8 @@ open class KChart(
         )
         lineKChartLinePaint.strokeWidth = chartConfig.lineChartStrokeWidth
         lineKChartLinePaint.color = chartConfig.lineChartColor
+        val topLimit = getChartDisplayArea().top + chartConfig.lineChartStrokeWidth/2
+        val bottomLimit = getChartDisplayArea().bottom - chartConfig.lineChartStrokeWidth/2
         var preIdx = -1
         for (idx in getKEntities().indices) {
             if (getKEntities()[idx].containFlag(FLAG_EMPTY)) {
@@ -1047,9 +1055,9 @@ open class KChart(
             mapPointsValue2Real(tmp4FloatArray)
             canvas.drawLine(
                 tmp4FloatArray[0],
-                tmp4FloatArray[1],
+                tmp4FloatArray[1]/*.coerceIn(topLimit,bottomLimit)*/,
                 tmp4FloatArray[2],
-                tmp4FloatArray[3],
+                tmp4FloatArray[3]/*.coerceIn(topLimit,bottomLimit)*/,
                 lineKChartLinePaint
             )
             preIdx = idx

@@ -16,7 +16,8 @@ package com.androidx.stockchart.childchart.macdchart
 import com.androidx.stockchart.childchart.base.*
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.listener.OnHighlightListener
-
+import com.androidx.stockchart.util.ResourceUtil
+import com.androidx.stock_chart.R
 /**
  * @author hai
  * @version 创建时间: 2021/2/18
@@ -33,15 +34,15 @@ class MacdChartConfig(
     // 长按时高亮线右侧标签配置
     var highlightLabelRight: HighlightLabelConfig? = null,
     // dif线颜色
-    var difLineColor: Int = com.androidx.stockchart.DEFAULT_MACD_DIF_LINE_COLOR,
+    var difLineColor: Int = ResourceUtil.getColor(R.color.stock_chart_macd_dif),
     // dif线宽度
     var difLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_MACD_DIF_LINE_STROKE_WIDTH,
     // dea线颜色
-    var deaLineColor: Int = com.androidx.stockchart.DEFAULT_MACD_DEA_LINE_COLOR,
+    var deaLineColor: Int =  ResourceUtil.getColor(R.color.stock_chart_macd_dea),
     // dea线宽度
     var deaLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_MACD_DEA_LINE_STROKE_WIDTH,
     // macd文字颜色
-    var macdTextColor: Int = com.androidx.stockchart.DEFAULT_MACD_TEXT_COLOR,
+    var macdTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_macd_text),
     // 柱子之间的空间占比柱子宽度
     var barSpaceRatio: Float = com.androidx.stockchart.DEFAULT_MACD_BAR_SPACE_RATIO,
     // 需要展示的指标配置

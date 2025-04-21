@@ -19,7 +19,8 @@ import com.androidx.stockchart.childchart.base.*
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.listener.OnHighlightListener
 import com.androidx.stockchart.util.NumberFormatUtil
-
+import com.androidx.stockchart.util.ResourceUtil
+import com.androidx.stock_chart.R
 /**
  * K线图配置
  *
@@ -43,15 +44,15 @@ open class KChartConfig(
     // 长按时高亮线底部标签配置
     var highlightLabelBottom: HighlightLabelConfig? = null,
     // 线形图的线条颜色
-    var lineChartColor: Int = com.androidx.stockchart.DEFAULT_K_CHART_LINE_CHART_COLOR,
+    var lineChartColor: Int = ResourceUtil.getColor(R.color.stock_chart_line),
     // 线形图的线条宽度
     var lineChartStrokeWidth: Float = com.androidx.stockchart.DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH,
     // 山峰图线条颜色
-    var mountainChartColor: Int = com.androidx.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_COLOR,
+    var mountainChartColor: Int = ResourceUtil.getColor(R.color.stock_chart_mountain_line),
     // 山峰图的线条宽度
     var mountainChartStrokeWidth: Float = com.androidx.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_STROKE_WIDTH,
     // 山峰图的封闭渐变色
-    var mountainChartLinearGradientColors: IntArray = com.androidx.stockchart.DEFAULT_K_CHART_MOUNTAIN_CHART_LINEAR_GRADIENT_COLORS,
+    var mountainChartLinearGradientColors: IntArray = intArrayOf(ResourceUtil.getColor(R.color.stock_chart_mountain_line_gradient_start), ResourceUtil.getColor(R.color.stock_chart_mountain_line_gradient_end)),
     // 蜡烛图的中间线宽度
     var candleChartLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_K_CHART_CANDLE_CHART_LINE_STROKE_WIDTH,
     // 空心蜡烛图线条宽度
@@ -61,13 +62,13 @@ open class KChartConfig(
     // 成本线价格
     var costPrice: Float? = null,
     // 成本线颜色
-    var costPriceLineColor: Int = com.androidx.stockchart.DEFAULT_K_CHART_COST_PRICE_LINE_COLOR,
+    var costPriceLineColor: Int = ResourceUtil.getColor(R.color.stock_chart_cost_price_line),
     // 成本线宽度
     var costPriceLineWidth: Float = com.androidx.stockchart.DEFAULT_K_CHART_COST_PRICE_LINE_WIDTH,
     // 昨收线价格
     var preClosePrice: Float? = null,
     // 昨收线颜色
-    var preCloseLineColor: Int = com.androidx.stockchart.DEFAULT_K_CHART_COST_PRICE_LINE_COLOR,
+    var preCloseLineColor: Int = ResourceUtil.getColor(R.color.stock_chart_pre_close_price_line),
     // 昨收线宽度
     var preCloseLineWidth: Float = com.androidx.stockchart.DEFAULT_K_CHART_COST_PRICE_LINE_WIDTH,
     var preClosePriceLineEffect: PathEffect? = DashPathEffect(floatArrayOf(20f, 10f), 0f),
@@ -78,7 +79,8 @@ open class KChartConfig(
     // 需要展示的指标类型
     var index: Index? = com.androidx.stockchart.DEFAULT_K_CHART_INDEX,
     // 指标线的颜色
-    var indexColors: List<Int> = com.androidx.stockchart.DEFAULT_K_CHART_INDEX_COLORS,
+    var indexColors: List<Int> = listOf(ResourceUtil.getColor(R.color.stock_chart_index_line1), ResourceUtil.getColor(R.color.stock_chart_index_line2), ResourceUtil.getColor(R.color.stock_chart_index_line3))
+    ,
     // 左侧标签配置
     var leftLabelConfig: LabelConfig? = com.androidx.stockchart.DEFAULT_K_CHART_LEFT_LABEL_CONFIG,
     // 右侧标签配置
@@ -86,7 +88,7 @@ open class KChartConfig(
     // 是否显示分时均线。若需要显示，K线数据需带有分时均线价格。
     var showAvgLine: Boolean = false,
     // 分时均线颜色
-    var avgLineColor: Int = com.androidx.stockchart.DEFAULT_AVG_LINE_COLOR,
+    var avgLineColor: Int = ResourceUtil.getColor(R.color.stock_chart_avg_price_line),
     // 分时均线宽度
     var avgLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_AVG_LINE_WIDTH,
     // y轴范围最小值，在增加或修改K线数据之前指定才有效
@@ -94,7 +96,7 @@ open class KChartConfig(
     // y轴范围最大值，在增加或修改K线数据之前指定才有效
     var yValueMax: Float? = null,
     // y轴依赖昨收价的百分比 null表示不依赖昨收
-    var minYRangePByPreClose: Float? = 0.01f,
+    var minYRangePByPreClose: Float? = 0.003f,
     var showCircle: Boolean = false,
     var lastPrice: Float? = null,
 ) : BaseChildChartConfig(
@@ -112,7 +114,7 @@ open class KChartConfig(
         class CANDLE(
             highestAndLowestLabelConfig: HighestAndLowestLabelConfig = HighestAndLowestLabelConfig(
                 { NumberFormatUtil.formatPrice(it) },
-                com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_COLOR,
+                ResourceUtil.getColor(R.color.stock_chart_highest_lowest_label),
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH
@@ -123,7 +125,7 @@ open class KChartConfig(
         class HOLLOW(
             highestAndLowestLabelConfig: HighestAndLowestLabelConfig = HighestAndLowestLabelConfig(
                 { NumberFormatUtil.formatPrice(it) },
-                com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_COLOR,
+                ResourceUtil.getColor(R.color.stock_chart_highest_lowest_label),
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH
@@ -142,7 +144,7 @@ open class KChartConfig(
         class BAR(
             highestAndLowestLabelConfig: HighestAndLowestLabelConfig = HighestAndLowestLabelConfig(
                 { NumberFormatUtil.formatPrice(it) },
-                com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_COLOR,
+                ResourceUtil.getColor(R.color.stock_chart_highest_lowest_label),
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE,
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH,
                 com.androidx.stockchart.DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH
@@ -187,8 +189,8 @@ open class KChartConfig(
         var textColorFormatter: ((price: Float) -> Int)? = null,
     )
 
-    fun updateTimeDayLast(last:Float){
-        showCircle=true
+    fun updateTimeDayLast(last:Float,show: Boolean=true){
+        showCircle = show
         lastPrice = last
     }
 }

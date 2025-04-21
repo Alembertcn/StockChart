@@ -1,0 +1,6 @@
+ext{
+    depSourceLibs=["module_chart"]
+    depSource={dep->
+        depSourceLibs.contains(dep)
+    }
+}

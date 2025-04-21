@@ -13,8 +13,15 @@
 
 package com.androidx.stockchart.sample.sample4
 
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.androidx.stockchart.childchart.timebar.TimeBarConfig
 import com.androidx.stockchart.childchart.timebar.TimeBarConfig.Type.DayTime
 import com.androidx.stockchart.childchart.timebar.TimeBarConfig.Type.FiveDays
@@ -32,6 +39,7 @@ import com.androidx.stockchart.listener.OnHighlightListener
 import com.androidx.stockchart.listener.OnLoadMoreListener
 import com.androidx.stockchart.sample.DataMock
 import com.androidx.stockchart.sample.R
+import com.androidx.stockchart.util.ResourceUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -53,17 +61,46 @@ class Sample4Activity : AppCompatActivity(), OnLoadMoreListener, OnHighlightList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sample4)
-
+        ResourceUtil.init(this)
         supportFragmentManager.beginTransaction().replace(R.id.flContent, fragment).commitAllowingStateLoss()
         MainScope().launch {
             fragment.period.collectLatest {
                 loadData(0,it)
             }
         }
-//        fragment.changeIndexType(Index.MA())
-//        fragment.hasIndexType(Index.MA::class)
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+            Log.d("EdgeArea", "系统手势区域: left=${insets.systemGestureInsets.left}, left2=${ insets.mandatorySystemGestureInsets.left}")
+
+            // 获取系统手势区域
+            Log.d("EdgeArea", "系统手势区域: left=${ insets.stableInsetLeft}, right=${ insets.stableInsetRight}")
+
+//            // 获取其他插入区域（如刘海屏、状态栏等）
+//            val statusBars = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+//            val navigationBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            insets
+        }
+        window.decorView.postDelayed({
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val cutout = window.decorView.rootWindowInsets.displayCutout
+            if (cutout != null) {
+                // 左侧安全区域宽度
+                val safeInsetRight = cutout.safeInsetRight // 右侧安全区域宽度
+                val safeInsetTop = cutout.safeInsetTop     // 顶部安全区域高度
+                val safeInsetBottom = cutout.safeInsetBottom // 底部安全区域高度
+
+            }
+        }},1000)
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val exclusionRects = listOf(
+                Rect(0, 0, 50, window.decorView.height) // 左侧 50px 区域排除手势冲突
+            )
+            window.setSystemGestureExclusionRects(exclusionRects)
+        }
+    }
     var isLoading = true
     var currentPage = 0
     // 加载模拟数据
@@ -147,7 +184,8 @@ class Sample4Activity : AppCompatActivity(), OnLoadMoreListener, OnHighlightList
             }
             Period.DAY_TIME -> {
                 DataMock.loadDayTimeData(this) { list ->
-                    fragment.doAfterLoad(list, preClosePrice = 623.0f, timeBarType = DayTime(totalPoint = 104,  labelParis = mapOf(0 to "9:30")))
+                    val totalPoint = list.size
+                    fragment.doAfterLoad(list, preClosePrice = 623.0f, timeBarType = DayTime(totalPoint = totalPoint,  labelParis = mapOf(0 to "9:30", totalPoint to "15:00")))
                     currentPage = page
                     isLoading = false
                 }
@@ -156,6 +194,11 @@ class Sample4Activity : AppCompatActivity(), OnLoadMoreListener, OnHighlightList
 
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        Log.d("shh","onTouch ${event?.x} ${event?.getRawX(0)}")
+
+        return super.onTouchEvent(event)
+    }
     override fun onLeftLoadMore() {
         if (!isLoading) {
             val period = fragment.period.value

@@ -16,8 +16,6 @@ package com.androidx.stockchart.childchart.base
 import android.graphics.*
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import com.androidx.stockchart.IStockChart
 import com.androidx.stockchart.StockChart
 import com.androidx.stockchart.entities.FLAG_EMPTY
@@ -61,6 +59,9 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
     protected val tmpRect by lazy { Rect() }
     protected val tmpPath by lazy { Path() }
     protected val tmpFontMetrics by lazy { Paint.FontMetrics() }
+    private val backgroundGridPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+    } }
 
     init {
         val layoutParams =
@@ -192,6 +193,7 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
 
     override fun onDraw(canvas: Canvas) {
 //        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        drawBorder(canvas)
         if (stockChart.getConfig().getKEntitiesSize() <= 0) return
         childChartMatrixHelper?.setOnDraw()
         preDrawBackground(canvas)
@@ -201,6 +203,18 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
         preDrawHighlight(canvas)
         drawHighlight(canvas)
         drawAddition(canvas)
+    }
+
+    open fun drawBorder(canvas: Canvas) {
+        if(chartConfig.drawBorder){
+         backgroundGridPaint.color = stockChart.getConfig().gridLineColor
+         backgroundGridPaint.strokeWidth = stockChart.getConfig().gridLineStrokeWidth
+            val insert = backgroundGridPaint.strokeWidth/2f
+            tmpRectF.set(getChartMainDisplayArea())
+            tmpRectF.inset(insert,insert)
+            canvas.drawRect(tmpRectF,backgroundGridPaint)
+        }
+
     }
 
     /**

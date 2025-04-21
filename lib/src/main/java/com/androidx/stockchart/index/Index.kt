@@ -15,6 +15,8 @@ package com.androidx.stockchart.index
 
 import android.graphics.Color
 import com.androidx.stockchart.entities.IKEntity
+import com.androidx.stockchart.util.ResourceUtil
+import com.androidx.stock_chart.R
 
 /**
  * @author hai
@@ -38,7 +40,7 @@ open abstract class Index(
     class MA(
         param: String = com.androidx.stockchart.DefaultIndexParams.MA,
         startText: String = com.androidx.stockchart.DefaultIndexStartText.MA,
-        startTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.MA,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTop: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
@@ -62,7 +64,7 @@ open abstract class Index(
     class EMA(
         param: String = com.androidx.stockchart.DefaultIndexParams.EMA,
         startText: String = com.androidx.stockchart.DefaultIndexStartText.EMA,
-        startTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.EMA,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTop: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
@@ -80,7 +82,7 @@ open abstract class Index(
     class BOLL(
         param: String = com.androidx.stockchart.DefaultIndexParams.BOLL,
         startText: String = com.androidx.stockchart.DefaultIndexStartText.BOLL,
-        startTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.BOLL,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTopDp: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
@@ -104,7 +106,7 @@ open abstract class Index(
     class MACD(
         param: String = com.androidx.stockchart.DefaultIndexParams.MACD,
         startText: String = com.androidx.stockchart.DefaultIndexStartText.MACD,
-        startTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.MACD,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTop: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
@@ -126,7 +128,7 @@ open abstract class Index(
     class KDJ(
         param: String = com.androidx.stockchart.DefaultIndexParams.KDJ,
         startText: String = com.androidx.stockchart.DefaultIndexStartText.KDJ,
-        startTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.KDJ,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTop: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
@@ -148,7 +150,7 @@ open abstract class Index(
     class RSI(
         param: String = com.androidx.stockchart.DefaultIndexParams.RSI,
         startText: String = "RSI",
-        startTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.RSI,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTopDp: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
@@ -170,7 +172,7 @@ open abstract class Index(
     class VOL(
         param: String = "",
         startText: String = "VOL",
-        startTextColor: Int = com.androidx.stockchart.DEFAULT_INDEX_START_TEXT_COLOR,
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String =  com.androidx.stockchart.DefaultIndexTextFormatter.VOL,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
         textMarginTopDp: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,

@@ -204,7 +204,7 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
     /**
      * 处理滑动
      */
-    fun handleTouchScroll(distanceX: Float) {
+    fun handleTouchScroll(distanceX: Float):Boolean {
 
         val kEntitiesSize = stockChart.getConfig().getKEntitiesSize()
 
@@ -308,8 +308,11 @@ internal class MatrixHelper(private val stockChart: IStockChart) {
             if (dx != 0f) {
                 scrollMatrix.postTranslate(dx, 0f)
                 stockChart.notifyChanged()
+                return true
             }
         }
+
+        return false
     }
 
     /**

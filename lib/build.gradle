@@ -17,11 +17,13 @@ plugins {
 }
 
 android {
+    namespace 'com.androidx.stock_chart'
+    resourcePrefix "stock_chart_"
     compileSdkVersion 33
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 33
     }
 

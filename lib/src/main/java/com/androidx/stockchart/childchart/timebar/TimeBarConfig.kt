@@ -13,11 +13,15 @@
 
 package com.androidx.stockchart.childchart.timebar
 
+import android.graphics.Color
 import androidx.annotation.ColorInt
 import com.androidx.stockchart.childchart.base.BaseChildChartConfig
 import com.androidx.stockchart.listener.OnHighlightListener
+import com.androidx.stockchart.util.ResourceUtil
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import com.androidx.stock_chart.R
+
 
 /**
  * @author hai
@@ -31,17 +35,17 @@ class TimeBarConfig(
     chartMainDisplayAreaPaddingTop: Float = 0f,
     chartMainDisplayAreaPaddingBottom: Float = 0f,
     // 背景色
-    @ColorInt var backGroundColor: Int = com.androidx.stockchart.DEFAULT_TIME_BAR_BG_COLOR,
+    @ColorInt var backGroundColor: Int = Color.TRANSPARENT,
     // 标签文本大小
     var labelTextSize: Float = com.androidx.stockchart.DEFAULT_TIME_BAR_LABEL_TEXT_SIZE,
     // 标签文本色
-    @ColorInt var labelTextColor: Int = com.androidx.stockchart.DEFAULT_TIME_BAR_LABEL_TEXT_SIZE_COLOR,
+    @ColorInt var labelTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_axis_x_label),
     // 长按显示的标签文本大小
     var highlightLabelTextSize: Float = com.androidx.stockchart.DEFAULT_TIME_BAR_HIGHLIGHT_LABEL_TEXT_SIZE,
     // 长按显示的标签文本色
-    @ColorInt var highlightLabelTextColor: Int = com.androidx.stockchart.DEFAULT_TIME_BAR_HIGHLIGHT_LABEL_TEXT_COLOR,
+    @ColorInt var highlightLabelTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_highlight_label),
     // 长按显示的标签背景色
-    @ColorInt var highlightLabelBgColor: Int = com.androidx.stockchart.DEFAULT_TIME_BAR_HIGHLIGHT_LABEL_BG_COLOR,
+    @ColorInt var highlightLabelBgColor: Int =  ResourceUtil.getColor(R.color.stock_chart_highlight_label_bg),
     // 时间条样式
     var type: Type = Type.Day()
 ) : BaseChildChartConfig(

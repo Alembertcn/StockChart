@@ -20,6 +20,7 @@ import com.androidx.stockchart.childchart.base.*
 import com.androidx.stockchart.entities.IKEntity
 import com.androidx.stockchart.listener.OnGestureListener
 import com.androidx.stockchart.listener.OnLoadMoreListener
+import com.androidx.stockchart.util.ResourceUtil
 
 /**
  * @author hai
@@ -56,48 +57,46 @@ class StockChartConfig {
      * 是否支持滑动
      */
     var scrollAble =
-        com.androidx.stockchart.DEFAULT_SCROLL_ABLE
+        DEFAULT_SCROLL_ABLE
 
     /**
      * 是否支持"滑过头回弹"效果
      */
     var overScrollAble =
-        com.androidx.stockchart.DEFAULT_OVER_SCROLL_ABLE
+        DEFAULT_OVER_SCROLL_ABLE
 
     /**
      * "滑过头回弹"最大距离
      */
-    var overScrollDistance =
-        com.androidx.stockchart.DEFAULT_OVER_SCROLL_DISTANCE
+    var overScrollDistance = DEFAULT_OVER_SCROLL_DISTANCE
 
     /**
      * "滑过头回弹"过程中触发加载更多需要的距离
      */
     var overScrollOnLoadMoreDistance =
-        com.androidx.stockchart.DEFAULT_OVER_SCROLL_ON_LOAD_MORE_DISTANCE
+        DEFAULT_OVER_SCROLL_ON_LOAD_MORE_DISTANCE
 
     /**
      * 是否支持双指缩放
      */
-    var scaleAble =
-        com.androidx.stockchart.DEFAULT_SCALE_ABLE
+    var scaleAble = DEFAULT_SCALE_ABLE
 
     /**
      * 是否需要"平滑的"滑动。如果false，滑动时一个下标对应的内容要么全显示，要么不显示。
      */
-    var scrollSmoothly = com.androidx.stockchart.DEFAULT_SCROLL_SMOOTHLY
+    var scrollSmoothly = DEFAULT_SCROLL_SMOOTHLY
 
     /**
      * 超出滑动限制范围时拖动的"摩擦力"
      */
     var frictionScrollExceedLimit =
-        com.androidx.stockchart.DEFAULT_FRICTION_SCROLL_EXCEED_LIMIT
+        DEFAULT_FRICTION_SCROLL_EXCEED_LIMIT
 
     /**
      * 双指缩放最大缩放比例
      */
     var scaleFactorMax =
-        com.androidx.stockchart.DEFAULT_SCALE_FACTOR_MAX
+        DEFAULT_SCALE_FACTOR_MAX
         set(value) {
             check(value >= 1f) { "The factor of max must not be less than 1.0 " }
             field = value
@@ -107,7 +106,7 @@ class StockChartConfig {
      * 双指缩放最小缩放比例
      */
     var scaleFactorMin =
-        com.androidx.stockchart.DEFAULT_SCALE_FACTOR_MIN
+        DEFAULT_SCALE_FACTOR_MIN
         set(value) {
             check(value <= 1f) { "The factor of max must not be greater than 1.0 " }
             field = value
@@ -117,19 +116,19 @@ class StockChartConfig {
      * 是否支持长按高亮横线
      */
     var showHighlightHorizontalLine =
-        com.androidx.stockchart.DEFAULT_SHOW_HIGHLIGHT_HORIZONTAL_LINE
+        DEFAULT_SHOW_HIGHLIGHT_HORIZONTAL_LINE
 
     /**
      * 长按高亮横线宽度
      */
     var highlightHorizontalLineWidth =
-        com.androidx.stockchart.DEFAULT_HIGHLIGHT_HORIZONTAL_LINE_WIDTH
+        DEFAULT_HIGHLIGHT_HORIZONTAL_LINE_WIDTH
 
     /**
      * 长按高亮横线颜色
      */
-    var highlightHorizontalLineColor =
-        com.androidx.stockchart.DEFAULT_HIGHLIGHT_HORIZONTAL_LINE_COLOR
+    var highlightHorizontalLineColor = ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_highlight_line)
+
 
     /**
      * 长按高亮线横线虚线配置
@@ -140,19 +139,18 @@ class StockChartConfig {
      * 是否支持长按高亮竖线
      */
     var showHighlightVerticalLine =
-        com.androidx.stockchart.DEFAULT_SHOW_HIGHLIGHT_VERTICAL_LINE
+        DEFAULT_SHOW_HIGHLIGHT_VERTICAL_LINE
 
     /**
      * 长按高亮竖线宽度
      */
     var highlightVerticalLineWidth =
-        com.androidx.stockchart.DEFAULT_HIGHLIGHT_VERTICAL_LINE_WIDTH
+        DEFAULT_HIGHLIGHT_VERTICAL_LINE_WIDTH
 
     /**
      * 长按高亮竖线颜色
      */
-    var highlightVerticalLineColor =
-        com.androidx.stockchart.DEFAULT_HIGHLIGHT_VERTICAL_LINE_COLOR
+    var highlightVerticalLineColor = ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_highlight_line)
 
     /**
      * 长按高亮线竖线虚线配置
@@ -162,41 +160,43 @@ class StockChartConfig {
     /**
      * 涨色值
      */
-    var riseColor: Int =
-        com.androidx.stockchart.DEFAULT_RISE_COLOR
+    var riseColor: Int = ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_up_color)
 
     /**
      * 跌色值
      */
-    var downColor: Int =
-        com.androidx.stockchart.DEFAULT_DOWN_COLOR
+    var downColor: Int = ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_down_color)
+    /**
+     * 平色值
+     */
+    var equalColor: Int = ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_equal_color)
 
     /**
      * 背景色
      */
     @ColorInt
-    var backgroundColor = com.androidx.stockchart.DEFAULT_BACKGROUND_COUNT
+    var backgroundColor =  ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_chart_bg)
 
     /**
      * 背景网格横线数
      */
-    var gridHorizontalLineCount = com.androidx.stockchart.DEFAULT_GRID_HORIZONTAL_LINE_COUNT
+    var gridHorizontalLineCount = DEFAULT_GRID_HORIZONTAL_LINE_COUNT
 
     /**
      * 背景网格竖线数
      */
-    var gridVerticalLineCount = com.androidx.stockchart.DEFAULT_GRID_VERTICAL_LINE_COUNT
+    var gridVerticalLineCount = DEFAULT_GRID_VERTICAL_LINE_COUNT
 
     /**
      * 背景网格线条色
      */
     @ColorInt
-    var gridLineColor = com.androidx.stockchart.DEFAULT_GRID_LINE_COLOR
+    var gridLineColor =  ResourceUtil.getColor(com.androidx.stock_chart.R.color.stock_chart_grid)
 
     /**
      * 背景网格线条宽度
      */
-    var gridLineStrokeWidth = com.androidx.stockchart.DEFAULT_GRID_LINE_STROKE_WIDTH
+    var gridLineStrokeWidth = DEFAULT_GRID_LINE_STROKE_WIDTH
 
     /**
      * 背景网格线条虚线配置
@@ -218,7 +218,7 @@ class StockChartConfig {
      */
     var horizontalGridLineSpaceCalculator: ((StockChart) -> Float)? = null
 
-    var valueTendToZero = com.androidx.stockchart.DEFAULT_VALUE_TEND_TO_ZERO
+    var valueTendToZero = DEFAULT_VALUE_TEND_TO_ZERO
 
     /**
      * 主数据显示区域的左内间距，主数据一般指数据线

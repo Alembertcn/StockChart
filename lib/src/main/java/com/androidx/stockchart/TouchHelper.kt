@@ -14,10 +14,12 @@
 package com.androidx.stockchart
 
 import android.graphics.Matrix
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewGroup
 import kotlin.math.abs
 
 /**
@@ -60,6 +62,8 @@ internal class TouchHelper(private val stockChart: IStockChart, private val call
                     // 不在允许的触摸范围
                     return false
                 }
+                //防止快速滑动导致的cancel
+                (stockChart as ViewGroup?)?.requestDisallowInterceptTouchEvent(true)
                 callBack.onTouchDown()
             }
             MotionEvent.ACTION_MOVE -> {
@@ -115,10 +119,14 @@ internal class TouchHelper(private val stockChart: IStockChart, private val call
                 }
             }
             if (!isTouchScaling && isTouchScalePointersLeave) {
-                gestureDetector.onTouchEvent(event)
+                val onTouchEvent = gestureDetector.onTouchEvent(event)
+                Log.d("testScroll","onTouchEvent gestureDetector $onTouchEvent")
+
+                return onTouchEvent
             }
         }
 
+        Log.d("testScroll","onTouchEvent action:${event.action} x:${event.x}")
         return true
     }
 
@@ -146,12 +154,11 @@ internal class TouchHelper(private val stockChart: IStockChart, private val call
     ): Boolean {
         if (abs(distanceX) > abs(distanceY)) {
             flingAble = true
-            callBack.onHScroll(distanceX)
+           return callBack.onHScroll(distanceX)
         } else {
             flingAble = false
+            return callBack.onVScroll(distanceY)
         }
-
-        return super.onScroll(e1, e2, distanceX, distanceY)
     }
 
     override fun onFling(
@@ -209,7 +216,11 @@ internal class TouchHelper(private val stockChart: IStockChart, private val call
         /**
          * 手指左右滑动
          */
-        fun onHScroll(distanceX: Float)
+        fun onHScroll(distanceX: Float):Boolean
+        /**
+         * 手指上下滑动
+         */
+        fun onVScroll(distanceX: Float):Boolean
 
         /**
          * 触发惯性滑动

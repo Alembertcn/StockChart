@@ -42,7 +42,7 @@ open class GestureEvent(
     /**
      * 获取对应K线数据下标
      */
-    fun getIdx() = (valueX).toInt()
+    fun getIdx() = (valueX+.5f).toInt()
 
     override fun equals(other: Any?): Boolean {
         if (other == null || other !is Highlight) return false

@@ -13,5 +13,7 @@
 
 include ':samples'
 include ':lib'
+include ':lib_chart2'
+project(':lib_chart2').projectDir = new File(rootProject.projectDir, '/lib')
 rootProject.name = "StockChart"
 include ':module_chart'
