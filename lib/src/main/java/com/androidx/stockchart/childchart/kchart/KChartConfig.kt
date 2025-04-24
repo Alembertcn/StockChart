@@ -96,9 +96,11 @@ open class KChartConfig(
     // y轴范围最大值，在增加或修改K线数据之前指定才有效
     var yValueMax: Float? = null,
     // y轴依赖昨收价的百分比 null表示不依赖昨收
-    var minYRangePByPreClose: Float? = 0.003f,
+    var minYRangeP: Float? = 0.03f,
     var showCircle: Boolean = false,
     var lastPrice: Float? = null,
+    var lastMaxY: Float? = null,
+    var lastMinY: Float? = null,
 ) : BaseChildChartConfig(
     height,
     marginTop,
@@ -189,8 +191,16 @@ open class KChartConfig(
         var textColorFormatter: ((price: Float) -> Int)? = null,
     )
 
-    fun updateTimeDayLast(last:Float,show: Boolean=true){
+    /**
+     * 更新最新价格
+     * @return 返回是否需要更新坐标
+     */
+    fun updateTimeDayLast(last:Float?,show: Boolean=true):Boolean{
         showCircle = show
         lastPrice = last
+        if(showCircle && lastPrice!=null && lastMinY!=null && lastMaxY!=null){
+          return  lastPrice!! !in lastMinY!!..lastMaxY!!
+        }
+        return false
     }
 }

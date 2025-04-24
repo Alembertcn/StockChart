@@ -125,17 +125,8 @@ open class KChart(
             return
         }
 
-        var yMin = 0f
-        var yMax = 0f
-        val preClosePrice = chartConfig.preClosePrice
-        val minYRangePByPreClose = chartConfig.minYRangePByPreClose
-        //默认为昨收价百分比
-        if(preClosePrice !=null){
-            minYRangePByPreClose?.let {
-                yMin = preClosePrice*(1-it)
-                yMax = preClosePrice*(1+it)
-            }
-        }
+        var yMin =chartConfig.lastPrice?: 0f
+        var yMax =chartConfig.lastPrice?: 0f
 
         getKEntities().filterIndexed { index, kEntity ->
             index in startIndex..endIndex && !kEntity.containFlag(
@@ -177,11 +168,20 @@ open class KChart(
                     }
                 }
         }
-        // 校验距离昨收价格相同
-        if (preClosePrice != null && minYRangePByPreClose != null && abs(yMin - preClosePrice) != abs(yMax - preClosePrice)) {
-                val delta = max(abs(yMin - preClosePrice) ,abs(yMax - preClosePrice) )
-                yMin = preClosePrice - delta
-                yMax =  preClosePrice + delta
+        val preClosePrice = chartConfig.preClosePrice
+        val minYRangePByPreClose = chartConfig.minYRangeP
+        //默认为昨收价百分比
+        if(preClosePrice !=null){
+            var diff = max(abs(yMin - preClosePrice), abs(yMax-preClosePrice))
+            if(minYRangePByPreClose!=null){
+                diff = max(diff,preClosePrice*minYRangePByPreClose)
+            }
+            yMin = preClosePrice-diff
+            yMax = preClosePrice+diff
+        }else if(minYRangePByPreClose!=null){
+            var diff = (yMax - yMin)*minYRangePByPreClose
+            yMax+=diff
+            yMin-=diff
         }
 
         if (abs(yMin - yMax) > stockChart.getConfig().valueTendToZero) {
@@ -239,7 +239,8 @@ open class KChart(
 
     override fun drawHighlight(canvas: Canvas) {
         getHighlight()?.let { highlight ->
-            val highlightAreaTop = getChartDisplayArea().top + drawnIndexTextHeight
+//            val highlightAreaTop = getChartDisplayArea().top + drawnIndexTextHeight
+            val highlightAreaTop = getChartMainDisplayArea().top
             if (stockChart.getConfig().showHighlightHorizontalLine) {
                 if (highlight.y >= highlightAreaTop && highlight.y <= getChartDisplayArea().bottom) {
 
@@ -1069,7 +1070,7 @@ open class KChart(
             tmp2FloatArray[0] = preIdx.toFloat() + 1
             tmp2FloatArray[1] = it
             mapPointsValue2Real(tmp2FloatArray)
-            circleDrawer.onDraw(canvas, tmp4FloatArray[2], tmp4FloatArray[3],tmp2FloatArray[0],tmp2FloatArray[1],lineKChartLinePaint,chartConfig)
+            circleDrawer.onDraw(canvas, tmp4FloatArray[2], tmp4FloatArray[3],tmp2FloatArray[0],tmp2FloatArray[1],lineKChartLinePaint,chartConfig,getChartDisplayArea())
         }
     }
 
@@ -1121,6 +1122,12 @@ open class KChart(
                 }
                 canvas.drawText(text, startX, pos - tmpFontMetrics.top, labelPaint)
                 pos += verticalSpace + labelHeight
+
+                if(i == 1){
+                    getConfig().lastMaxY = tmp2FloatArray[1]
+                }else if(i == config.count){
+                    getConfig().lastMinY = tmp2FloatArray[1]
+                }
             }
         }
     }

@@ -193,9 +193,8 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
 
     override fun onDraw(canvas: Canvas) {
 //        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-        drawBorder(canvas)
         if (stockChart.getConfig().getKEntitiesSize() <= 0) return
-        childChartMatrixHelper?.setOnDraw()
+        childChartMatrixHelper.setOnDraw()
         preDrawBackground(canvas)
         drawBackground(canvas)
         preDrawData(canvas)
@@ -203,18 +202,6 @@ abstract class BaseChildChart<C : BaseChildChartConfig> @JvmOverloads constructo
         preDrawHighlight(canvas)
         drawHighlight(canvas)
         drawAddition(canvas)
-    }
-
-    open fun drawBorder(canvas: Canvas) {
-        if(chartConfig.drawBorder){
-         backgroundGridPaint.color = stockChart.getConfig().gridLineColor
-         backgroundGridPaint.strokeWidth = stockChart.getConfig().gridLineStrokeWidth
-            val insert = backgroundGridPaint.strokeWidth/2f
-            tmpRectF.set(getChartMainDisplayArea())
-            tmpRectF.inset(insert,insert)
-            canvas.drawRect(tmpRectF,backgroundGridPaint)
-        }
-
     }
 
     /**

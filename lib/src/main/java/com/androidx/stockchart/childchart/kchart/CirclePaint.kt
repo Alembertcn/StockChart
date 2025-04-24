@@ -2,6 +2,7 @@ import android.animation.ValueAnimator
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.view.View
 import androidx.core.graphics.ColorUtils
 import com.androidx.stockchart.childchart.kchart.KChartConfig
@@ -36,7 +37,16 @@ class CirclePaint (val view:View){
 
     var lastCenterX = 0.0f
     var lastCenterY = 0.0f
-    fun onDraw(canvas: Canvas,startX:Float,startY:Float,centerX:Float,centerY:Float,linePaint:Paint,config: KChartConfig){
+    fun onDraw(
+        canvas: Canvas,
+        startX: Float,
+        startY: Float,
+        centerX: Float,
+        centerY: Float,
+        linePaint: Paint,
+        config: KChartConfig,
+        chartDisplayArea: RectF
+    ){
         if(!config.showCircle || config.kChartType !is KChartConfig.KChartType.LINE)return
         circleColor = if(config.preClosePrice!!>config.lastPrice!!) Color.GREEN else Color.RED
         if(lastCenterX!=centerX || lastCenterY!=centerY){
@@ -44,7 +54,8 @@ class CirclePaint (val view:View){
         }
         canvas.drawLine(startX,startY,centerX,centerY,linePaint)
         // 绘制圆圈
-        canvas.drawCircle(centerX, centerY, DimensionUtil.dp2px(view.context, circleRadius).toFloat() , paint)
+        canvas.drawCircle(centerX.coerceIn(chartDisplayArea.left+maxRadius,chartDisplayArea.right-maxRadius),
+            centerY.coerceIn(chartDisplayArea.top+maxRadius,chartDisplayArea.bottom-maxRadius), DimensionUtil.dp2px(view.context, circleRadius).toFloat() , paint)
         lastCenterX = centerX
         lastCenterY = centerY
     }

@@ -14,6 +14,7 @@ import com.androidx.stockchart.DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH
 import com.androidx.stockchart.DEFAULT_TIME_BAR_LABEL_TEXT_SIZE
 import com.androidx.stockchart.StockChartConfig
 import com.androidx.stockchart.childchart.base.AbsChildChartFactory
+import com.androidx.stockchart.childchart.base.BaseChildChart
 import com.androidx.stockchart.childchart.base.HighlightLabelConfig
 import com.androidx.stockchart.childchart.kchart.KChartConfig
 import com.androidx.stockchart.childchart.kchart.KChartFactory
@@ -214,14 +215,32 @@ class ChartFragment:Fragment() {
             scaleFactorMin = 0.5f
 
             // 网格线设置
-            gridVerticalLineCount = 0
-            gridHorizontalLineCount = 5
+            gridVerticalLineCount = 2
+            gridHorizontalLineCount = 7
+            gridLineStrokeWidth = 2f
 
             horizontalGridLineTopOffsetCalculator = {
-                kChartConfig.chartMainDisplayAreaPaddingTop+kChartConfig.marginTop
+                kChartConfig.chartMainDisplayAreaPaddingTop + kChartConfig.marginTop
             }
-            horizontalGridLineSpaceCalculator={
-                (kChartConfig.height - kChartConfig.chartMainDisplayAreaPaddingTop-kChartConfig.chartMainDisplayAreaPaddingBottom-kChartConfig.marginTop-kChartConfig.marginBottom)/(gridHorizontalLineCount-1f)
+            horizontalGridLineYCalculator={ chart,i->
+                when(i){
+                    0->kChartConfig.chartMainDisplayAreaPaddingTop
+                    1,2,3->(kChartConfig.height - kChartConfig.chartMainDisplayAreaPaddingTop)/4f *i
+                    4-> chart.getChildCharts()[0].getConfig().height - stockChartConfig.gridLineStrokeWidth/2
+                    5-> (chart.getChildCharts()[2] as View).top + stockChartConfig.gridLineStrokeWidth/2
+                    else ->chart.height.toFloat()
+                }
+            }
+
+            verticalGridLineTopOffsetCalculator = {
+                kChartConfig.chartMainDisplayAreaPaddingTop + kChartConfig.marginTop
+            }
+            verticalGridLineLeftOffsetCalculator = {
+                0f
+            }
+
+            verticalGridLineSpaceCalculator={chart,_->
+                chart.width.toFloat()
             }
 
             onLoadMoreListener = this@ChartFragment.onLoadMoreListener
@@ -281,7 +300,6 @@ class ChartFragment:Fragment() {
         kChartConfig.apply {
             // 指标线宽度
             indexStrokeWidth = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 0.5f).toFloat()
-            drawBorder = true
             // 监听长按信息
             onHighlightListener = object : OnHighlightListener {
                 override fun onHighlightBegin() {
@@ -370,6 +388,21 @@ class ChartFragment:Fragment() {
                 }
             )
 
+            // 右侧标签设置
+            rightLabelConfig = KChartConfig.LabelConfig(
+                3,
+                { "${NumberFormatUtil.formatPresent(kChartConfig.preClosePrice?.let { p->(it-p)/p })}" },
+                DEFAULT_TIME_BAR_LABEL_TEXT_SIZE,
+                resources.getColor(R.color.stock_chart_axis_y_label),
+                DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat(),0f,0f,
+                {
+                    when (NumberFormatUtil.formatPrice(preClosePrice?:it)) {
+                        NumberFormatUtil.formatPrice(it)-> stockChartConfig.equalColor
+                        else -> if(it>preClosePrice!!) stockChartConfig.riseColor else stockChartConfig.downColor
+                    }
+                }
+            )
+
             // 长按左侧标签配置
             highlightLabelLeft =
                 HighlightLabelConfig(
@@ -392,8 +425,7 @@ class ChartFragment:Fragment() {
         volumeChartConfig.apply {
             // 图高度
             height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 40f)
-            drawBorder = true
-
+            
             // 长按左侧标签配置
             highlightLabelLeft = HighlightLabelConfig(
                 textSize = DimensionUtil.sp2px(this@ChartFragment.requireContext(), 10f).toFloat(),
@@ -418,8 +450,7 @@ class ChartFragment:Fragment() {
 
         timeBarConfig.apply {
             // 背景色（时间条这里不像显示网格线，加个背景色覆盖掉）
-            backGroundColor = stockChartConfig.backgroundColor
-
+            backGroundColor = ResourceUtil.getColor(R.color.page_background)
             // 长按标签背景色
             highlightLabelBgColor = Color.parseColor("#A3A3A3")
         }
@@ -435,7 +466,7 @@ class ChartFragment:Fragment() {
         macdChartConfig.apply {
             // 图高度
             height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 80f)
-
+            
             // 长按左侧标签配置
             highlightLabelLeft = HighlightLabelConfig(
                 textSize = DimensionUtil.sp2px(this@ChartFragment.requireContext(), 10f).toFloat(),
@@ -454,7 +485,7 @@ class ChartFragment:Fragment() {
         kdjChartConfig.apply {
             // 图高度
             height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 80f)
-
+            
             // 长按左侧标签配置
             highlightLabelLeft = HighlightLabelConfig(
                 textSize = DimensionUtil.sp2px(this@ChartFragment.requireContext(), 10f).toFloat(),
@@ -473,6 +504,7 @@ class ChartFragment:Fragment() {
         rsiChartConfig.apply {
             // 图高度
             height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 80f)
+            
 
             // 长按左侧标签配置
             highlightLabelLeft = HighlightLabelConfig(
@@ -508,27 +540,29 @@ class ChartFragment:Fragment() {
             stockChartConfig.xValueMin = 0.0f
             stockChartConfig.xValueMax = timeBarType.totalPoint!!.toFloat()//一个点就需要0-1坐标
             kChartConfig.preClosePrice = preClosePrice
+            kChartConfig.minYRangeP = 0.0f
             kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH/2
             kChartConfig.chartMainDisplayAreaPaddingBottom = DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH/2
-            kChartConfig.marginTop = 0
             kChartConfig.leftLabelConfig?.count = 3
+            kChartConfig.rightLabelConfig?.count = 3
             // 分时图只有两种类型自动校验
             if (period.value != Period.DAY_TIME && period.value != Period.FIVE_DAYS) {
                 changePeriod(Period.DAY_TIME)
             }
-        }else{
+        } else {
             if(period.value == Period.DAY_TIME){
                 changePeriod(Period.DAY)
             }
             //非分时不绘制昨收线
             kChartConfig.preClosePrice = null
+            kChartConfig.minYRangeP = 0.1f
             stockChartConfig.xValueMin = null
             stockChartConfig.xValueMax = null
             stockChartConfig.minShowCount = initialPageSize?:60
-            kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP/2
-            kChartConfig.marginTop = (DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP/2).toInt()
+            kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP/1.2f
             kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
             kChartConfig.leftLabelConfig?.count = 5
+            kChartConfig.rightLabelConfig?.count = 0
         }
 
 
@@ -793,7 +827,12 @@ class ChartFragment:Fragment() {
         set(value) {
             field = value?.also {
                 if(period.value == Period.DAY_TIME && it>0.0){
-                    kChartConfig.updateTimeDayLast(it,stockChartConfig.getKEntitiesSize()< (stockChartConfig.xValueMax?.toInt()?:0))
+                    // 通知更新数据
+                    if(kChartConfig.updateTimeDayLast(it,stockChartConfig.getKEntitiesSize()< (stockChartConfig.xValueMax?.toInt()?:0))){
+                        val lastIndex = stockChartConfig.getKEntitiesSize()-1
+                        stockChartConfig.getKEntity(lastIndex)
+                            ?.let { it1 -> stockChartConfig.modifyKEntity(lastIndex, it1) }
+                    }
                     binding.stockChart.notifyChanged()
                 }else{
                     kChartConfig.showCircle = false

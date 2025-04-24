@@ -15,6 +15,7 @@ package com.androidx.stockchart.childchart.timebar
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.text.TextUtils
 import com.androidx.stockchart.IStockChart
 import com.androidx.stockchart.childchart.base.BaseChildChart
 import com.androidx.stockchart.entities.FLAG_EMPTY
@@ -120,6 +121,7 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
         var lastDrawLabel = ""
         var lastDrawTime = 0L
         val y =  getChartDisplayArea().top + getChartDisplayArea().height() / 2 + (tmpFontMetrics.bottom - tmpFontMetrics.top) / 2 - tmpFontMetrics.bottom
+        tmpDate.time=-1
         getKEntities().forEachIndexed { idx, kEntity ->
             if (kEntity.containFlag(FLAG_EMPTY)) return@forEachIndexed
 
@@ -156,7 +158,7 @@ class TimeBar(stockChart: IStockChart, chartConfig: TimeBarConfig) :
                 val min = min(lastDrawRight +labelHalfWidth,getChartMainDisplayArea().right-labelHalfWidth)
                 centerRealX = centerRealX.coerceIn(min,max)
             }
-            if(centerRealX-labelHalfWidth<lastDrawRight+labelMinSpace){
+            if(!TextUtils.isEmpty(lastDrawLabel) && centerRealX-labelHalfWidth<lastDrawRight+labelMinSpace){
                 return@forEachIndexed
             }
             val x = centerRealX - labelHalfWidth

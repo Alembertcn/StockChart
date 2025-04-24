@@ -64,4 +64,7 @@ object NumberFormatUtil {
 
         return "${numberDecimalFormat.format(volume / magnitude)}${unit}股"
     }
+    fun formatPresent(present:Float?):String{
+        return present?.let { "${formatPrice(it * 100 )}%"   } ?: "- -"
+    }
 }

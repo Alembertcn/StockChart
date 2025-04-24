@@ -216,7 +216,26 @@ class StockChartConfig {
     /**
      * 背景网格横线间距
      */
-    var horizontalGridLineSpaceCalculator: ((StockChart) -> Float)? = null
+    var horizontalGridLineSpaceCalculator: ((StockChart,Int) -> Float)? = null
+    /**
+     * 背景网格横线y值自定义
+     */
+    var horizontalGridLineYCalculator: ((StockChart, Int) -> Float)? = null
+
+    /**
+     * 背景网格竖线第一条线的左边偏移量
+     */
+    var verticalGridLineLeftOffsetCalculator: ((StockChart) -> Float)? = null
+
+    /**
+     * 背景网格竖线顶部偏移量
+     */
+    var verticalGridLineTopOffsetCalculator: ((StockChart) -> Float)? = null
+
+    /**
+     * 背景网格竖线间距
+     */
+    var verticalGridLineSpaceCalculator: ((StockChart,Int) -> Float)? = null
 
     var valueTendToZero = DEFAULT_VALUE_TEND_TO_ZERO
 

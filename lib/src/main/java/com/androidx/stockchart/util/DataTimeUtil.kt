@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
+import java.util.TimeZone
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -108,7 +109,12 @@ object DataTimeUtil {
     }
 
     // a integer to xx:xx
-    var tem: SimpleDateFormat = SimpleDateFormat()
+    val tem: SimpleDateFormat = SimpleDateFormat()
+
+    @JvmStatic
+    val temCalendar1=Calendar.getInstance(TimeZone.getDefault())
+    @JvmStatic
+    val temCalendar2=Calendar.getInstance(TimeZone.getDefault())
     private val temDate =Date()
     @JvmStatic
     fun secToTime(time: Long, format: String?): String? {
@@ -117,6 +123,11 @@ object DataTimeUtil {
         tem.applyLocalizedPattern(format)
         timeStr = tem.format(temDate)
         return timeStr
+    }
+    @JvmStatic
+    fun secToTime(time: Long, format:SimpleDateFormat): String? {
+        temDate.time = time
+        return format.format(temDate)
     }
 
     // a integer to xxxxxx
@@ -412,23 +423,31 @@ object DataTimeUtil {
 
     @JvmStatic
     fun isSameMoth(time1: Long, time2: Long): Boolean {
-        return secToTime(time1, "yyyy/MM") == secToTime(time2, "yyyy/MM")
+        temCalendar1.timeInMillis = time1
+        temCalendar2.timeInMillis = time2
+        return temCalendar1.get(Calendar.MONTH) ==temCalendar2.get(Calendar.MONTH) && temCalendar1.get(Calendar.YEAR) ==temCalendar2.get(Calendar.YEAR)
     }
 
     @JvmStatic
     fun isSameYear(time1: Long, time2: Long): Boolean {
-        return secToTime(time1, "yyyy") == secToTime(time2, "yyyy")
+        temCalendar1.timeInMillis = time1
+        temCalendar2.timeInMillis = time2
+        return temCalendar1.get(Calendar.YEAR) ==temCalendar2.get(Calendar.YEAR)
     }
 
     @JvmStatic
     fun isSameDay(time1: Long, time2: Long): Boolean {
-        return secToTime(time1, "yyyy/MM/dd") == secToTime(time2, "yyyy/MM/dd")
+        temCalendar1.timeInMillis = time1
+        temCalendar2.timeInMillis = time2
+        return temCalendar1.get(Calendar.MONTH) ==temCalendar2.get(Calendar.MONTH) && temCalendar1.get(Calendar.DAY_OF_MONTH) ==temCalendar2.get(Calendar.DAY_OF_MONTH)
     }
 
     @JvmStatic
     fun isSameMini(time1: Long, time2: Long): Boolean {
         return secToTime(time1, "m") == secToTime(time2, "m")
     }
+
+    private const val MILLIS_PER_HALF_HOUR = 30 * 60 * 1000L // 1800000L
     @JvmStatic
     fun isSameHalfHour(time1: Long, time2: Long): Boolean {
         val s1 = secToTime(time1, "mm")?.substring(0)?.toInt()?:0
@@ -443,7 +462,6 @@ object DataTimeUtil {
      */
     @JvmStatic
     fun isHalfHourTimePoint(dateMills: Long): Boolean {
-        val s = secToTime(dateMills, "yyyy/MM/dd HH:mm")
-        return s!!.endsWith("00") || s.endsWith("30")
+        return dateMills % MILLIS_PER_HALF_HOUR == 0L
     }
 }

@@ -133,7 +133,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         tmp2FloatArray[0]=getChildCharts()[0].getChartMainDisplayArea().left
         tmp2FloatArray[1] = 0f
         childCharts[0].mapPointsReal2Value(tmp2FloatArray)
-        (tmp2FloatArray[0] +.5f).toInt()+1
+        (tmp2FloatArray[0] +.5f).toInt()
     }?:0
     override fun findLastNotEmptyKEntityIdxInDisplayArea(): Int? {
         if (childCharts.isEmpty()) return null
@@ -284,28 +284,40 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
         backgroundGridPaint.pathEffect = config.gridLinePathEffect
 
         if (config.gridHorizontalLineCount > 0) {
-            val space = config.horizontalGridLineSpaceCalculator?.invoke(this)
-                ?: height.toFloat() / (config.gridHorizontalLineCount + 1)
-            var top = config.horizontalGridLineTopOffsetCalculator?.invoke(this) ?: space
+            if(config.horizontalGridLineYCalculator!=null){
+
+            }
+            var space = config.horizontalGridLineSpaceCalculator?.invoke(this,0)
+                ?: (height.toFloat() / (config.gridHorizontalLineCount + 1))
+            var top = config.horizontalGridLineYCalculator?.invoke (this,0)
+                ?:config.horizontalGridLineTopOffsetCalculator?.invoke(this)
+                ?: space
 
             for (i in 1..config.gridHorizontalLineCount) {
                 canvas.drawLine(
                     config.horizontalGridLineLeftOffsetCalculator?.invoke(this) ?: 0f,
-                    top,
+                    top.coerceIn(config.gridLineStrokeWidth/2,height-config.gridLineStrokeWidth/2),
                     width.toFloat(),
-                    top,
+                    top.coerceIn(config.gridLineStrokeWidth/2,height-config.gridLineStrokeWidth/2),
                     backgroundGridPaint
                 )
-                top += space
-
+                config.horizontalGridLineSpaceCalculator?.invoke(this,i-1)?.let {
+                    space = it
+                }
+                top = config.horizontalGridLineYCalculator?.invoke(this,i)?:(top + space)
             }
         }
 
         if (config.gridVerticalLineCount > 0) {
-            val space = width.toFloat() / (config.gridVerticalLineCount + 1)
-            var left = space
+            var space = config.verticalGridLineSpaceCalculator?.invoke(this,0)
+                ?: (width.toFloat() / (config.gridVerticalLineCount + 1))
+            var left = config.verticalGridLineLeftOffsetCalculator?.invoke(this) ?: space
+
             for (i in 1..config.gridVerticalLineCount) {
-                canvas.drawLine(left, 0f, left, height.toFloat(), backgroundGridPaint)
+                canvas.drawLine(left.coerceIn(config.gridLineStrokeWidth/2,width-config.gridLineStrokeWidth/2), config.verticalGridLineTopOffsetCalculator?.invoke(this) ?: 0f, left.coerceIn(config.gridLineStrokeWidth/2,width-config.gridLineStrokeWidth/2), height.toFloat(), backgroundGridPaint)
+                config.verticalGridLineSpaceCalculator?.invoke(this,i-1)?.let {
+                    space = it
+                }
                 left += space
             }
         }
@@ -348,6 +360,8 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
                 getConfig().getOnGestureListeners().forEach { it.onHScrolling() }
                 return handlerScroll
+            }else{
+                requestDisallowInterceptTouchEvent(false)
             }
             return false
         }
