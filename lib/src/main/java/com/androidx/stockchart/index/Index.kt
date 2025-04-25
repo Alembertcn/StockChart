@@ -192,5 +192,73 @@ open abstract class Index(
             return  mutableListOf(input.map { it.getVolume().toFloat() }.toList())
         }
     }
+
+    class ATR(
+        param: String = com.androidx.stockchart.DefaultIndexParams.ATR,
+        startText: String = "ATR",
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
+        textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.ATR,
+        textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
+        textMarginTopDp: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
+        textSpace: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_SPACE,
+        textSize: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_SIZE
+    ) : Index(
+        param,
+        startText,
+        startTextColor,
+        textFormatter,
+        textMarginLeft,
+        textMarginTopDp,
+        textSpace,
+        textSize
+    ) {
+        override fun calculate(input: List<IKEntity>) = ATRCalculator.calculate(param, input)
+    }
+
+    class OBV(
+        param: String = "",
+        startText: String = "OBV",
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
+        textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.OBV,
+        textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
+        textMarginTopDp: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
+        textSpace: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_SPACE,
+        textSize: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_SIZE
+    ) : Index(
+        param,
+        startText,
+        startTextColor,
+        textFormatter,
+        textMarginLeft,
+        textMarginTopDp,
+        textSpace,
+        textSize
+    ) {
+        override fun calculate(input: List<IKEntity>) = OBVCalculator.calculate(param, input)
+    }
+
+    class VWAP(
+        param: String = "",
+        startText: String = "VWAP",
+        startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
+        textFormatter: (idx: Int, value: Float?) -> String = com.androidx.stockchart.DefaultIndexTextFormatter.VWAP,
+        textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,
+        textMarginTop: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_TOP,
+        textSpace: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_SPACE,
+        textSize: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_SIZE,
+        preFixText: String? =null
+    ) : Index(
+        param,
+        startText,
+        startTextColor,
+        textFormatter,
+        textMarginLeft,
+        textMarginTop,
+        textSpace,
+        textSize,
+        preFixText
+    ) {
+        override fun calculate(input: List<IKEntity>) = VWAPCalculator.calculate(param, input)
+    }
 }
 

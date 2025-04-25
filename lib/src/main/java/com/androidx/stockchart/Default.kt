@@ -63,6 +63,8 @@ const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_TEXT_SIZE = 24f
 const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_STROKE_WIDTH = 1f
 const val DEFAULT_K_CHART_HIGHEST_AND_LOWEST_LABEL_LINE_LENGTH = 30f
 
+val DEFAULT_MAIN_CHART_INDEX_TYPES = arrayOf(Index.MA::class, Index.EMA::class, Index.BOLL::class, Index.VWAP::class)
+
 
 // 时间条
 const val DEFAULT_TIME_BAR_HEIGHT = 60
@@ -118,6 +120,8 @@ object DefaultIndexParams {
     const val MACD = "12,26,9"
     const val KDJ = "9,3,3"
     const val RSI = "6,12,24"
+
+    const val ATR = "14"
 }
 
 object DefaultIndexTextFormatter {
@@ -168,6 +172,15 @@ object DefaultIndexTextFormatter {
     }
     val VOL: (idx: Int, value: Float?) -> String = { idx, value ->
         NumberFormatUtil.formatVolume(value?.toLong()) ?: "——"
+    }
+    val ATR: (idx: Int, value: Float?) -> String = { idx, value ->
+        "${if(idx == 0)"TR1" else "ATR1"}:${value?.let { NumberFormatUtil.formatPrice(it) } ?: "——"}"
+    }
+    val OBV: (idx: Int, value: Float?) -> String = { idx, value ->
+        "OBV:${value?.let { NumberFormatUtil.formatPrice(it) } ?: "——"}"
+    }
+    val VWAP: (idx: Int, value: Float?) -> String = { idx, value ->
+        "VWAP:${value?.let { NumberFormatUtil.formatPrice(it) } ?: "——"}"
     }
 }
 

@@ -15,6 +15,7 @@ package com.androidx.stockchart.childchart.kchart
 
 import CirclePaint
 import android.graphics.*
+import com.androidx.stockchart.DEFAULT_MAIN_CHART_INDEX_TYPES
 import com.androidx.stockchart.IStockChart
 import com.androidx.stockchart.childchart.base.BaseChildChart
 import com.androidx.stockchart.entities.FLAG_EMPTY
@@ -85,8 +86,8 @@ open class KChart(
         indexList = null
         lastCalculateIndexType = chartConfig.index
         chartConfig.index?.apply {
-            when (this) {
-                is Index.MA, is Index.EMA, is Index.BOLL -> {
+            when (this::class) {
+                in DEFAULT_MAIN_CHART_INDEX_TYPES -> {
                     indexList = calculate(getKEntities())
                 }
                 else -> {

@@ -116,7 +116,6 @@ class Sample4Activity : AppCompatActivity(), OnLoadMoreListener, OnHighlightList
             Period.FIVE_DAYS -> {
                 DataMock.loadFiveDayData(this) { list ->
                     fragment.doAfterLoad(list, timeBarType = FiveDays(), appendDirect = isAppend)
-
                 }
             }
             Period.WEEK -> {

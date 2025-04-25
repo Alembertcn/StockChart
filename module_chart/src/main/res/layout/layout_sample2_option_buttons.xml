@@ -221,6 +221,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="BOLL" />
+        <TextView
+            android:id="@+id/index_vwap"
+            style="@style/OptionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="VWAP" />
 
         <TextView
             android:id="@+id/index_macd"
@@ -249,6 +255,18 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="VOL" />
+        <TextView
+            android:id="@+id/index_atr"
+            style="@style/OptionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="ATR" />
+        <TextView
+            android:id="@+id/index_obv"
+            style="@style/OptionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="OBV" />
 
         <TextView
             android:id="@+id/custom"

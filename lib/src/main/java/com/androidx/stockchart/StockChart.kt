@@ -19,6 +19,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import androidx.annotation.UiThread
 import com.androidx.stockchart.childchart.base.BaseChildChart
@@ -50,7 +51,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private val tmp2FloatArray by lazy { FloatArray(2) }
     private val tmp4FloatArray by lazy { FloatArray(4) }
     private val backgroundGridPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-
+    private val touchSlop by lazy{ ViewConfiguration.get(context).scaledTouchSlop }
     init {
         setWillNotDraw(false)
         setOnTouchListener(touchHelper)
@@ -351,6 +352,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
 
         var handlerScroll = false
+
         override fun onHScroll(distanceX: Float):Boolean {
             if (getConfig().scrollAble) {
                 if(matrixHelper.handleTouchScroll(distanceX)){
@@ -366,7 +368,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
             return false
         }
 
-        override fun onVScroll(distanceX: Float): Boolean {
+        override fun onVScroll(distanceY: Float): Boolean {
             requestDisallowInterceptTouchEvent(handlerScroll)
             return false
         }

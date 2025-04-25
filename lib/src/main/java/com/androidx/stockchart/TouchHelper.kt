@@ -220,7 +220,7 @@ internal class TouchHelper(private val stockChart: IStockChart, private val call
         /**
          * 手指上下滑动
          */
-        fun onVScroll(distanceX: Float):Boolean
+        fun onVScroll(distanceY: Float):Boolean
 
         /**
          * 触发惯性滑动

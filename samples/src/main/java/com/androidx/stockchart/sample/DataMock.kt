@@ -179,7 +179,9 @@ object DataMock {
                         item.getString("open").toFloat(),
                         item.getString("close").toFloat(),
                         item.getLong("volume"),
-                        item.getLong("time")
+                        item.getLong("time"),
+                        null,
+                        (item.getLong("volume")*item.getString("close").toFloat()).toBigDecimal()
                     )
                     result.add(kEntity)
                 }

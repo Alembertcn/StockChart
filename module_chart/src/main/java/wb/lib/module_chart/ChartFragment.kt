@@ -8,13 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.Fragment
-import com.androidx.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_BOTTOM
 import com.androidx.stockchart.DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP
 import com.androidx.stockchart.DEFAULT_K_CHART_LINE_CHART_STROKE_WIDTH
+import com.androidx.stockchart.DEFAULT_MAIN_CHART_INDEX_TYPES
 import com.androidx.stockchart.DEFAULT_TIME_BAR_LABEL_TEXT_SIZE
 import com.androidx.stockchart.StockChartConfig
+import com.androidx.stockchart.childchart.atrchart.ATRChartConfig
+import com.androidx.stockchart.childchart.atrchart.ATRChartFactory
 import com.androidx.stockchart.childchart.base.AbsChildChartFactory
-import com.androidx.stockchart.childchart.base.BaseChildChart
 import com.androidx.stockchart.childchart.base.HighlightLabelConfig
 import com.androidx.stockchart.childchart.kchart.KChartConfig
 import com.androidx.stockchart.childchart.kchart.KChartFactory
@@ -22,6 +23,8 @@ import com.androidx.stockchart.childchart.kdjchart.KdjChartConfig
 import com.androidx.stockchart.childchart.kdjchart.KdjChartFactory
 import com.androidx.stockchart.childchart.macdchart.MacdChartConfig
 import com.androidx.stockchart.childchart.macdchart.MacdChartFactory
+import com.androidx.stockchart.childchart.obvchart.OBVChartConfig
+import com.androidx.stockchart.childchart.obvchart.OBVChartFactory
 import com.androidx.stockchart.childchart.rskchart.RsiChartConfig
 import com.androidx.stockchart.childchart.rskchart.RsiChartFactory
 import com.androidx.stockchart.childchart.timebar.TimeBarConfig
@@ -31,7 +34,6 @@ import com.androidx.stockchart.childchart.volumechart.VolumeChartFactory
 import com.androidx.stockchart.entities.FLAG_EMPTY
 import com.androidx.stockchart.entities.Highlight
 import com.androidx.stockchart.entities.IKEntity
-import com.androidx.stockchart.entities.KEntity
 import com.androidx.stockchart.entities.containFlag
 import com.androidx.stockchart.index.Index
 import com.androidx.stockchart.listener.OnHighlightListener
@@ -92,6 +94,13 @@ class ChartFragment:Fragment() {
     // rsi指标图工厂与配置
     private var rsiChartFactory: RsiChartFactory? = null
     private val rsiChartConfig = RsiChartConfig()
+    // atr指标图工厂与配置
+    private var atrChartFactory: ATRChartFactory? = null
+    private val atrChartConfig = ATRChartConfig()
+
+    // obv指标图工厂与配置
+    private var obvChartFactory: OBVChartFactory? = null
+    private val obvChartConfig = OBVChartConfig()
 
     // 自定义示例图与配置
     private var customChartFactory: CustomChartFactory? = null
@@ -184,6 +193,8 @@ class ChartFragment:Fragment() {
         initMacdChart()
         initKdjChart()
         initRsiChart()
+        initATRChart()
+        initOBVChart()
         initCustomChart()
 
         stockChartConfig.apply {
@@ -198,6 +209,8 @@ class ChartFragment:Fragment() {
                     macdChartFactory!!,
                     kdjChartFactory!!,
                     rsiChartFactory!!,
+                    atrChartFactory!!,
+                    obvChartFactory!!,
                     customChartFactory!!
                 )
             }else{
@@ -214,35 +227,40 @@ class ChartFragment:Fragment() {
             // 最小缩放比例
             scaleFactorMin = 0.5f
 
-            // 网格线设置
-            gridVerticalLineCount = 2
-            gridHorizontalLineCount = 7
-            gridLineStrokeWidth = 2f
 
-            horizontalGridLineTopOffsetCalculator = {
-                kChartConfig.chartMainDisplayAreaPaddingTop + kChartConfig.marginTop
-            }
-            horizontalGridLineYCalculator={ chart,i->
-                when(i){
-                    0->kChartConfig.chartMainDisplayAreaPaddingTop
-                    1,2,3->(kChartConfig.height - kChartConfig.chartMainDisplayAreaPaddingTop)/4f *i
-                    4-> chart.getChildCharts()[0].getConfig().height - stockChartConfig.gridLineStrokeWidth/2
-                    5-> (chart.getChildCharts()[2] as View).top + stockChartConfig.gridLineStrokeWidth/2
-                    else ->chart.height.toFloat()
+            if(!isDev){
+                // 网格线设置
+                gridVerticalLineCount = 2
+                gridHorizontalLineCount = 7
+                gridLineStrokeWidth = 2f
+                horizontalGridLineTopOffsetCalculator = {
+                    kChartConfig.chartMainDisplayAreaPaddingTop + kChartConfig.marginTop
                 }
-            }
 
-            verticalGridLineTopOffsetCalculator = {
-                kChartConfig.chartMainDisplayAreaPaddingTop + kChartConfig.marginTop
-            }
-            verticalGridLineLeftOffsetCalculator = {
-                0f
-            }
+                horizontalGridLineYCalculator={ chart,i->
+                    when(i){
+                        0->kChartConfig.chartMainDisplayAreaPaddingTop
+                        1,2,3->(kChartConfig.height - kChartConfig.chartMainDisplayAreaPaddingTop)/4f *i
+                        4-> chart.getChildCharts()[0].getConfig().height - stockChartConfig.gridLineStrokeWidth/2
+                        5-> (chart.getChildCharts()[2] as View).top + stockChartConfig.gridLineStrokeWidth/2
+                        else ->chart.height.toFloat()
+                    }
+                }
+                verticalGridLineTopOffsetCalculator = {
+                    kChartConfig.chartMainDisplayAreaPaddingTop + kChartConfig.marginTop
+                }
+                verticalGridLineLeftOffsetCalculator = {
+                    0f
+                }
 
-            verticalGridLineSpaceCalculator={chart,_->
-                chart.width.toFloat()
-            }
+                verticalGridLineSpaceCalculator={chart,_->
+                    chart.width.toFloat()
+                }
 
+            }else{
+                gridVerticalLineCount = 2
+                gridHorizontalLineCount = 7
+            }
             onLoadMoreListener = this@ChartFragment.onLoadMoreListener
         }
 
@@ -514,6 +532,44 @@ class ChartFragment:Fragment() {
             )
         }
     }
+    /**
+     * atr指标图初始化
+     */
+    private fun initATRChart() {
+        atrChartFactory = ATRChartFactory(binding.stockChart, atrChartConfig)
+
+        atrChartConfig.apply {
+            // 图高度
+            height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 80f)
+
+
+            // 长按左侧标签配置
+            highlightLabelLeft = HighlightLabelConfig(
+                textSize = DimensionUtil.sp2px(this@ChartFragment.requireContext(), 10f).toFloat(),
+                bgColor = Color.parseColor("#A3A3A3"),
+                padding = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat()
+            )
+        }
+    }
+    /**
+     * obv指标图初始化
+     */
+    private fun initOBVChart() {
+        obvChartFactory = OBVChartFactory(binding.stockChart, obvChartConfig)
+
+        obvChartConfig.apply {
+            // 图高度
+            height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 80f)
+
+
+            // 长按左侧标签配置
+            highlightLabelLeft = HighlightLabelConfig(
+                textSize = DimensionUtil.sp2px(this@ChartFragment.requireContext(), 10f).toFloat(),
+                bgColor = Color.parseColor("#A3A3A3"),
+                padding = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat()
+            )
+        }
+    }
 
     /**
      * 自定义示例图初始化
@@ -700,10 +756,13 @@ class ChartFragment:Fragment() {
                 Pair(binding.llOptions.indexMa, Index.MA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
                 Pair(binding.llOptions.indexEma, Index.EMA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
                 Pair(binding.llOptions.indexBoll, Index.BOLL(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
+                Pair(binding.llOptions.indexVwap, Index.VWAP(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")),
                 Pair(binding.llOptions.indexMacd, Index.MACD()),
                 Pair(binding.llOptions.indexKdj, Index.KDJ()),
                 Pair(binding.llOptions.indexRsi, Index.RSI()),
                 Pair(binding.llOptions.indexVol, Index.VOL()),
+                Pair(binding.llOptions.indexAtr, Index.ATR()),
+                Pair(binding.llOptions.indexObv, Index.OBV()),
             )
         )
 
@@ -737,7 +796,7 @@ class ChartFragment:Fragment() {
         }
         indexOptionButton.forEach { (button, index) ->
             when (index::class) {
-                Index.MA::class, Index.EMA::class, Index.BOLL::class -> { // 这三个是K线图中的指标
+                in DEFAULT_MAIN_CHART_INDEX_TYPES -> { // 这三个是K线图中的指标
                     button.isSelected =
                         kChartConfig.index != null && kChartConfig.index!!::class == index::class
                 }
@@ -756,6 +815,14 @@ class ChartFragment:Fragment() {
                 Index.VOL::class -> {
                     button.isSelected =
                         stockChartConfig.childChartFactories.contains(volumeChartFactory!!)
+                }
+                Index.ATR::class -> {
+                    button.isSelected =
+                        stockChartConfig.childChartFactories.contains(atrChartFactory!!)
+                }
+                Index.OBV::class -> {
+                    button.isSelected =
+                        stockChartConfig.childChartFactories.contains(obvChartFactory!!)
                 }
             }
         }
@@ -850,6 +917,8 @@ class ChartFragment:Fragment() {
         Index.MACD::class -> stockChartConfig.childChartFactories.contains(macdChartFactory!!)
         Index.KDJ::class -> stockChartConfig.childChartFactories.contains(kdjChartFactory!!)
         Index.RSI::class -> stockChartConfig.childChartFactories.contains(rsiChartFactory!!)
+        Index.ATR::class -> stockChartConfig.childChartFactories.contains(atrChartFactory!!)
+        Index.OBV::class -> stockChartConfig.childChartFactories.contains(obvChartFactory!!)
         Index.VOL::class -> stockChartConfig.childChartFactories.contains(volumeChartFactory!!)
         else -> false
     }
@@ -857,8 +926,7 @@ class ChartFragment:Fragment() {
 
     fun changeIndexType(index: Index){
         when (index::class) {
-            Index.MA::class, Index.EMA::class, Index.BOLL::class -> { // 这三个是K线图中的指标
-
+            in DEFAULT_MAIN_CHART_INDEX_TYPES -> { // 这三个是K线图中的指标
                 if (period.value == Period.DAY_TIME || period.value == Period.FIVE_DAYS) return
 
                 kChartIndex =
@@ -890,6 +958,20 @@ class ChartFragment:Fragment() {
                     stockChartConfig.addChildCharts(rsiChartFactory!!)
                 }
             }
+            Index.ATR::class -> {
+                if (stockChartConfig.childChartFactories.contains(atrChartFactory!!)) {
+                    stockChartConfig.removeChildCharts(atrChartFactory!!)
+                } else {
+                    stockChartConfig.addChildCharts(atrChartFactory!!)
+                }
+            }
+            Index.OBV::class -> {
+                if (stockChartConfig.childChartFactories.contains(obvChartFactory!!)) {
+                    stockChartConfig.removeChildCharts(obvChartFactory!!)
+                } else {
+                    stockChartConfig.addChildCharts(obvChartFactory!!)
+                }
+            }
             Index.VOL::class -> {
                 if (stockChartConfig.childChartFactories.contains(volumeChartFactory!!)) {
                     stockChartConfig.removeChildCharts(volumeChartFactory!!)
@@ -907,7 +989,7 @@ class ChartFragment:Fragment() {
         if (lastFactory == null) {
             lastFactory = volumeChartFactory
         }
-        if (index::class in arrayOf(Index.MA::class, Index.EMA::class, Index.BOLL::class)){
+        if (index::class in DEFAULT_MAIN_CHART_INDEX_TYPES){
                 if (period.value == Period.DAY_TIME || period.value == Period.FIVE_DAYS) return
 
                 kChartIndex =
@@ -927,6 +1009,12 @@ class ChartFragment:Fragment() {
                 }
                 Index.RSI::class -> {
                     rsiChartFactory
+                }
+                Index.ATR::class -> {
+                    atrChartFactory
+                }
+                Index.ATR::class -> {
+                    obvChartFactory
                 }
                 else -> {
                     volumeChartFactory
