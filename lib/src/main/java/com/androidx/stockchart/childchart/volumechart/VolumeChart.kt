@@ -317,7 +317,7 @@ class VolumeChart(
 
             if (stockChart.getConfig().showHighlightVerticalLine) {
                 if (highlight.x >= getChartDisplayArea().left && highlight.x <= getChartDisplayArea().right) {
-
+                    val highlightAreaTop = getChartDisplayArea().top + drawnIndexTextHeight
                     highlightVerticalLinePaint.color =
                         stockChart.getConfig().highlightVerticalLineColor
                     highlightVerticalLinePaint.strokeWidth =
@@ -341,7 +341,7 @@ class VolumeChart(
                     // highlight vertical line
                     canvas.drawLine(
                         x,
-                        getChartDisplayArea().top,
+                        getChartDisplayArea().top /* highlightAreaTop */,
                         x,
                         getChartDisplayArea().bottom,
                         highlightVerticalLinePaint

@@ -148,6 +148,8 @@ class KdjChart(stockChart: IStockChart, chartConfig: KdjChartConfig) :
     }
 
     private fun doDrawLine(canvas: Canvas, valueList: List<Float?>?) {
+        if(valueList==null)return
+
         val saveCount = canvas.saveLayer(
             getChartMainDisplayArea().left,
             getChartDisplayArea().top,
@@ -155,11 +157,12 @@ class KdjChart(stockChart: IStockChart, chartConfig: KdjChartConfig) :
             getChartDisplayArea().bottom,
             null
         )
-        valueList?.forEachIndexed { valueIdx, value ->
-            if (valueIdx == 0) {
-                return@forEachIndexed
-            }
-            value?.let { value ->
+
+        val firstIndex = (stockChart.findFirstIdxInDisplayArea()-1).coerceAtLeast(0)
+        val lastIndex = (stockChart.findLastIdxInDisplayArea()+1).coerceAtMost(valueList.size-1)
+        for (valueIdx in firstIndex..lastIndex){
+            val value = valueList[valueIdx]
+            if(valueIdx!=0 && value!=null){
                 valueList[valueIdx - 1]?.let { preValue ->
                     tmp4FloatArray[0] = valueIdx - 1 + 0.5f
                     tmp4FloatArray[1] = preValue

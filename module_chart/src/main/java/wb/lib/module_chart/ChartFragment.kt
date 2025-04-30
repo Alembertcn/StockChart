@@ -115,6 +115,11 @@ class ChartFragment:Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.getBoolean("IS_DEV")?.let {
+            isDev = it
+        }
+        isMatchHeight= !isDev
+
         kChartIndex =Index.MA(preFixText = " ${getString(R.string.quo_chart_no_restoration)} ")
 
     }
@@ -131,9 +136,6 @@ class ChartFragment:Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.getBoolean("dev")?.let {
-            isDev = it
-        }
         scope=MainScope()
         // StockChart初始化
         initStockChart()
@@ -201,7 +203,7 @@ class ChartFragment:Fragment() {
 //            chartMainDisplayAreaPaddingLeft = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
 //            chartMainDisplayAreaPaddingRight = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
             // 将需要显示的子图的工厂添加进StockChart配置
-            if(!isDev){
+            if(isDev){
                 addChildCharts(
                     kChartFactory!!,
                     timeBarFactory!!,
@@ -228,7 +230,10 @@ class ChartFragment:Fragment() {
             scaleFactorMin = 0.5f
 
 
-            if(!isDev){
+            if(isDev){
+                gridVerticalLineCount = 2
+                gridHorizontalLineCount = 5
+            }else{
                 // 网格线设置
                 gridVerticalLineCount = 2
                 gridHorizontalLineCount = 7
@@ -240,7 +245,7 @@ class ChartFragment:Fragment() {
                 horizontalGridLineYCalculator={ chart,i->
                     when(i){
                         0->kChartConfig.chartMainDisplayAreaPaddingTop
-                        1,2,3->(kChartConfig.height - kChartConfig.chartMainDisplayAreaPaddingTop)/4f *i
+                        1,2,3->kChartConfig.chartMainDisplayAreaPaddingTop + (kChartConfig.height - kChartConfig.chartMainDisplayAreaPaddingTop)/4f *i
                         4-> chart.getChildCharts()[0].getConfig().height - stockChartConfig.gridLineStrokeWidth/2
                         5-> (chart.getChildCharts()[2] as View).top + stockChartConfig.gridLineStrokeWidth/2
                         else ->chart.height.toFloat()
@@ -256,10 +261,6 @@ class ChartFragment:Fragment() {
                 verticalGridLineSpaceCalculator={chart,_->
                     chart.width.toFloat()
                 }
-
-            }else{
-                gridVerticalLineCount = 2
-                gridHorizontalLineCount = 7
             }
             onLoadMoreListener = this@ChartFragment.onLoadMoreListener
         }
@@ -344,10 +345,10 @@ class ChartFragment:Fragment() {
                                 "最新价:${NumberFormatUtil.formatPrice(kEntity.getClosePrice())}"
                             var changeRatio = "涨跌幅:——"
                             kChartConfig.preClosePrice?.let{ it ->
-                                changeRatio = "涨跌幅:${Util.formatChangeRatio(kEntity.getClosePrice(),it)}"
+                                changeRatio = "涨跌幅:${NumberFormatUtil.formatChangeRatio(kEntity.getClosePrice(),it)}"
                             }
-                            val volume = "成交量:${Util.formatVolume(kEntity.getVolume())}"
-                            val amount = "成交额:${kEntity.getAmount()?.let { Util.formatAmount(it) } ?: "- -"}"
+                            val volume = "成交量:${NumberFormatUtil.formatVolume(kEntity.getVolume())}"
+                            val amount = "成交额:${kEntity.getAmount()?.let { NumberFormatUtil.formatAmount(it) } ?: "- -"}"
 
                             showContent = "$price，$changeRatio，$volume $amount"
                         } else if (kChartType is KChartConfig.KChartType.LINE || kChartType is KChartConfig.KChartType.MOUNTAIN) {
@@ -356,9 +357,9 @@ class ChartFragment:Fragment() {
                                 "最新价:${NumberFormatUtil.formatPrice(kEntity.getClosePrice())}"
                             var changeRatio = "涨跌幅:——"
                             firstIdx?.let{ it ->
-                                changeRatio = "涨跌幅:${Util.formatChangeRatio(kEntity.getClosePrice(),kEntities[it].getClosePrice())}"
+                                changeRatio = "涨跌幅:${NumberFormatUtil.formatChangeRatio(kEntity.getClosePrice(),kEntities[it].getClosePrice())}"
                             }
-                            val volume = "成交量:${Util.formatVolume(kEntity.getVolume())}"
+                            val volume = "成交量:${NumberFormatUtil.formatVolume(kEntity.getVolume())}"
 
                             showContent = "$price，$changeRatio，$volume"
                         } else {
@@ -370,12 +371,12 @@ class ChartFragment:Fragment() {
                             val low = "最低价${NumberFormatUtil.formatPrice(kEntity.getLowPrice())}"
                             val changeRatio =
                                 "涨跌幅:${
-                                    Util.formatChangeRatio(
+                                    NumberFormatUtil.formatChangeRatio(
                                         kEntity.getClosePrice(),
                                         kEntity.getOpenPrice()
                                     )
                                 }"
-                            val volume = "成交量:${Util.formatVolume(kEntity.getVolume())}"
+                            val volume = "成交量:${NumberFormatUtil.formatVolume(kEntity.getVolume())}"
 
                             showContent = "$open，$close，$high，$low，$changeRatio，$volume"
                         }
@@ -409,7 +410,7 @@ class ChartFragment:Fragment() {
             // 右侧标签设置
             rightLabelConfig = KChartConfig.LabelConfig(
                 3,
-                { "${NumberFormatUtil.formatPresent(kChartConfig.preClosePrice?.let { p->(it-p)/p })}" },
+                { "${NumberFormatUtil.formatPresent(kChartConfig.preClosePrice?.let { p->(it-p)/p })}".let{ if (it == "0.00%" || it == "-0.00%") "" else it } },
                 DEFAULT_TIME_BAR_LABEL_TEXT_SIZE,
                 resources.getColor(R.color.stock_chart_axis_y_label),
                 DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat(),0f,0f,
@@ -450,7 +451,7 @@ class ChartFragment:Fragment() {
                 bgColor = Color.parseColor("#A3A3A3"),
                 padding = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat(),
                 textFormat = { volume ->
-                    Util.formatVolume(volume = volume.toLong())
+                    NumberFormatUtil.formatVolume(volume = volume.toLong())
                 }
             )
 
@@ -589,7 +590,6 @@ class ChartFragment:Fragment() {
         appendDirect: Int=0,
         initialPageSize:Int? = 48
     ) {
-
         // 设置时间条样式
         timeBarConfig.type = timeBarType
         if(timeBarType is  TimeBarConfig.Type.DayTime){
@@ -619,6 +619,7 @@ class ChartFragment:Fragment() {
             kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
             kChartConfig.leftLabelConfig?.count = 5
             kChartConfig.rightLabelConfig?.count = 0
+            changeKChartType(KChartConfig.KChartType.HOLLOW())
         }
 
 
@@ -691,6 +692,9 @@ class ChartFragment:Fragment() {
                     kChartType = if(volumeChartConfig.volumeChartType is VolumeChartConfig.VolumeChartType.CANDLE) KChartConfig.KChartType.CANDLE() else KChartConfig.KChartType.HOLLOW()
                 }
             }
+        }
+        volumeChartConfig.apply {
+            volumeChartType = if(kChartConfig.kChartType is KChartConfig.KChartType.HOLLOW) VolumeChartConfig.VolumeChartType.HOLLOW() else VolumeChartConfig.VolumeChartType.CANDLE()
         }
         this.period.value = period
         refreshOptionButtonsState()
@@ -992,11 +996,9 @@ class ChartFragment:Fragment() {
         if (index::class in DEFAULT_MAIN_CHART_INDEX_TYPES){
                 if (period.value == Period.DAY_TIME || period.value == Period.FIVE_DAYS) return
 
-                kChartIndex =
                     if (kChartIndex != null && kChartIndex!!::class == index::class) {
-                        null
                     } else {
-                        index
+                        kChartIndex =  index
                     }
                 kChartConfig.index = kChartIndex
         }else{

@@ -14,14 +14,17 @@
 package com.androidx.stockchart
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import androidx.annotation.UiThread
+import androidx.core.graphics.drawable.toDrawable
 import com.androidx.stockchart.childchart.base.BaseChildChart
 import com.androidx.stockchart.childchart.base.IChildChart
 import com.androidx.stockchart.entities.*
@@ -55,6 +58,7 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
     init {
         setWillNotDraw(false)
         setOnTouchListener(touchHelper)
+        setLayerType(View.LAYER_TYPE_HARDWARE, null)
     }
 
     override fun getTouchArea() =
@@ -268,11 +272,27 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
             childTop = childBottom + childLayoutParams.bottomMargin
         }
     }
-
+    // 预渲染静态内容到 Bitmap
+    private var cachedBitmap: Bitmap? = null
     override fun onDraw(canvas: Canvas) {
-        drawBackgroundColor(canvas)
-        drawBackgroundGrid(canvas)
-        super.onDraw(canvas)
+        Log.d("shh","testDraw onDraw ${cachedBitmap!=null}")
+        canvas.clipRect(0,0,width,height)
+        if(cachedBitmap!=null){
+            canvas.drawBitmap(cachedBitmap!!,canvas.matrix,null)
+        }else{
+//            cachedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+//            canvas.setBitmap(cachedBitmap)
+            drawBackgroundColor(canvas)
+            drawBackgroundGrid(canvas)
+            super.onDraw(canvas)
+        }
+    }
+
+    override fun invalidate() {
+        Log.d("shh","testDraw invalidate")
+
+        cachedBitmap = null
+        super.invalidate()
     }
 
     private fun drawBackgroundColor(canvas: Canvas) {

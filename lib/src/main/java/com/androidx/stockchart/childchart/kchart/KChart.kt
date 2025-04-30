@@ -15,6 +15,8 @@ package com.androidx.stockchart.childchart.kchart
 
 import CirclePaint
 import android.graphics.*
+import android.util.Log
+import android.util.SparseArray
 import com.androidx.stockchart.DEFAULT_MAIN_CHART_INDEX_TYPES
 import com.androidx.stockchart.IStockChart
 import com.androidx.stockchart.childchart.base.BaseChildChart
@@ -75,11 +77,13 @@ open class KChart(
 
     private var indexList: List<List<Float?>>? = null
     private var lastCalculateIndexType: Index? = null
+    private val labelCache= mutableMapOf<KChartConfig.LabelConfig,HashMap<Float,LabelInfo>>()
 
     private var drawnIndexTextHeight = 0f
 
     override fun onKEntitiesChanged() {
         calculateIndexList()
+        labelCache.clear()
     }
 
     private fun calculateIndexList() {
@@ -160,15 +164,18 @@ open class KChart(
                 }
             }
 
-        indexList?.forEach { valueList ->
-            valueList.filterIndexed { idx, _ -> idx in startIndex..endIndex }.filterNotNull()
-                .apply {
-                    if (isNotEmpty()) {
-                        yMax = max(yMax, max())
-                        yMin = min(yMin, min())
+        if(chartConfig.index !is Index.VWAP){
+            indexList?.forEach { valueList ->
+                for (idx in startIndex..endIndex){
+                    val value = valueList[idx]
+                    if(value!=null){
+                        yMax = max(yMax, value)
+                        yMin = min(yMin, value)
                     }
                 }
+            }
         }
+
         val preClosePrice = chartConfig.preClosePrice
         val minYRangePByPreClose = chartConfig.minYRangeP
         //默认为昨收价百分比
@@ -180,7 +187,7 @@ open class KChart(
             yMin = preClosePrice-diff
             yMax = preClosePrice+diff
         }else if(minYRangePByPreClose!=null){
-            var diff = (yMax - yMin)*minYRangePByPreClose
+            val diff = (yMax - yMin)*minYRangePByPreClose
             yMax+=diff
             yMin-=diff
         }
@@ -208,6 +215,9 @@ open class KChart(
     override fun preDrawData(canvas: Canvas) {}
 
     override fun drawData(canvas: Canvas) {
+        drawCostPriceLine(canvas)
+        drawPreClosePriceLine(canvas)
+
         when (chartConfig.kChartType) {
             is KChartConfig.KChartType.LINE -> {
                 drawLineKChart(canvas)
@@ -226,8 +236,6 @@ open class KChart(
             }
         }
         drawAvgPriceLine(canvas)
-        drawCostPriceLine(canvas)
-        drawPreClosePriceLine(canvas)
         drawLabels(canvas)
         drawHighestAndLowestLabel(canvas)
         drawIndex(canvas)
@@ -641,6 +649,10 @@ open class KChart(
             getChartDisplayArea().bottom,
             null
         )
+
+        val firstIndex = (stockChart.findFirstIdxInDisplayArea()-1).coerceAtLeast(0)
+        val lastIndex = (stockChart.findLastIdxInDisplayArea()+1).coerceAtMost(getKEntities().size-1)
+
         indexPaint.strokeWidth = chartConfig.indexStrokeWidth
         indexList?.forEachIndexed { lineIdx, pointList ->
             chartConfig.indexColors?.let { indexColors ->
@@ -655,6 +667,10 @@ open class KChart(
 
                         if (preIdx == -1) {
                             preIdx = pointIdx
+                            return@forEachIndexed
+                        }
+                        // 这里优化下防止全部绘制
+                        if(pointIdx !in firstIndex..lastIndex){
                             return@forEachIndexed
                         }
 
@@ -693,7 +709,8 @@ open class KChart(
                     indexTextPaint.color = index.preFixTextColor
                     val measureTextWidth = indexTextPaint.measureText(index.preFixText)
                     indexTextPaint.style = Paint.Style.STROKE
-                    canvas.drawRoundRect(left,top,left+measureTextWidth,(textHeight+ top),10f,10f,indexTextPaint)
+                    //防止出界+indexPaint.strokeWidth/2
+                    canvas.drawRoundRect(left,top+indexPaint.strokeWidth/2,left+measureTextWidth,(textHeight+ top),10f,10f,indexTextPaint)
                     indexTextPaint.style = Paint.Style.FILL
 
                     canvas.drawText(
@@ -996,11 +1013,20 @@ open class KChart(
             null
         )
 
+        val firstIndex = (stockChart.findFirstIdxInDisplayArea()-1).coerceAtLeast(0)
+        val lastIndex = (stockChart.findLastIdxInDisplayArea()+1).coerceAtMost(getKEntities().size-1)
+
         candleKChartPaint.strokeWidth = chartConfig.candleChartLineStrokeWidth
         val barWidth = 1 * (1 - chartConfig.barSpaceRatio)
         val spaceWidth = 1 * chartConfig.barSpaceRatio
-        var left = spaceWidth / 2f
-        getKEntities().forEachIndexed { idx, kEntity ->
+        tmp2FloatArray[0]=firstIndex.toFloat()
+        tmp2FloatArray[1]=0f
+        mapPointsValue2Real(tmp2FloatArray)
+        var left =firstIndex.toFloat() + spaceWidth / 2f
+        for (idx in firstIndex .. lastIndex){
+            val kEntity = getKEntities()[idx]
+//        var left = spaceWidth / 2f
+//        getKEntities().forEachIndexed { idx, kEntity ->
             if (!kEntity.containFlag(FLAG_EMPTY)) {
                 candleKChartPaint.color =
                     if (isRise(idx)) stockChart.getConfig().riseColor else stockChart.getConfig().downColor
@@ -1087,19 +1113,22 @@ open class KChart(
 
     private fun doDrawLabel(canvas: Canvas, isLeft: Boolean, config: KChartConfig.LabelConfig) {
         if (config.count > 0) {
+            var labelHeight = labelCache[config]?.firstNotNullOfOrNull { it.value.textHeight }
+            var labelTop = labelCache[config]?.firstNotNullOfOrNull { it.value.textTop }
             labelPaint.textSize = config.textSize
             labelPaint.color = config.textColor
-            labelPaint.getFontMetrics(tmpFontMetrics)
-            val labelHeight = tmpFontMetrics.bottom - tmpFontMetrics.top
-//            val areaTop = getChartDisplayArea().top + drawnIndexTextHeight + config.marginTop
-//            val areaBottom = getChartDisplayArea().bottom - config.marginBottom
+            if(labelHeight==null||labelTop==null){
+                labelPaint.getFontMetrics(tmpFontMetrics)
+                labelHeight = tmpFontMetrics.bottom - tmpFontMetrics.top
+                labelTop = tmpFontMetrics.top
+            }
+
             val areaTop = getChartMainDisplayArea().top
             val areaBottom = getChartMainDisplayArea().bottom
 
             var verticalSpace = 0f
             if (config.count > 1) {
-                verticalSpace =
-                    (areaBottom - areaTop - config.count * labelHeight) / (config.count - 1)
+                verticalSpace = (areaBottom - areaTop - config.count * labelHeight) / (config.count - 1)
             }
             var pos = areaTop
             for (i in 1..config.count) {
@@ -1110,18 +1139,26 @@ open class KChart(
                     else -> pos + labelHeight / 2
                 }
                 mapPointsReal2Value(tmp2FloatArray)
-                val text = config.formatter.invoke(tmp2FloatArray[1])
-                config.textColorFormatter?.invoke(tmp2FloatArray[1])?.let {
+                if(labelCache[config]?.get(tmp2FloatArray[1]) == null) {
+                    labelCache[config] = labelCache[config]?:HashMap()
+                    val text = config.formatter.invoke(tmp2FloatArray[1])
+                    labelCache[config]!![tmp2FloatArray[1]] =
+                        LabelInfo(
+                            text,config.textColorFormatter?.invoke(tmp2FloatArray[1]),labelPaint.measureText(
+                            text),labelHeight,labelTop)
+                }
+                val labelInfo = labelCache[config]!![tmp2FloatArray[1]]
+                val text = labelInfo!!.text
+                labelInfo.color?.let {
                     labelPaint.color = it
                 }
+
                 val startX = if (isLeft) {
                     config.horizontalMargin
                 } else {
-                    getChartDisplayArea().right - config.horizontalMargin - labelPaint.measureText(
-                        text
-                    )
+                    getChartDisplayArea().right - config.horizontalMargin - (labelInfo.textWidth?:0.0f)
                 }
-                canvas.drawText(text, startX, pos - tmpFontMetrics.top, labelPaint)
+                canvas.drawText(text, startX, pos - labelTop, labelPaint)
                 pos += verticalSpace + labelHeight
 
                 if(i == 1){
@@ -1132,4 +1169,7 @@ open class KChart(
             }
         }
     }
+
+    // 优化后：预生成格式化数据（假设数值范围固定）
+    data class LabelInfo(val text: String, val color: Int?,val textWidth:Float,val textHeight:Float,val textTop:Float)
 }

@@ -171,7 +171,7 @@ open abstract class Index(
 
     class VOL(
         param: String = "",
-        startText: String = "VOL",
+        startText: String = "VOL:",
         startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),
         textFormatter: (idx: Int, value: Float?) -> String =  com.androidx.stockchart.DefaultIndexTextFormatter.VOL,
         textMarginLeft: Float = com.androidx.stockchart.DEFAULT_INDEX_TEXT_MARGIN_LEFT,

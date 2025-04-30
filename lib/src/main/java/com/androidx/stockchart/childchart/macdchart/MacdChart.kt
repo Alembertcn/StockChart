@@ -192,11 +192,11 @@ class MacdChart(
             null
         )
 
-        valueList?.forEachIndexed { valueIdx, value ->
-            if (valueIdx == 0) {
-                return@forEachIndexed
-            }
-            value?.let { value ->
+        val firstIdxInDisplayArea = (stockChart.findFirstIdxInDisplayArea()-1).coerceAtLeast(0)
+        val lastIdxInDisplayArea = (stockChart.findLastIdxInDisplayArea()+1).coerceAtMost(stockChart.getConfig().getKEntitiesSize()-1)
+        for (valueIdx in firstIdxInDisplayArea..lastIdxInDisplayArea){
+            if (valueIdx == 0) continue
+            valueList?.get(valueIdx)?.let { value ->
                 valueList[valueIdx - 1]?.let { preValue ->
                     tmp4FloatArray[0] = valueIdx - 1 + 0.5f
                     tmp4FloatArray[1] = preValue

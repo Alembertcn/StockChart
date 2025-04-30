@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">StockApp</string>
+    <string name="loading">Loading...</string>
+    <string name="no_data">No data</string>
+    <string name="vol_name">VOL</string>
+    <string name="age_price">Avg Price</string>
+    <string name="billions_shou">T shares</string>
+    <string name="billions">B</string>
+    <string name="billions_w">T</string>
+    <string name="millions_shou">M shares</string>
+    <string name="millions">M</string>
+    <string name="shou">share</string>
+    <string name="billions_gu">T shares</string>
+    <string name="millions_gu">M shares</string>
+    <string name="gu">share(s)</string>
+    <string name="quo_chart_no_restoration">No Adj</string>
+    <string name="quo_chart_front_restoration">Split-adj</string>
+    <string name="quo_chart_back_restoration">Adj Bwd</string>
+    <string name="vol_info_format">%1$s%2$s %3$s</string>
+</resources>

@@ -47,7 +47,7 @@ class KdjChartConfig(
     // j线宽度
     var jLineStrokeWidth: Float = com.androidx.stockchart.DEFAULT_KDJ_J_LINE_STROKE_WIDTH,
     // 需要展示的指标配置
-    var index: Index? = com.androidx.stockchart.DEFAULT_KDJ_INDEX
+    var index: Index? = Index.KDJ()
 ) : BaseChildChartConfig(
     height,
     marginTop,

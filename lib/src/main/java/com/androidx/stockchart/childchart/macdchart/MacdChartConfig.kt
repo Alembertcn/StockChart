@@ -46,7 +46,7 @@ class MacdChartConfig(
     // 柱子之间的空间占比柱子宽度
     var barSpaceRatio: Float = com.androidx.stockchart.DEFAULT_MACD_BAR_SPACE_RATIO,
     // 需要展示的指标配置
-    var index: Index? = com.androidx.stockchart.DEFAULT_MACD_INDEX
+    var index: Index? = Index.MACD()
 ) : BaseChildChartConfig(
     height,
     marginTop,

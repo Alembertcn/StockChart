@@ -54,8 +54,9 @@ class CirclePaint (val view:View){
         }
         canvas.drawLine(startX,startY,centerX,centerY,linePaint)
         // 绘制圆圈
-        canvas.drawCircle(centerX.coerceIn(chartDisplayArea.left+maxRadius,chartDisplayArea.right-maxRadius),
-            centerY.coerceIn(chartDisplayArea.top+maxRadius,chartDisplayArea.bottom-maxRadius), DimensionUtil.dp2px(view.context, circleRadius).toFloat() , paint)
+        val maxRadius1 = DimensionUtil.dp2px(view.context,maxRadius)
+        canvas.drawCircle(centerX.coerceIn(chartDisplayArea.left+ maxRadius1,chartDisplayArea.right- maxRadius1),
+            centerY.coerceIn(chartDisplayArea.top+ maxRadius1,chartDisplayArea.bottom- maxRadius1), DimensionUtil.dp2px(view.context, circleRadius).toFloat() , paint)
         lastCenterX = centerX
         lastCenterY = centerY
     }
