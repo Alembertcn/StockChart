@@ -51,6 +51,9 @@ import kotlinx.coroutines.launch
 import wb.lib.module_chart.custom.CustomChartConfig
 import wb.lib.module_chart.custom.CustomChartFactory
 import wb.lib.module_chart.databinding.FragmentChartBinding
+import wb.lib.module_chart.index.qm.QM
+import wb.lib.module_chart.index.qm.QMChartConfig
+import wb.lib.module_chart.index.qm.QMChartFactory
 import kotlin.reflect.KClass
 
 /**
@@ -97,6 +100,10 @@ class ChartFragment:Fragment() {
     // atr指标图工厂与配置
     private var atrChartFactory: ATRChartFactory? = null
     private val atrChartConfig = ATRChartConfig()
+
+    // qm指标图工厂与配置
+    private var qmChartFactory: QMChartFactory? = null
+    private val qmChartConfig = QMChartConfig()
 
     // obv指标图工厂与配置
     private var obvChartFactory: OBVChartFactory? = null
@@ -197,6 +204,7 @@ class ChartFragment:Fragment() {
         initRsiChart()
         initATRChart()
         initOBVChart()
+        initQMChart()
         initCustomChart()
 
         stockChartConfig.apply {
@@ -213,6 +221,7 @@ class ChartFragment:Fragment() {
                     rsiChartFactory!!,
                     atrChartFactory!!,
                     obvChartFactory!!,
+                    qmChartFactory!!,
                     customChartFactory!!
                 )
             }else{
@@ -270,6 +279,22 @@ class ChartFragment:Fragment() {
         binding.stockChart.setConfig(stockChartConfig)
     }
 
+    private fun initQMChart() {
+        qmChartFactory = QMChartFactory(binding.stockChart, qmChartConfig)
+
+        qmChartConfig.apply {
+            // 图高度
+            height = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 80f)
+
+            // 长按左侧标签配置
+            highlightLabelLeft = HighlightLabelConfig(
+                textSize = DimensionUtil.sp2px(this@ChartFragment.requireContext(), 10f).toFloat(),
+                bgColor = Color.parseColor("#A3A3A3"),
+                padding = DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat()
+            )
+        }
+    }
+
     fun getPreNotEmptyEntry(index: Int): IKEntity?{
         for (idx in  index-1 downTo 0){
             val kEntity = stockChartConfig.getKEntity(idx)
@@ -298,6 +323,7 @@ class ChartFragment:Fragment() {
                             kdjChartConfig.height =unit.toInt()
                             volumeChartConfig.height =unit.toInt()
                             macdChartConfig.height =unit.toInt()
+                            qmChartConfig.height =unit.toInt()
                             binding.stockChart.notifyChanged()
                             viewTreeObserver.removeOnGlobalLayoutListener(this)
                         }
@@ -767,6 +793,7 @@ class ChartFragment:Fragment() {
                 Pair(binding.llOptions.indexVol, Index.VOL()),
                 Pair(binding.llOptions.indexAtr, Index.ATR()),
                 Pair(binding.llOptions.indexObv, Index.OBV()),
+                Pair(binding.llOptions.indexQm, QM()),
             )
         )
 
@@ -827,6 +854,10 @@ class ChartFragment:Fragment() {
                 Index.OBV::class -> {
                     button.isSelected =
                         stockChartConfig.childChartFactories.contains(obvChartFactory!!)
+                }
+                QM::class -> {
+                    button.isSelected =
+                        stockChartConfig.childChartFactories.contains(qmChartFactory!!)
                 }
             }
         }
@@ -983,6 +1014,13 @@ class ChartFragment:Fragment() {
                     stockChartConfig.addChildCharts(volumeChartFactory!!)
                 }
             }
+            QM::class -> {
+                if (stockChartConfig.childChartFactories.contains(qmChartFactory!!)) {
+                    stockChartConfig.removeChildCharts(qmChartFactory!!)
+                } else {
+                    stockChartConfig.addChildCharts(qmChartFactory!!)
+                }
+            }
         }
         binding.stockChart.notifyChanged()
         refreshOptionButtonsState()
@@ -1017,6 +1055,9 @@ class ChartFragment:Fragment() {
                 }
                 Index.ATR::class -> {
                     obvChartFactory
+                }
+                QM::class -> {
+                    qmChartFactory
                 }
                 else -> {
                     volumeChartFactory

@@ -1,0 +1,78 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:orientation="horizontal">
+
+    <!-- 左侧滑动内容 -->
+
+    <LinearLayout
+        android:id="@+id/leftContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:minWidth="400dp"
+        android:background="#F5F5F5"
+        android:paddingStart="16dp">
+
+        <TextView
+            android:id="@+id/tvLeft1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            android:textColor="#333"
+            tools:text="Left1"/>
+
+        <TextView
+            android:singleLine="true"
+            android:id="@+id/tvLeft2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:gravity="end|center_vertical"
+            android:textColor="#666"
+            tools:text="Left2"/>
+    </LinearLayout>
+
+    <!-- 中间固定列 -->
+    <TextView
+        android:id="@+id/tvCenter"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:textColor="#222"
+        tools:text="Center"/>
+
+    <!-- 右侧滑动内容 -->
+    <LinearLayout
+        android:id="@+id/rightContent"
+        android:layout_width="match_parent"
+        android:minWidth="400dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#F5F5F5"
+        android:paddingEnd="16dp">
+
+        <TextView
+            android:id="@+id/tvRight1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:layout_weight="1"
+            android:gravity="start|center_vertical"
+            android:textColor="#666"
+            tools:text="Right1"/>
+
+        <TextView
+            android:id="@+id/tvRight2"
+            android:singleLine="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="#333"
+            tools:text="Right2"/>
+    </LinearLayout>
+</LinearLayout>

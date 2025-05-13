@@ -103,7 +103,7 @@ open abstract class Index(
         override fun calculate(input: List<IKEntity>) = BollCalculator.calculate(param, input)
     }
 
-    class MACD(
+    open class MACD(
         param: String = com.androidx.stockchart.DefaultIndexParams.MACD,
         startText: String = com.androidx.stockchart.DefaultIndexStartText.MACD,
         startTextColor: Int = ResourceUtil.getColor(R.color.stock_chart_index_start_text),

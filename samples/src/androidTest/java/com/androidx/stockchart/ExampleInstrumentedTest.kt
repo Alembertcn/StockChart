@@ -32,6 +32,7 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+//        println(appContext.getString(com.androidx.stock_chart.R.string.app_name))
         assertEquals("com.androidx.stockchart", appContext.packageName)
     }
 }

@@ -528,8 +528,8 @@ open class KChart(
             null
         )
         chartConfig.preClosePrice?.let {
-            costPriceLinePaint.color = chartConfig.costPriceLineColor
-            costPriceLinePaint.strokeWidth = chartConfig.costPriceLineWidth
+            costPriceLinePaint.color = chartConfig.preCloseLineColor
+            costPriceLinePaint.strokeWidth = chartConfig.preCloseLineWidth
             costPriceLinePaint.pathEffect = chartConfig.preClosePriceLineEffect
             tmp2FloatArray[0] = 0f
             tmp2FloatArray[1] = it

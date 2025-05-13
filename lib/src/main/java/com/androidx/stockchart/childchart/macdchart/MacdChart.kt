@@ -15,6 +15,7 @@ package com.androidx.stockchart.childchart.macdchart
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.text.TextUtils
 import com.androidx.stockchart.IStockChart
 import com.androidx.stockchart.childchart.base.BaseChildChart
 import kotlin.math.abs
@@ -24,24 +25,24 @@ import kotlin.math.abs
  * @author hai
  * @version 创建时间: 2021/2/18
  */
-class MacdChart(
+open class MacdChart(
     stockChart: IStockChart,
     chartConfig: MacdChartConfig
 ) : BaseChildChart<MacdChartConfig>(stockChart, chartConfig) {
 
-    private val linePaint by lazy {
+    protected val linePaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeCap = Paint.Cap.ROUND }
     }
-    private val barPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-    private val highlightHorizontalLinePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-    private val highlightVerticalLinePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-    private val highlightLabelPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-    private val highlightLabelBgPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-    private val indexTextPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    protected val barPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    protected val highlightHorizontalLinePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    protected val highlightVerticalLinePaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    protected val highlightLabelPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    protected val highlightLabelBgPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    protected val indexTextPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
 
-    private var indexList: List<List<Float?>>? = null
+    protected var indexList: List<List<Float?>>? = null
 
-    private var drawnIndexTextHeight = 0f
+    protected var drawnIndexTextHeight = 0f
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -85,10 +86,10 @@ class MacdChart(
     override fun preDrawData(canvas: Canvas) {
     }
 
+    val difIdx = 0
+    val deaIdx = 1
+    val macdIdx = 2
     override fun drawData(canvas: Canvas) {
-        val difIdx = 0
-        val deaIdx = 1
-        val macdIdx = 2
 
         drawMacdBar(canvas, macdIdx)
 
@@ -134,6 +135,7 @@ class MacdChart(
                     val value =
                         if (indexIdx != null && indexIdx in pointList.indices && pointList[indexIdx] != null) pointList[indexIdx] else null
                     val text = index.textFormatter.invoke(lineIdx, value)
+                    if(TextUtils.isEmpty(text))return@forEachIndexed
                     canvas.drawText(
                         text,
                         left,
@@ -148,7 +150,7 @@ class MacdChart(
         }
     }
 
-    private fun drawMacdBar(canvas: Canvas, macdIdx: Int){
+    protected fun drawMacdBar(canvas: Canvas, macdIdx: Int){
         val saveCount = canvas.saveLayer(
             getChartMainDisplayArea().left,
             getChartDisplayArea().top,
@@ -164,26 +166,22 @@ class MacdChart(
         indexList?.get(macdIdx).let { valueList ->
             valueList?.forEach { value ->
                 value?.let {
-                    barPaint.color =
-                        if (it >= 0f) stockChart.getConfig().riseColor else stockChart.getConfig().downColor
-
+                    barPaint.color = if (it >= 0f) stockChart.getConfig().riseColor else stockChart.getConfig().downColor
                     tmpRectF.left = barLeft
                     tmpRectF.top = it
                     tmpRectF.right = barLeft + barWidth
                     tmpRectF.bottom = 0f
 
                     mapRectValue2Real(tmpRectF)
-
                     canvas.drawRect(tmpRectF, barPaint)
                 }
-
                 barLeft += barWidth + spaceWidth
             }
         }
         canvas.restoreToCount(saveCount)
     }
 
-    private fun doDrawLine(canvas: Canvas, valueList: List<Float?>?) {
+    protected fun doDrawLine(canvas: Canvas, valueList: List<Float?>?) {
         val saveCount = canvas.saveLayer(
             getChartMainDisplayArea().left,
             getChartDisplayArea().top,

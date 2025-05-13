@@ -22,7 +22,7 @@ import com.androidx.stock_chart.R
  * @author hai
  * @version 创建时间: 2021/2/18
  */
-class MacdChartConfig(
+open class MacdChartConfig(
     height: Int = com.androidx.stockchart.DEFAULT_CHILD_CHART_HEIGHT,
     marginTop: Int = com.androidx.stockchart.DEFAULT_CHILD_CHART_MARGIN_TOP,
     marginBottom: Int = com.androidx.stockchart.DEFAULT_CHILD_CHART_MARGIN_BOTTOM,

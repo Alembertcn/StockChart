@@ -30,7 +30,7 @@
     <color name="stock_chart_mountain_line_gradient_start">#50FFFFFF</color>
     <color name="stock_chart_mountain_line_gradient_end">#002196F3</color>
     <color name="stock_chart_cost_price_line">#7d7d7f</color>
-    <color name="stock_chart_pre_close_price_line">#7d7d7f</color>
+    <color name="stock_chart_pre_close_price_line">#7d7d7d7f</color>
     <color name="stock_chart_avg_price_line">#FF7B11</color>
     <color name="stock_chart_highest_lowest_label">#ffffff</color>
 

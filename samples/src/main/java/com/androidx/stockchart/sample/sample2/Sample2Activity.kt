@@ -607,6 +607,7 @@ class Sample2Activity : AppCompatActivity() {
                 Pair(binding.llOptions.indexKdj, Index.KDJ()),
                 Pair(binding.llOptions.indexRsi, Index.RSI()),
                 Pair(binding.llOptions.indexVol, Index.VOL()),
+                Pair(binding.llOptions.indexQm, Index.MACD()),
             )
         )
 
