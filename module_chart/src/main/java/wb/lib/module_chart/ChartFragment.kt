@@ -96,7 +96,7 @@ class ChartFragment:Fragment() {
 
     // rsi指标图工厂与配置
     private var rsiChartFactory: RsiChartFactory? = null
-    private val rsiChartConfig = RsiChartConfig()
+    private val rsiChartConfig = RsiChartConfig(dashLineColor = Color.TRANSPARENT)
     // atr指标图工厂与配置
     private var atrChartFactory: ATRChartFactory? = null
     private val atrChartConfig = ATRChartConfig()
@@ -116,6 +116,7 @@ class ChartFragment:Fragment() {
     private var isLoading = false
     private var isDev = true
     var isMatchHeight = false
+    var subChartHeight: Float? = ResourceUtil.dp2pix(52f)
     var onLoadMoreListener: OnLoadMoreListener? = null
     var onHighlightListener: OnHighlightListener?=null
     private var scope:CoroutineScope?=null
@@ -316,8 +317,8 @@ class ChartFragment:Fragment() {
                         if(binding.flRoot.height>0){
                             var radio = 2.8f
                             var totalHeight = view?.height?:0
-                            val unit = (totalHeight -60f)/(radio+1)
-                            kChartConfig.height =(unit*radio).toInt()
+                            val unit = subChartHeight ?: ((totalHeight - 60f) / (radio + 1))
+                            kChartConfig.height =(totalHeight - 60f - unit).toInt()
                             volumeChartConfig.height =unit.toInt()
                             rsiChartConfig.height =unit.toInt()
                             kdjChartConfig.height =unit.toInt()
@@ -436,7 +437,13 @@ class ChartFragment:Fragment() {
             // 右侧标签设置
             rightLabelConfig = KChartConfig.LabelConfig(
                 3,
-                { "${NumberFormatUtil.formatPresent(kChartConfig.preClosePrice?.let { p->(it-p)/p })}".let{ if (it == "0.00%" || it == "-0.00%") "" else it } },
+                 {
+                kChartConfig.preClosePrice
+                    ?.takeIf { it != 0.0f }
+                    ?.let { p -> NumberFormatUtil.formatPresent((it - p) / p) }
+                    ?.takeUnless { it == "0.00%" || it == "-0.00%" }
+                    ?: ""
+                },
                 DEFAULT_TIME_BAR_LABEL_TEXT_SIZE,
                 resources.getColor(R.color.stock_chart_axis_y_label),
                 DimensionUtil.dp2px(this@ChartFragment.requireContext(), 5f).toFloat(),0f,0f,
@@ -487,6 +494,7 @@ class ChartFragment:Fragment() {
         }
     }
 
+    var chartGgColor = ResourceUtil.getColor(R.color.page_background)
     /**
      * 时间条图初始化
      */
@@ -495,7 +503,7 @@ class ChartFragment:Fragment() {
 
         timeBarConfig.apply {
             // 背景色（时间条这里不像显示网格线，加个背景色覆盖掉）
-            backGroundColor = ResourceUtil.getColor(R.color.page_background)
+            backGroundColor = chartGgColor
             // 长按标签背景色
             highlightLabelBgColor = Color.parseColor("#A3A3A3")
         }
@@ -642,7 +650,6 @@ class ChartFragment:Fragment() {
             stockChartConfig.xValueMax = null
             stockChartConfig.minShowCount = initialPageSize?:60
             kChartConfig.chartMainDisplayAreaPaddingTop = DEFAULT_CHART_MAIN_DISPLAY_AREA_PADDING_TOP/1.2f
-            kChartConfig.chartMainDisplayAreaPaddingBottom = 0f
             kChartConfig.leftLabelConfig?.count = 5
             kChartConfig.rightLabelConfig?.count = 0
             changeKChartType(KChartConfig.KChartType.HOLLOW())
@@ -1027,12 +1034,16 @@ class ChartFragment:Fragment() {
     }
 
     var lastFactory: AbsChildChartFactory<*>? = null
+    var lastIndex: Index? = null
     fun changeIndexTypeOnlyOne(index: Index){
         if (lastFactory == null) {
             lastFactory = volumeChartFactory
         }
+        lastIndex = index
+
         if (index::class in DEFAULT_MAIN_CHART_INDEX_TYPES){
-                if (period.value == Period.DAY_TIME || period.value == Period.FIVE_DAYS) return
+                if (period.value == Period.DAY_TIME || period.value == Period.FIVE_DAYS)
+                    return
 
                     if (kChartIndex != null && kChartIndex!!::class == index::class) {
                     } else {

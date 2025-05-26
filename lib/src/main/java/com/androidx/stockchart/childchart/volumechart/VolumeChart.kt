@@ -167,7 +167,7 @@ class VolumeChart(
 
         getKEntities().forEachIndexed { idx, kEntity ->
 
-            if (!kEntity.containFlag(FLAG_EMPTY)) {
+            if (!kEntity.containFlag(FLAG_EMPTY) && kEntity.getVolume()>0f) {
                 val isRise = isRise(idx)
                 volumePaint.color =
                     if (isRise) stockChart.getConfig().riseColor else stockChart.getConfig().downColor

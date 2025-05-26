@@ -73,6 +73,7 @@ dependencies {
     implementation 'com.google.android:flexbox:2.0.1'
     implementation project(':lib')
     implementation project(':module_chart')
+    implementation 'com.dianping.android.sdk:logan:1.2.4'
 //    api 'wb.lib:module_src:1.0'
 //    implementation 'com.github.wangyiqian:StockChart:1.1.16'
 }

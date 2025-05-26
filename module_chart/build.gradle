@@ -45,12 +45,12 @@ dependencies {
     if(depSource('module_chart')){
         api project(':lib')
     }else{
-        api 'com.androidx:stock_chart:1.1'
+        api 'com.androidx:stock_chart:1.2'
     }
 }
 
 ext{
-    publishVersion = "1.4"
+    publishVersion = "1.6"
     publishGroup = "wb.lib"
     moduleName = 'module_chart'
     descContent = '股票插件'

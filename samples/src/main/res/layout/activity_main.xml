@@ -42,5 +42,15 @@
         android:layout_height="wrap_content"
         android:onClick="sample4"
         android:text="示例四：项目适配" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sample5"
+        android:text="示例四：日志上报" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sample6"
+        android:text="Crash" />
 
 </LinearLayout>
