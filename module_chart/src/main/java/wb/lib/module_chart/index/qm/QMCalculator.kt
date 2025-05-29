@@ -50,50 +50,78 @@ object QMCalculator: ICalculator {
             val closePricePre = input[kEntityIdx-1].getClosePrice()
 
             //1.MA5 > MA10 且 前MA5 <= MA10 且 当前成交量>=5日平均成交量*1.5；
+            val buy1_1= compare(ma5,ma10)
+            val buy1_2= compare(ma5Pre,ma10,false, includeSame = true)
+            val buy1_3= compare(volume.toFloat(),volume5?.let { it * 1.5f }, includeSame = true)
+
             //2.DIF > DEA 且 前一DIF <= 前一DEA 且 RSI<30；
+            val buy2_1= compare(dif,dea)
+            val buy2_2=  compare(difPre,deaPre, biger = false, includeSame = true)
+            val buy2_3= (listOf<Float?>(rsi2).any { it!=null && it<30f })
+
             //3.收盘价 > UPPER 且 前一收盘价 <=  前一UPPER 且 当前成交量 > 5日平均成交量*1.2
-            Log.d("testQM","$kEntityIdx buy1 compare ${compare(ma5,ma10)} ${compare(ma5Pre,ma10,false, includeSame = true)} ${compare(volume.toFloat(),volume5?.let { it * 1.5f }, includeSame = true)}")
-            Log.d("testQM","$kEntityIdx buy2 compare ${compare(dif,dea)} ${compare(difPre,deaPre, biger = false, includeSame = true)} ${(listOf<Float?>(rsi1,rsi2,rsi3).any { it!=null && it<30f })}")
-            Log.d("testQM","$kEntityIdx buy3 compare ${compare(closePrice,upper)} ${compare(closePricePre,upperPre,false,includeSame = true)} ${compare(volume.toFloat(),volume5?.let { it*1.2f })}")
+            val buy3_1= compare(closePrice,upper)
+            val buy3_2=  compare(closePricePre,upperPre,false,includeSame = true)
+            val buy3_3= compare(volume.toFloat(),volume5?.let { it*1.2f })
+
+            Log.d("testQM","$kEntityIdx buy1 compare $buy1_1 $buy1_2 $buy1_3")
+            Log.d("testQM","$kEntityIdx buy2 compare $buy2_1 $buy2_2 $buy2_3")
+            Log.d("testQM","$kEntityIdx buy3 compare $buy3_1 $buy3_2 $buy3_3")
+
 
 
             //1.MA5 < MA10 且 前MA5 >= MA10 且 当前成交量>=5日平均成交量*0.8；
+            val sell1_1= compare(ma5,ma10,false)
+            val sell1_2= compare(ma5Pre,ma10,true, includeSame = true)
+            val sell1_3= compare(volume.toFloat(),volume5?.let { it * .8f }, includeSame = true)
+
             //2.DIF < DEA 且 前一DIF >= 前一DEA 且 RSI>70；
+            val sell2_1= compare(dif,dea,false)
+            val sell2_2=  compare(difPre,deaPre, biger = true, includeSame = true)
+            val sell2_3= (listOf<Float?>(rsi2).any { it!=null && it>70f })
+
             //3.收盘价 < LOWER 且 前一收盘价 >=  前一LOWER 且 当前成交量 > 5日平均成交量*1.2
-            Log.d("testQM","$kEntityIdx sell1 compare ${compare(ma5,ma10,false)} ${compare(ma5Pre,ma10,true, includeSame = true)} ${compare(volume.toFloat(),volume5?.let { it * 1.5f }, includeSame = true)}")
-            Log.d("testQM","$kEntityIdx sell2 compare ${compare(dif,dea,false)} ${compare(difPre,deaPre, biger = true, includeSame = true)} ${(listOf<Float?>(rsi1,rsi2,rsi3).any { it!=null && it>70f })}")
-            Log.d("testQM","$kEntityIdx sell3 compare ${compare(closePrice,lower,false)} ${compare(closePricePre,lowerPre,true,includeSame = true)   } ${compare(volume.toFloat(),volume5?.let { it*1.2f })}")
+            val sell3_1= compare(closePrice,lower,false)
+            val sell3_2=  compare(closePricePre,lowerPre,true,includeSame = true)
+            val sell3_3= compare(volume.toFloat(),volume5?.let { it*1.2f })
+
+            Log.d("testQM","$kEntityIdx buy1 compare $sell1_1 $sell1_2 $sell1_3")
+            Log.d("testQM","$kEntityIdx buy2 compare $sell2_1 $sell2_2 $sell2_3")
+            Log.d("testQM","$kEntityIdx buy3 compare $sell3_1 $sell3_2 $sell3_3")
+
             if(
                 //1.MA5 > MA10 且 前MA5 <= MA10 且 当前成交量>=5日平均成交量*1.5；
-                (compare(ma5,ma10)
-                && compare(ma5Pre,ma10,false, includeSame = true)
-                && compare(volume.toFloat(),volume5?.let { it * 1.5f }, includeSame = true))
+                (buy1_1
+                && buy1_2
+                && buy1_3)
 
                 //2.DIF > DEA 且 前一DIF <= 前一DEA 且 RSI<30；
-                || (compare(dif,dea)
-                && compare(difPre,deaPre, biger = false, includeSame = true)
-                && (listOf<Float?>(rsi1,rsi2,rsi3).any { it!=null && it<30f }))
+                || (buy2_1
+                && buy2_2
+//                && (listOf<Float?>(rsi1,rsi2,rsi3).any { it!=null && it<30f }))
+                && buy2_3)
 
                 //3.收盘价 > UPPER 且 前一收盘价 <=  前一UPPER 且 当前成交量 > 5日平均成交量*1.2
-                || (compare(closePrice,upper)
-                && compare(closePricePre,upperPre,false,includeSame = true)
-                && compare(volume.toFloat(),volume5?.let { it*1.2f }))){
+                || (buy3_1
+                && buy3_2
+                && buy3_3)){
                 result.add(kEntityIdx,1f)
             }else if(
                 //1.MA5 < MA10 且 前MA5 >= MA10 且 当前成交量>=5日平均成交量*0.8；
-                (compare(ma5,ma10,false)
-                && compare(ma5Pre,ma10,true, includeSame = true)
-                && compare(volume.toFloat(),volume5?.let { it * .8f }, includeSame = true))
+                (sell1_1
+                && sell1_2
+                && sell1_3)
 
                 //2.DIF < DEA 且 前一DIF >= 前一DEA 且 RSI>70；
-                || (compare(dif,dea,false)
-                && compare(difPre,deaPre, biger = true, includeSame = true)
-                && (listOf<Float?>(rsi1,rsi2,rsi3).any { it!=null && it>70f }))
+                || (sell2_1
+                && sell2_2
+//                && (listOf<Float?>(rsi1,rsi2,rsi3).any { it!=null && it>70f }))
+                && sell2_3)
 
                 //3.收盘价 < LOWER 且 前一收盘价 >=  前一LOWER 且 当前成交量 > 5日平均成交量*1.2
-                || (compare(closePrice,lower,false)
-                && compare(closePricePre,lowerPre,true,includeSame = true)
-                && compare(volume.toFloat(),volume5?.let { it*1.2f }))
+                || (sell3_1
+                && sell3_2
+                && sell3_3)
             ){
                 result.add(kEntityIdx,-1f)
             }else{
