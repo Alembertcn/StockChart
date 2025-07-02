@@ -321,13 +321,18 @@ class ChartFragment:Fragment() {
                             var radio = 2.8f
                             var totalHeight = view?.height?:0
                             val unit = subChartHeight ?: ((totalHeight - 60f) / (radio + 1))
-                            kChartConfig.height =(totalHeight - 60f - unit).toInt()
-                            volumeChartConfig.height =unit.toInt()
-                            rsiChartConfig.height =unit.toInt()
-                            kdjChartConfig.height =unit.toInt()
-                            volumeChartConfig.height =unit.toInt()
-                            macdChartConfig.height =unit.toInt()
-                            qmChartConfig.height =unit.toInt()
+                            if(isDev && !hasSubChart){
+                                kChartConfig.height =(totalHeight - 60f).toInt()
+                            }else{
+                                kChartConfig.height =(totalHeight - 60f - unit).toInt()
+                                volumeChartConfig.height =unit.toInt()
+                                rsiChartConfig.height =unit.toInt()
+                                kdjChartConfig.height =unit.toInt()
+                                volumeChartConfig.height =unit.toInt()
+                                macdChartConfig.height =unit.toInt()
+                                qmChartConfig.height =unit.toInt()
+                            }
+
                             binding.stockChart.notifyChanged()
                             viewTreeObserver.removeOnGlobalLayoutListener(this)
                         }
