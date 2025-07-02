@@ -115,6 +115,7 @@ class ChartFragment:Fragment() {
 
     private var isLoading = false
     private var isDev = true
+    private var hasSubChart = true
     var isMatchHeight = false
     var subChartHeight: Float? = ResourceUtil.dp2pix(52f)
     var onLoadMoreListener: OnLoadMoreListener? = null
@@ -125,6 +126,9 @@ class ChartFragment:Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.getBoolean("IS_DEV")?.let {
             isDev = it
+        }
+        arguments?.getBoolean("HAS_SUB_CHART")?.let {
+            hasSubChart = it
         }
         isMatchHeight= !isDev
 
@@ -212,27 +216,7 @@ class ChartFragment:Fragment() {
 //            chartMainDisplayAreaPaddingLeft = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
 //            chartMainDisplayAreaPaddingRight = DimensionUtil.dp2px(this@ChartFragment.requireContext(),25f).toFloat()
             // 将需要显示的子图的工厂添加进StockChart配置
-            if(isDev){
-                addChildCharts(
-                    kChartFactory!!,
-                    timeBarFactory!!,
-                    volumeChartFactory!!,
-                    macdChartFactory!!,
-                    kdjChartFactory!!,
-                    rsiChartFactory!!,
-                    atrChartFactory!!,
-                    obvChartFactory!!,
-                    qmChartFactory!!,
-                    customChartFactory!!
-                )
-            }else{
-                addChildCharts(
-                    kChartFactory!!,
-                    timeBarFactory!!,
-                    volumeChartFactory!!,
-                )
-            }
-
+            addChildCharts(*getInitStockCharts().toTypedArray())
             // 最大缩放比例
             scaleFactorMax = 5f
 
@@ -278,6 +262,25 @@ class ChartFragment:Fragment() {
 
         // 绑定配置
         binding.stockChart.setConfig(stockChartConfig)
+    }
+
+    fun getInitStockCharts():List<AbsChildChartFactory<*>>{
+        return if (isDev) {
+            mutableListOf(kChartFactory!!, timeBarFactory!!).apply {
+                if (hasSubChart) add(volumeChartFactory!!)
+            }
+        }else{
+            listOf(kChartFactory!!,
+                timeBarFactory!!,
+                volumeChartFactory!!,
+                macdChartFactory!!,
+                kdjChartFactory!!,
+                rsiChartFactory!!,
+                atrChartFactory!!,
+                obvChartFactory!!,
+                qmChartFactory!!,
+                customChartFactory!!)
+        }
     }
 
     private fun initQMChart() {

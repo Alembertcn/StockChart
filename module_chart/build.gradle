@@ -50,7 +50,7 @@ dependencies {
 }
 
 ext{
-    publishVersion = "1.6"
+    publishVersion = "1.7"
     publishGroup = "wb.lib"
     moduleName = 'module_chart'
     descContent = '股票插件'
