@@ -13,6 +13,9 @@
 
 package com.androidx.stockchart.sample
 
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import java.security.MessageDigest
 import java.text.DecimalFormat
 
 /**
@@ -61,6 +64,33 @@ object Util {
         if (old == 0f) return "——"
         val ratio = (new - old) / old * 100
         return "${if (new > old) "+" else ""}${numberDecimalFormat.format(ratio)}"
+    }
+
+
+    fun getCallerSignatureHash(packageName: String,packageManager: PackageManager): String? {
+        return try {
+            val packageInfo: PackageInfo = packageManager.getPackageInfo(
+                packageName,
+                PackageManager.GET_SIGNATURES
+            )
+            val signatures = packageInfo.signatures
+            if (signatures.isEmpty()) return null
+
+            // 取第一个签名计算哈希值
+            calcSha256(signatures[0].toByteArray())
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun calcSha256(bytes: ByteArray): String {
+        return try {
+            val md = MessageDigest.getInstance("SHA-256")
+            val digest = md.digest(bytes)
+            digest.joinToString(":") { "%02X".format(it) }
+        } catch (e: Exception) {
+            ""
+        }
     }
 
 }

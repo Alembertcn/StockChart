@@ -13,13 +13,13 @@
 
 package com.androidx.stockchart.sample
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
 import com.androidx.stockchart.sample.sample1.Sample1Activity
 import com.androidx.stockchart.sample.sample2.Sample2Activity
 import com.androidx.stockchart.sample.sample3.Sample3Activity
@@ -27,7 +27,6 @@ import com.androidx.stockchart.sample.sample4.Sample4Activity
 import com.androidx.stockchart.util.ResourceUtil
 import com.dianping.logan.Logan
 import com.dianping.logan.LoganConfig
-import com.dianping.logan.SendLogCallback
 import java.io.File
 import java.sql.Date
 import java.text.SimpleDateFormat
@@ -99,5 +98,16 @@ class MainActivity : AppCompatActivity() {
 
     fun sample6(view: View) {
         throw RuntimeException("test Exception")
+    }
+
+    fun sample7(view: View) {
+
+        android.util.Log.d("TAG", "sample7: ${callingActivity?.className} ${callingActivity?.packageName} getCallerSignatureHash：： ${SigningUtils.getAppSignatureSha256(this,
+            callingActivity?.packageName
+        )}")
+        val intent: Intent = Intent()
+        intent.putExtra("CALLER_PACKAGE", packageName) // 添加包名标识
+        setResult(Activity.RESULT_CANCELED,intent);
+        finish();
     }
 }

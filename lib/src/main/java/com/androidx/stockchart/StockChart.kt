@@ -325,7 +325,8 @@ class StockChart @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 config.horizontalGridLineSpaceCalculator?.invoke(this,i-1)?.let {
                     space = it
                 }
-                top = config.horizontalGridLineYCalculator?.invoke(this,i)?:(top + space)
+                if(i<config.gridHorizontalLineCount)
+                    top = config.horizontalGridLineYCalculator?.invoke(this,i)?:(top + space)
             }
         }
 

@@ -230,7 +230,7 @@ class ChartFragment:Fragment() {
             }else{
                 // 网格线设置
                 gridVerticalLineCount = 2
-                gridHorizontalLineCount = 7
+                gridHorizontalLineCount = if(hasSubChart) 7 else 5
                 gridLineStrokeWidth = 2f
                 horizontalGridLineTopOffsetCalculator = {
                     kChartConfig.chartMainDisplayAreaPaddingTop + kChartConfig.marginTop
@@ -265,7 +265,7 @@ class ChartFragment:Fragment() {
     }
 
     fun getInitStockCharts():List<AbsChildChartFactory<*>>{
-        return if (isDev) {
+        return if (!isDev) {
             mutableListOf(kChartFactory!!, timeBarFactory!!).apply {
                 if (hasSubChart) add(volumeChartFactory!!)
             }
@@ -321,7 +321,7 @@ class ChartFragment:Fragment() {
                             var radio = 2.8f
                             var totalHeight = view?.height?:0
                             val unit = subChartHeight ?: ((totalHeight - 60f) / (radio + 1))
-                            if(isDev && !hasSubChart){
+                            if(!isDev && !hasSubChart){
                                 kChartConfig.height =(totalHeight - 60f).toInt()
                             }else{
                                 kChartConfig.height =(totalHeight - 60f - unit).toInt()

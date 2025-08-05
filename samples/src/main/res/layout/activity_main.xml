@@ -53,4 +53,9 @@
         android:onClick="sample6"
         android:text="Crash" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sample7"
+        android:text="Return Data" />
 </LinearLayout>

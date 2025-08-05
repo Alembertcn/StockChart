@@ -57,10 +57,12 @@ afterEvaluate {
 //                }
             }
         }
+        println("user--> ${getLocalEnv("WB_REPO_USER")} pwd-->${getLocalEnv("WB_REPO_PWD")}")
         repositories {
             maven {
+                allowInsecureProtocol = true
                 // change to point to your repo, e.g. http://my.org/repo
-                url = "https://web-gy.httester.com/repository/maven-releases"
+                url = System.getenv("WB_REPO_URL_PUBLISH")
                 credentials {
                     username getLocalEnv("WB_REPO_USER")
                     password getLocalEnv("WB_REPO_PWD")

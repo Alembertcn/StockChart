@@ -50,7 +50,7 @@ dependencies {
 }
 
 ext{
-    publishVersion = "1.2"
+    publishVersion = "1.3.0"
     publishGroup = "com.androidx"
     moduleName = 'stock_chart'
     descContent = '股票图表'

@@ -38,7 +38,7 @@ buildscript {
         }
         maven {
             allowInsecureProtocol = true
-            url 'https://web-gy.httester.com/repository/maven-public/'
+            url System.getenv("WB_REPO_URL")
             credentials{
                 username getLocalEnv("WB_REPO_USER")
                 password getLocalEnv("WB_REPO_PWD")
@@ -77,7 +77,7 @@ allprojects {
         }
         maven {
             allowInsecureProtocol = true
-            url 'https://web-gy.httester.com/repository/maven-public/'
+            url System.getenv("WB_REPO_URL")
             credentials{
                 username getLocalEnv("WB_REPO_USER")
                 password getLocalEnv("WB_REPO_PWD")
